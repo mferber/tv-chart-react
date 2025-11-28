@@ -1,3 +1,45 @@
 [tools]
-node = "latest"
-pnpm = "latest"
+# Install Node.js using the specified version
+node = "{{ env['NODE_VERSION'] | default(value='lts') }}"
+"aqua:pnpm" = "latest"  # default pnpm backend (asdf) breaks with 'latest'
+
+# Install some npm packages globally if needed
+"npm:typescript" = "latest"
+"npm:eslint" = "latest"
+"npm:vitest" = "latest"
+
+[env]
+_.path = ['{{config_root}}/node_modules/.bin']
+
+# Use the project name derived from the current directory
+PROJECT_NAME = "{{ config_root | basename }}"
+
+# Set up the path for node module binaries
+BIN_PATH = "{{ config_root }}/node_modules/.bin"
+
+NODE_ENV = "{{ env.NODE_ENV | default(value='development') }}"
+
+[tasks.install]
+alias = "i"
+description = "Install dependencies"
+run = "pnpm install"
+
+[tasks.dev]
+alias = "d"
+description = "Start the development server"
+run = "pnpm dev"
+
+[tasks.lint]
+alias = "l"
+description = "Run ESLint"
+run = "eslint src/"
+
+[tasks.test]
+description = "Run tests"
+alias = "t"
+run = "vitest"
+
+[tasks.build]
+description = "Build the project"
+alias = "b"
+run = "pnpm build"
