@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import os from 'os'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import os from "os";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -8,8 +8,13 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    allowedHosts: [
-      os.hostname().toLowerCase()
-    ]
-  }
-})
+    allowedHosts: [os.hostname().toLowerCase()],
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
+});
