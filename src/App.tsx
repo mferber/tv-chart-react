@@ -1,29 +1,17 @@
-import { useState, useEffect, createContext, use } from 'react'
-import { type ReactNode } from 'react'
-
-const AppEnvironmentContext = createContext<string | null>(null)
-
-// Provides the app environment context; also carries out initial request to server
-// to find out the environment and get a CSRF protection cookie
-function AppEnvironmentContextProvider({ children }: { children: ReactNode }) {
-  const [env, setEnv] = useState<string | null>(null)
-
-  useEffect(() => {
-    setTimeout(async () => {
-      const rsp = await fetch("/api/env");
-      const result = await rsp.text();
-      setEnv(result);
-    }, 1500);
-  }, []);
-
-  return (
-    <AppEnvironmentContext value={env}>
-      {children}
-    </AppEnvironmentContext>
-  )
-}
+import {
+  AppEnvironmentContextProvider,
+  useAppEnvironmentContext,
+} from "./contexts/AppEnvironmentContext"
 
 function App() {
+  return (
+    <AppEnvironmentContextProvider>
+        <Main />
+    </AppEnvironmentContextProvider>
+}
+
+function Main() {
+  const env = useAppEnvironmentContext()
   return (
     <>
       <h1>Here we go</h1>
