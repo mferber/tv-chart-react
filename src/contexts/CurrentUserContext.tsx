@@ -2,7 +2,7 @@ import { createContext, useState, use, type Dispatch, type SetStateAction, type 
 
 // Context that provides the email and id of the current user, if one is logged in, otherwise null.
 
-interface User {
+export interface User {
   email: string
   id: string
 }
