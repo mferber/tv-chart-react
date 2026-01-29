@@ -54,8 +54,8 @@ function LoginPanel() {
 }
 
 function MainUI() {
-  // current user can't be null or we wouldn't be here
-  const { currentUser } = useCurrentUserContext() as User
+  // User can't be null or we wouldn't be here
+  const { currentUser } = useCurrentUserContext() as { currentUser: User }
   return (
     <p>
       User logged in as: {currentUser.email} ({currentUser.id})
