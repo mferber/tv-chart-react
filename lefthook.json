@@ -1,0 +1,14 @@
+{
+  "pre-commit": {
+    "jobs": [
+      {
+        "run": "mise x -- pnpm eslint {staged_files}",
+        "glob": "*.{js,ts,jsx,tsx}"
+      },
+      {
+        "run": "mise x -- pnpm prettier -w {staged_files}",
+        "glob": "*.{js,ts,jsx,tsx}"
+      }
+    ]
+  }
+}
