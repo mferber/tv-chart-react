@@ -2,12 +2,13 @@
   "pre-commit": {
     "jobs": [
       {
+        "name": "lint",
         "run": "mise x -- eslint {staged_files}",
         "glob": "*.{js,ts,jsx,tsx}"
       },
       {
-        "run": "mise x -- prettier -w {staged_files}",
-        "glob": "*.{js,ts,jsx,tsx}"
+        "name": "reformat",
+        "run": "mise x -- pretty-quick --staged --no-restage --bail --pattern '**/*.(js|jsx|ts|tsx)'"
       }
     ]
   }
