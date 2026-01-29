@@ -1,66 +1,25 @@
-import {
-  AppEnvironmentContextProvider,
-  useAppEnvironmentContext,
-} from "./contexts/AppEnvironmentContext"
+import { MainUI } from "./components/main/MainUI"
+import { LoginPanel } from "./components/authentication/LoginPanel"
+import { AppEnvironmentContextProvider } from "./contexts/AppEnvironmentContext"
 import {
   CurrentUserContextProvider,
   useCurrentUserContext,
-  type User,
 } from "./contexts/CurrentUserContext"
 
 function App() {
   return (
     <AppEnvironmentContextProvider>
       <CurrentUserContextProvider>
-        <Main />
+        <AppBody />
       </CurrentUserContextProvider>
     </AppEnvironmentContextProvider>
   )
 }
 
-function Main() {
-  const env = useAppEnvironmentContext()
+function AppBody() {
   const { currentUser } = useCurrentUserContext()
-  return (
-    <>
-      {env === null ? (
-        <p>"No environment info available"</p>
-      ) : (
-        <div>
-          <p>Environment: {env.environment}</p>
-          <p>CSRF token: {env.csrfToken}</p>
-        </div>
-      )}
-      <hr />
 
-      {currentUser === null ? <LoginPanel /> : <MainUI />}
-    </>
-  )
-}
-
-function LoginPanel() {
-  const { setCurrentUser } = useCurrentUserContext()
-  return (
-    <div>
-      <button
-        onClick={() =>
-          setCurrentUser({ email: "nobody@nowhere.com", id: "123abc" })
-        }
-      >
-        Fake login
-      </button>
-    </div>
-  )
-}
-
-function MainUI() {
-  // User can't be null or we wouldn't be here
-  const { currentUser } = useCurrentUserContext() as { currentUser: User }
-  return (
-    <p>
-      User logged in as: {currentUser.email} ({currentUser.id})
-    </p>
-  )
+  return currentUser === null ? <LoginPanel /> : <MainUI />
 }
 
 export default App
