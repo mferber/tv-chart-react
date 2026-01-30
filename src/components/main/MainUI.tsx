@@ -1,11 +1,15 @@
 import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
+import { LogOutLink } from "../authentication/LogOutLink"
 
 export function MainUI() {
   // User can't be null or we wouldn't be here
   const currentUser = useCurrentUserStatusContext().user!
   return (
-    <p>
-      User logged in as: {currentUser.email} ({currentUser.id})
-    </p>
+    <>
+      <div>
+        {currentUser.email} (<LogOutLink>Log out</LogOutLink>)
+      </div>
+      <hr />
+    </>
   )
 }
