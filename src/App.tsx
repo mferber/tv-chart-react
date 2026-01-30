@@ -2,24 +2,35 @@ import { MainUI } from "./components/main/MainUI"
 import { LoginPanel } from "./components/authentication/LoginPanel"
 import { AppEnvironmentContextProvider } from "./contexts/AppEnvironmentContext"
 import {
-  CurrentUserContextProvider,
-  useCurrentUserContext,
-} from "./contexts/CurrentUserContext"
+  CurrentUserStatusContextProvider,
+  useCurrentUserStatusContext,
+} from "./contexts/CurrentUserStatusContext"
 
 function App() {
   return (
     <AppEnvironmentContextProvider>
-      <CurrentUserContextProvider>
+      <CurrentUserStatusContextProvider>
         <AppBody />
-      </CurrentUserContextProvider>
+      </CurrentUserStatusContextProvider>
     </AppEnvironmentContextProvider>
   )
 }
 
 function AppBody() {
-  const { currentUser } = useCurrentUserContext()
+  const currentUserStatus = useCurrentUserStatusContext()
 
-  return currentUser === null ? <LoginPanel /> : <MainUI />
+  function renderBody() {
+    switch (currentUserStatus.authenticationStatus) {
+      case "unknown":
+        return "..."
+      case "unauthenticated":
+        return <LoginPanel />
+      case "authenticated":
+        return <MainUI />
+    }
+  }
+
+  return renderBody()
 }
 
 export default App

@@ -1,14 +1,10 @@
 import { createContext, use, type ReactNode } from "react"
-import { useFetchAppEnvironment, type AppEnvironmentType } from "../hooks"
+import { useFetchAppEnvironment } from "../hooks"
 
-// Context that provides the app environment, consisting of the current environment name
-// ("development" or "production") and the CSRF protection token. Both are obtained by
-// a one-time request to /env in the back end.
+// Context that provides the server-side app environment, obtained by a one-time request to /env in the back end.
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const AppEnvironmentContext = createContext<AppEnvironmentType | null>(
-  null,
-)
+export const AppEnvironmentContext = createContext<string | null>(null)
 
 // Provides the app environment context; also carries out initial request to server
 // to find out the environment and get a CSRF protection cookie
