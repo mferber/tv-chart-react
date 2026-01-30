@@ -20,9 +20,7 @@ export class HttpError extends Error {
 }
 
 export async function fetchCurrentUser(): Promise<User> {
-  const fresult = await fetch(`${API_BASE}/auth/users/me`, {
-    method: "GET",
-  })
+  const fresult = await fetch(`${API_BASE}/auth/users/me`, { method: "GET" })
   if (fresult.ok) {
     return (await fresult.json()) as User
   }
