@@ -2,6 +2,7 @@ import { type User } from "../contexts/CurrentUserStatusContext"
 import { getCSRFCookie } from "../utils/cookies"
 
 const API_BASE = "/api"
+const CSRF_TOKEN_HEADER_NAME = "X-CSRFToken"
 const HTTP_STATUS_UNAUTHORIZED = 401
 
 export class HttpUnauthorizedError extends Error {
@@ -40,7 +41,7 @@ export async function fetchLogin(
   const fresult = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     body: JSON.stringify({ email, password }),
-    headers: { "X-CSRFToken": getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
+    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
   })
   if (fresult.ok) {
     return (await fresult.json()) as User
