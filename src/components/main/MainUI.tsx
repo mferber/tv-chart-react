@@ -7,7 +7,8 @@ export function MainUI() {
   return (
     <>
       <div>
-        {currentUser.email} (<LogOutLink>Log out</LogOutLink>)
+        <span className="font-bold">{currentUser.email}</span> (
+        <LogOutLink>Log out</LogOutLink>)
       </div>
       <hr />
     </>
