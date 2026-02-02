@@ -64,3 +64,16 @@ export async function fetchLogout(): Promise<string> {
     `HTTP error attempting to fetch user: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
   )
 }
+
+export async function fetchShows(): Promise<object> {
+  const fresult = await fetch(`${API_BASE}/shows`, { method: "GET" })
+  if (fresult.ok) {
+    return await fresult.json()
+  }
+  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
+    throw new HttpUnauthorizedError("User not authenticated")
+  }
+  throw new HttpError(
+    `HTTP error attempting to fetch user: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
+  )
+}

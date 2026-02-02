@@ -1,3 +1,5 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
 import { MainUI } from "./components/main/MainUI"
 import { LoginPanel } from "./components/authentication/LoginPanel"
 import { AppEnvironmentContextProvider } from "./contexts/AppEnvironmentContext"
@@ -6,11 +8,15 @@ import {
   useCurrentUserStatusContext,
 } from "./contexts/CurrentUserStatusContext"
 
+const queryClient = new QueryClient()
+
 function App() {
   return (
     <AppEnvironmentContextProvider>
       <CurrentUserStatusContextProvider>
-        <AppBody />
+        <QueryClientProvider client={queryClient}>
+          <AppBody />
+        </QueryClientProvider>
       </CurrentUserStatusContextProvider>
     </AppEnvironmentContextProvider>
   )
