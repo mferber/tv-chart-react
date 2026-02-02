@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { Toaster } from "react-hot-toast"
 
 import { MainUI } from "./components/main/MainUI"
 import { LoginPanel } from "./components/authentication/LoginPanel"
@@ -16,6 +17,7 @@ function App() {
       <CurrentUserStatusContextProvider>
         <QueryClientProvider client={queryClient}>
           <AppBody />
+          <Toaster />
         </QueryClientProvider>
       </CurrentUserStatusContextProvider>
     </AppEnvironmentContextProvider>
