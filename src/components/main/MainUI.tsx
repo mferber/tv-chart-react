@@ -47,7 +47,7 @@ function Show({ show }: { show: object }) {
         {show.seasons.map((season, idx) => (
           <div key={idx}>
             Season {idx + 1}:{" "}
-            {season.episodes.map((ep, idx) => {
+            {season.map((ep, idx) => {
               const classNames = []
               if (ep.type === "special") {
                 classNames.push("underline")
