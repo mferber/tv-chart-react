@@ -1,4 +1,6 @@
 import { type MouseEvent, type ReactNode } from "react"
+import toast from "react-hot-toast"
+
 import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
 import { fetchLogout } from "../../api/client"
 
@@ -12,7 +14,9 @@ export function LogOutLink({ children }: { children: ReactNode }) {
       currentStatusContext.setCurrentUserUnauthenticated()
     } catch (e) {
       console.error(e)
-      throw e
+      toast(
+        "Logout couldn't be completed due to a network problem; try again later",
+      )
     }
   }
 

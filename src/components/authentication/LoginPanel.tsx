@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from "react"
+import toast from "react-hot-toast"
+
 import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
 import { fetchLogin, HttpUnauthorizedError } from "../../api/client"
 
@@ -22,7 +24,10 @@ export function LoginPanel() {
           console.error("Login failed: unauthorized")
           setLoginFailed(true)
         } else {
-          console.error("Fetch error:", e) // FIXME throw
+          console.error(error)
+          toast(
+            "Login could not be completed due to a network problem; try again later",
+          )
         }
       }
     }
