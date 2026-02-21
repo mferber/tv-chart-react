@@ -40,9 +40,14 @@ function Show({ show }: { show: object }) {
   return (
     <>
       <section>
-        <header className="text-xl font-black">{show.title}</header>
-        <div>
-          {show.source}, {show.duration} min.
+        <div class="flex gap-2">
+          <img src={show.image_sm_url} class="w-16" />
+          <div class="flex flex-col">
+            <header className="text-xl font-black">{show.title}</header>
+            <span>
+              {show.source}, {show.duration} min.
+            </span>
+          </div>
         </div>
         {show.seasons.map((season, idx) => (
           <div key={idx}>
