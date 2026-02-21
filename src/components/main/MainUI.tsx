@@ -18,18 +18,16 @@ export function MainUI() {
   )
 
   return (
-    <>
-      <div>
+    <main className="m-4">
+      <div className="border-b-1 pb-1 mb-4">
         <span className="font-bold">{currentUser.email}</span> (
         <LogOutLink>Log out</LogOutLink>)
       </div>
-      <hr />
 
-      <h1>Shows:</h1>
       {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
       {showsQuery.data && (
         <ShowDisplayList shows={showListSchema.parse(showsQuery.data)} />
       )}
-    </>
+    </main>
   )
 }
