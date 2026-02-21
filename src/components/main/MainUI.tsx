@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
 import { LogOutLink } from "../authentication/LogOutLink"
 import { fetchShows } from "../../api/client"
+import { showListSchema, type Show } from "../../schemas/schemas"
 import { useQueryErrorToast } from "../../hooks"
 
 export function MainUI() {
@@ -27,8 +28,8 @@ export function MainUI() {
       {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
       {showsQuery.data && (
         <div>
-          {(showsQuery.data as object[])?.map((s) => (
-            <Show show={s} key={(s as { id: number }).id} />
+          {showListSchema.parse(showsQuery.data).map((show) => (
+            <Show show={show} key={show.id} />
           ))}
         </div>
       )}
@@ -36,13 +37,13 @@ export function MainUI() {
   )
 }
 
-function Show({ show }: { show: object }) {
+function Show({ show }: { show: Show }) {
   return (
     <>
       <section>
-        <div class="flex gap-2">
-          <img src={show.image_sm_url} class="w-16" />
-          <div class="flex flex-col">
+        <div className="flex gap-2">
+          <img src={show.image_sm_url} className="w-16" />
+          <div className="flex flex-col">
             <header className="text-xl font-black">{show.title}</header>
             <span>
               {show.source}, {show.duration} min.
@@ -50,6 +51,7 @@ function Show({ show }: { show: object }) {
           </div>
         </div>
         {show.seasons.map((season, idx) => (
+          // eslint-disable-next-line react-x/no-array-index-key
           <div key={idx}>
             Season {idx + 1}:{" "}
             {season.map((ep, idx) => {
