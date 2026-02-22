@@ -3,8 +3,9 @@
     "jobs": [
       {
         "name": "lint",
-        "run": "mise x -- eslint {staged_files}",
-        "glob": "*.{js,ts,jsx,tsx}"
+        "run": "mise x -- eslint {staged_files} --fix",
+        "glob": "*.{js,ts,jsx,tsx}",
+        "fail-on-changes": "always"
       },
       {
         "name": "reformat",
