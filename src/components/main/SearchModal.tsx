@@ -82,35 +82,51 @@ export function SearchModal({
 
 function SearchResults({ results }: { results: ShowSearchResult[] }) {
   return results.map((result) => (
-    <div className="mt-8 flex" key={result.tvmaze_id}>
-      <ImageWithPlaceholder
-        src={result.image_sm_url ?? ""}
-        alt={result.name}
-        widthClassName="w-32"
-        placeholderHeightClassName="h-50"
-        additionalClassNames="mr-4 mb-4"
-      />
-      {/* <img
-        className="w-32 mr-4 mb-4"
-        src={result.image_sm_url ?? ""}
-      /> */}
-      <div>
-        <button className="bg-red-800 text-white py-1 px-2 rounded-lg mb-2">
-          Add this show
-        </button>
-        <div className="text-2xl font-bold">{result.name}</div>
-        <Details result={result} />
-        <div
-          className="mt-2 text-sm"
-          // html is pre-sanitized on the backend
-          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
-          dangerouslySetInnerHTML={{
-            __html: result.summary_html ?? "(no summary available)",
-          }}
-        />
-      </div>
-    </div>
+    <SearchResult result={result} key={result.tvmaze_id} />
   ))
+}
+
+function SearchResult({ result }: { result: ShowSearchResult }) {
+  return (
+    <div className="flex flex-col" key={result.tvmaze_id}>
+      <div className="mt-6 flex">
+        <ImageWithPlaceholder
+          src={result.image_sm_url ?? ""}
+          alt={result.name}
+          widthClassName="w-32"
+          placeholderHeightClassName="h-50"
+          additionalClassNames="mr-4 mb-1"
+        />
+        <div>
+          <button className="bg-red-800 text-white py-1 px-2 rounded-lg mb-2">
+            Add this show
+          </button>
+          <div className="text-2xl font-bold mb-1">{result.name}</div>
+          <Details result={result} />
+
+          {/* show summary for larger screens */}
+          <div
+            className="mt-2 text-sm hidden sm:block"
+            // html is pre-sanitized on the backend
+            // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+            dangerouslySetInnerHTML={{
+              __html: result.summary_html ?? "(no summary available)",
+            }}
+          />
+        </div>
+      </div>
+
+      {/* show summary for smaller screens */}
+      <div
+        className="text-sm block sm:hidden"
+        // html is pre-sanitized on the backend
+        // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+        dangerouslySetInnerHTML={{
+          __html: result.summary_html ?? "(no summary available)",
+        }}
+      />
+    </div>
+  )
 }
 
 function Details({ result }: { result: ShowSearchResult }) {
@@ -161,13 +177,13 @@ function Details({ result }: { result: ShowSearchResult }) {
   const dates_and_sources_div = <div>{dates_and_sources}</div>
 
   const genres_div = result.genres ? (
-    <div className="italic">{result.genres.join(", ")}</div>
+    <div className="italic text-sm">{result.genres.join(", ")}</div>
   ) : null
 
   return (
-    <>
+    <div className="mb-2 sm:mb-2">
       {dates_and_sources_div}
       {genres_div}
-    </>
+    </div>
   )
 }
