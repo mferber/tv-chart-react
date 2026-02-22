@@ -8,9 +8,6 @@ import { showListSchema } from "../../schemas/schemas"
 import { useQueryErrorToast } from "../../hooks"
 
 export function MainUI() {
-  // User can't be null or we wouldn't be here
-  const currentUser = useCurrentUserStatusContext().user!
-
   const showsQuery = useQuery({ queryKey: ["shows"], queryFn: fetchShows })
   useQueryErrorToast(
     showsQuery,
@@ -19,15 +16,26 @@ export function MainUI() {
 
   return (
     <main className="m-4">
-      <div className="border-b-1 pb-1 mb-4">
-        <span className="font-bold">{currentUser.email}</span> (
-        <LogOutLink>Log out</LogOutLink>)
-      </div>
-
+      <AppHeader />
       {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
       {showsQuery.data && (
         <ShowDisplayList shows={showListSchema.parse(showsQuery.data)} />
       )}
     </main>
+  )
+}
+
+function AppHeader() {
+  // User can't be null or we wouldn't be here
+  const currentUser = useCurrentUserStatusContext().user!
+
+  return (
+    <div className="flex justify-between border-b mb-4">
+      <span>Add new show</span>
+      <span>
+        <span className="font-bold">{currentUser.email}</span> (
+        <LogOutLink>Log out</LogOutLink>)
+      </span>
+    </div>
   )
 }
