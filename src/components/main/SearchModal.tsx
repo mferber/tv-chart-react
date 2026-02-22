@@ -1,3 +1,4 @@
+import { type SubmitEvent } from "react"
 import Modal from "react-modal"
 
 export function SearchModal({
@@ -7,6 +8,13 @@ export function SearchModal({
   isOpen: boolean
   close: () => void
 }) {
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const query = formData.get("show-query")
+    alert(query)
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -18,7 +26,22 @@ export function SearchModal({
           Cancel
         </a>
       </div>
-      Search here
+      <div>Search for a show here:</div>
+      <div>
+        <form onSubmit={handleSubmit} className="flex gap-1">
+          <input
+            type="text"
+            name="show-query"
+            className="flex-1 max-w-80 min-w-8 px-2 py-1 border rounded-md"
+          />
+          <button
+            type="submit"
+            className="px-4 py-1 text-white bg-red-800 border-red-800 border-2 rounded-md"
+          >
+            Search
+          </button>
+        </form>
+      </div>
     </Modal>
   )
 }
