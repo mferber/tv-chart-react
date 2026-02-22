@@ -1,15 +1,15 @@
 import { type Episode, type Show } from "../../schemas/schemas"
 
-type DisplayableEpisode = {
+type EpisodeWithDisplayMarker = {
   episode: Episode
   marker: string
 }
 
-/** Assign each episode a display marker, marking special episodes with a
+/** Pair each episode with a display marker, marking special episodes with a
     star and otherwise assigning consecutive numbers.
 */
-function asDisplayableEpisodes(season: Episode[]): DisplayableEpisode[] {
-  const result: DisplayableEpisode[] = []
+function addDisplayMarkers(season: Episode[]): EpisodeWithDisplayMarker[] {
+  const result: EpisodeWithDisplayMarker[] = []
   let nextEpisodeNumber = 1
   for (const episode of season) {
     let marker: string
@@ -52,13 +52,15 @@ function ShowDisplayHeader({ show }: { show: Show }) {
 }
 
 function SeasonDisplay({ season, num }: { season: Episode[]; num: number }) {
+  const episodesWithDisplayMarkers = addDisplayMarkers(season)
+
   return (
     <div className="flex gap-8 items-center">
       <span className="w-2 shrink-0 text-2xl">{num}</span>
       <span className="flex gap-1">
-        {asDisplayableEpisodes(season).map((ep, idx) => (
-          <NumberedEpisodeDisplay
-            displayable_episode={ep}
+        {episodesWithDisplayMarkers.map((ep, idx) => (
+          <EpisodeDisplay
+            episode_with_display_marker={ep}
             episode_index={idx}
             // eslint-disable-next-line react-x/no-array-index-key
             key={idx}
@@ -69,23 +71,27 @@ function SeasonDisplay({ season, num }: { season: Episode[]; num: number }) {
   )
 }
 
-function NumberedEpisodeDisplay({
-  displayable_episode,
+function EpisodeDisplay({
+  episode_with_display_marker,
   episode_index,
 }: {
-  displayable_episode: DisplayableEpisode
+  episode_with_display_marker: EpisodeWithDisplayMarker
   episode_index: number
 }) {
   return (
     <span className="relative inline-block" key={episode_index}>
-      <EpisodeSquircle filled={displayable_episode.episode.watched} />
+      <EpisodeSquircle filled={episode_with_display_marker.episode.watched} />
+
+      {/* center the display marker -- star or episode number -- over the squircle */}
       <div className="absolute inset-0 flex items-center justify-center">
         <span
           className={
-            displayable_episode.episode.watched ? "text-white" : "text-black"
+            episode_with_display_marker.episode.watched
+              ? "text-white"
+              : "text-black"
           }
         >
-          {displayable_episode.marker}
+          {episode_with_display_marker.marker}
         </span>
       </div>
     </span>
