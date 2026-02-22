@@ -2,8 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "react-hot-toast"
 import Modal from "react-modal"
 
-import { MainUI } from "./components/main/MainUI"
 import { LoginPanel } from "./components/authentication/LoginPanel"
+import { MainUI } from "./components/main/MainUI"
 import { AppEnvironmentContextProvider } from "./contexts/AppEnvironmentContext"
 import {
   CurrentUserStatusContextProvider,

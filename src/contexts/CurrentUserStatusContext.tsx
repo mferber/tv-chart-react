@@ -1,7 +1,8 @@
 // Context that provides the user's authentication status (unknown, unauthenticated, or authenticated)
 // and, if authenticated, the user info (email and id).
 
-import { createContext, useState, useEffect, use, type ReactNode } from "react"
+import { createContext, type ReactNode, use, useEffect, useState } from "react"
+
 import { fetchCurrentUser, HttpUnauthorizedError } from "../api/client"
 
 // User identification

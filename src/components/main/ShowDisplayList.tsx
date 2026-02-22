@@ -1,5 +1,5 @@
-import { ShowDisplay } from "./ShowDisplay"
 import { type ShowList } from "../../schemas/schemas"
+import { ShowDisplay } from "./ShowDisplay"
 
 export function ShowDisplayList({ shows }: { shows: ShowList }) {
   return (

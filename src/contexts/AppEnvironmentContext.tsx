@@ -1,4 +1,5 @@
-import { createContext, use, type ReactNode } from "react"
+import { createContext, type ReactNode, use } from "react"
+
 import { useFetchAppEnvironment } from "../hooks"
 
 // Context that provides the server-side app environment, obtained by a one-time request to /env in the back end.

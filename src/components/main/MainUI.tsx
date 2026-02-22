@@ -1,13 +1,13 @@
-import { useState, type Dispatch, type SetStateAction } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { type Dispatch, type SetStateAction, useState } from "react"
 
-import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
-import { LogOutLink } from "../authentication/LogOutLink"
 import { fetchShows } from "../../api/client"
-import { ShowDisplayList } from "./ShowDisplayList"
-import { showListSchema } from "../../schemas/schemas"
+import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
 import { useQueryErrorToast } from "../../hooks"
+import { showListSchema } from "../../schemas/schemas"
+import { LogOutLink } from "../authentication/LogOutLink"
 import { SearchModal } from "./SearchModal"
+import { ShowDisplayList } from "./ShowDisplayList"
 
 export function MainUI() {
   const [searchUIOpen, setSearchUIOpen] = useState(false)
