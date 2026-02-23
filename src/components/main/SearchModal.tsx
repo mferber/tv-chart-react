@@ -21,10 +21,8 @@ export function SearchModal({
   const { data, isLoading } = useQuery({
     queryKey: ["show-search", searchTerm],
     queryFn: async () => {
-      console.log("FETCH:", searchTerm)
       try {
         const fetchResults = await fetchShowSearchResults(searchTerm)
-        console.log(JSON.stringify(fetchResults, null, 2))
         return showSearchResultsSchema.parse(fetchResults)
       } catch (e) {
         console.error(e)
@@ -35,7 +33,6 @@ export function SearchModal({
 
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
-    console.log("SUBMIT")
     const formData = new FormData(e.target)
     const q = (formData.get("query") ?? "").toString()
     setSearchTerm(q)
