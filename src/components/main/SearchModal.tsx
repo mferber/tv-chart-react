@@ -91,7 +91,7 @@ function SearchResult({ result }: { result: ShowSearchResult }) {
     <div className="flex flex-col" key={result.tvmaze_id}>
       <div className="mt-6 flex">
         <ImageWithPlaceholder
-          src={result.image_sm_url ?? ""}
+          src={result.image_sm_url ?? null}
           alt={result.name}
           widthClassName="w-32"
           placeholderHeightClassName="h-50"

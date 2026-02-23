@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import NoImage from "../../assets/no_image.png"
+
 // via Claude
 export function ImageWithPlaceholder({
   src,
@@ -8,7 +10,7 @@ export function ImageWithPlaceholder({
   placeholderHeightClassName,
   additionalClassNames,
 }: {
-  src: string
+  src: string | null
   alt: string
   widthClassName: string
   placeholderHeightClassName: string
@@ -34,7 +36,7 @@ export function ImageWithPlaceholder({
   return (
     <div className={divClassNames}>
       <img
-        src={src}
+        src={src ?? NoImage}
         alt={alt}
         className={imgClassNames}
         onLoad={() => setLoaded(true)}
