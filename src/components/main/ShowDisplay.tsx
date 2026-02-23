@@ -29,8 +29,13 @@ export function ShowDisplay({ show }: { show: Show }) {
       <ShowDisplayHeader show={show} />
       <div className="flex flex-col gap-2">
         {show.seasons.map((season, idx) => (
-          // eslint-disable-next-line react-x/no-array-index-key
-          <SeasonDisplay season={season} num={idx + 1} key={idx} />
+          <SeasonDisplay
+            show_id={show.id}
+            season={season}
+            season_num={idx + 1}
+            // eslint-disable-next-line react-x/no-array-index-key
+            key={idx}
+          />
         ))}
       </div>
     </section>
@@ -51,16 +56,26 @@ function ShowDisplayHeader({ show }: { show: Show }) {
   )
 }
 
-function SeasonDisplay({ season, num }: { season: Episode[]; num: number }) {
+function SeasonDisplay({
+  show_id,
+  season,
+  season_num,
+}: {
+  show_id: string
+  season: Episode[]
+  season_num: number
+}) {
   const episodesWithDisplayMarkers = addDisplayMarkers(season)
 
   return (
     <div className="flex gap-8 items-center">
-      <span className="w-2 shrink-0 text-2xl">{num}</span>
+      <span className="w-2 shrink-0 text-2xl">{season_num}</span>
       <span className="flex gap-1">
         {episodesWithDisplayMarkers.map((ep, idx) => (
           <EpisodeDisplay
             episode_with_display_marker={ep}
+            show_id={show_id}
+            season_number={season_num}
             episode_index={idx}
             // eslint-disable-next-line react-x/no-array-index-key
             key={idx}
@@ -73,13 +88,26 @@ function SeasonDisplay({ season, num }: { season: Episode[]; num: number }) {
 
 function EpisodeDisplay({
   episode_with_display_marker,
+  show_id,
+  season_number,
   episode_index,
 }: {
   episode_with_display_marker: EpisodeWithDisplayMarker
+  show_id: string
+  season_number: number
   episode_index: number
 }) {
   return (
-    <span className="relative inline-block" key={episode_index}>
+    <button
+      type="button"
+      className="relative inline-block"
+      key={episode_index}
+      onClick={() =>
+        console.log(
+          `clicked show ${show_id}, season ${season_number}, episode@${episode_index}`,
+        )
+      }
+    >
       <EpisodeSquircle filled={episode_with_display_marker.episode.watched} />
 
       {/* center the display marker -- star or episode number -- over the squircle */}
@@ -94,7 +122,7 @@ function EpisodeDisplay({
           {episode_with_display_marker.marker}
         </span>
       </div>
-    </span>
+    </button>
   )
 }
 
