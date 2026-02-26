@@ -1,8 +1,14 @@
-import { MouseEvent, type SubmitEvent, useRef } from "react"
+import {
+  type MouseEvent,
+  type RefObject,
+  type SubmitEvent,
+  useRef,
+} from "react"
 import Modal from "react-modal"
 
 import { fetchShowSearchResults } from "../../api/client"
 import {
+  type Show,
   type ShowSearchResult,
   showSearchResultsSchema,
 } from "../../schemas/schemas"
@@ -12,34 +18,16 @@ import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 export function SearchModal({
   isOpen,
   close,
+  shows,
 }: {
   isOpen: boolean
   close: () => void
+  shows: Show[] | undefined
 }) {
-  const searchFieldRef = useRef<HTMLInputElement>(null)
-
   // put initial focus in the search input field
+  const searchFieldRef = useRef<HTMLInputElement>(null)
   function handleAfterOpen() {
     searchFieldRef.current?.focus()
-  }
-
-  const { executeQuery, resetQuery, data, isLoading } = useSimpleQuery(
-    async (searchTerm: string) => {
-      const fetchResults = await fetchShowSearchResults(searchTerm)
-      return showSearchResultsSchema.parse(fetchResults)
-    },
-  )
-
-  function handleSubmitSearch(e: SubmitEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    const q = (formData.get("query") ?? "").toString()
-    executeQuery(q)
-  }
-
-  function closeModal() {
-    resetQuery()
-    close()
   }
 
   return (
@@ -49,11 +37,50 @@ export function SearchModal({
       overlayClassName="fixed top-0 right-0 bottom-0 left-0 bg-black/25"
       className="absolute top-8 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
     >
+      <ModalContent
+        searchFieldRef={searchFieldRef}
+        close={close}
+        shows={shows}
+      />
+    </Modal>
+  )
+}
+
+function ModalContent({
+  searchFieldRef,
+  close,
+  shows,
+}: {
+  searchFieldRef: RefObject<HTMLInputElement | null>
+  close: () => void
+  shows: Show[] | undefined
+}) {
+  const owned_show_tvmaze_ids = shows ? shows.map((s) => s.tvmaze_id) : []
+
+  const { executeQuery, resetQuery, data, isLoading } = useSimpleQuery(
+    async (searchTerm: string) => {
+      const fetchResults = await fetchShowSearchResults(searchTerm)
+      return showSearchResultsSchema.parse(fetchResults)
+    },
+  )
+
+  function resetAndCloseModal() {
+    resetQuery()
+    close()
+  }
+  function handleSubmitSearch(e: SubmitEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const q = (formData.get("query") ?? "").toString()
+    executeQuery(q)
+  }
+  return (
+    <>
       <div className="text-right">
         <a
           href="#"
           onClick={() => {
-            closeModal()
+            resetAndCloseModal()
           }}
         >
           Cancel
@@ -78,23 +105,30 @@ export function SearchModal({
       </div>
       {isLoading && "…"}
       {data && data.results && (
-        <SearchResults results={data.results} closeModal={closeModal} />
+        <SearchResults
+          results={data.results}
+          owned_show_tvmaze_ids={owned_show_tvmaze_ids}
+          resetAndCloseModal={resetAndCloseModal}
+        />
       )}
-    </Modal>
+    </>
   )
 }
 
 function SearchResults({
   results,
-  closeModal,
+  owned_show_tvmaze_ids,
+  resetAndCloseModal,
 }: {
   results: ShowSearchResult[]
-  closeModal: () => void
+  owned_show_tvmaze_ids: number[]
+  resetAndCloseModal: () => void
 }) {
   return results.map((result) => (
     <SearchResult
       result={result}
-      closeModal={closeModal}
+      owned_show_tvmaze_ids={owned_show_tvmaze_ids}
+      resetAndCloseModal={resetAndCloseModal}
       key={result.tvmaze_id}
     />
   ))
@@ -102,14 +136,16 @@ function SearchResults({
 
 function SearchResult({
   result,
-  closeModal,
+  owned_show_tvmaze_ids,
+  resetAndCloseModal,
 }: {
   result: ShowSearchResult
-  closeModal: () => void
+  owned_show_tvmaze_ids: number[]
+  resetAndCloseModal: () => void
 }) {
   function handleAddShow(e: MouseEvent<HTMLButtonElement>, tvmaze_id: number) {
     console.log("CLICK add this show (", tvmaze_id, ")")
-    closeModal()
+    resetAndCloseModal()
   }
 
   return (
@@ -123,12 +159,16 @@ function SearchResult({
           additionalClassNames="mr-4 mb-1"
         />
         <div>
-          <button
-            className="bg-red-800 text-white py-1 px-2 rounded-lg mb-2"
-            onClick={(e) => handleAddShow(e, result.tvmaze_id)}
-          >
-            Add this show
-          </button>
+          {owned_show_tvmaze_ids.includes(result.tvmaze_id) ? (
+            <div>[Already added]</div>
+          ) : (
+            <button
+              className="bg-red-800 text-white py-1 px-2 rounded-lg mb-2"
+              onClick={(e) => handleAddShow(e, result.tvmaze_id)}
+            >
+              Add this show
+            </button>
+          )}
           <div className="text-2xl font-bold mb-1">{result.name}</div>
           <Details result={result} />
 

@@ -12,7 +12,14 @@ import { ShowDisplayList } from "./ShowDisplayList"
 export function MainUI() {
   const [searchUIOpen, setSearchUIOpen] = useState(false)
 
-  const showsQuery = useQuery({ queryKey: ["shows"], queryFn: fetchShows })
+  const showsQuery = useQuery({
+    queryKey: ["shows"],
+    queryFn: async () => {
+      const fetch_results = await fetchShows()
+      return showListSchema.parse(fetch_results)
+    },
+  })
+
   useQueryErrorToast(
     showsQuery,
     "Shows could not be loaded due to a network problem",
@@ -22,10 +29,12 @@ export function MainUI() {
     <main className="m-4">
       <AppHeader setSearchUIOpen={setSearchUIOpen} />
       {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
-      {showsQuery.data && (
-        <ShowDisplayList shows={showListSchema.parse(showsQuery.data)} />
-      )}
-      <SearchModal isOpen={searchUIOpen} close={() => setSearchUIOpen(false)} />
+      {showsQuery.data && <ShowDisplayList shows={showsQuery.data} />}
+      <SearchModal
+        isOpen={searchUIOpen}
+        close={() => setSearchUIOpen(false)}
+        shows={showsQuery.data}
+      />
     </main>
   )
 }
