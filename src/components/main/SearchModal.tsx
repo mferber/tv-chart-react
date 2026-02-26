@@ -3,12 +3,16 @@ import {
   type RefObject,
   type SubmitEvent,
   useRef,
+  useState,
 } from "react"
+import { toast } from "react-hot-toast"
 import Modal from "react-modal"
 
 import { addShowFromTVmazeId, fetchShowSearchResults } from "../../api/client"
+import { Button } from "../../components/misc/Button"
 import {
   type Show,
+  showSchema,
   type ShowSearchResult,
   showSearchResultsSchema,
 } from "../../schemas/schemas"
@@ -55,7 +59,9 @@ function ModalContent({
   close: () => void
   shows: Show[] | undefined
 }) {
-  const owned_show_tvmaze_ids = shows ? shows.map((s) => s.tvmaze_id) : []
+  const [addingTVmazeIDInProgress, setAddingTVmazeIDInProgress] = useState<
+    number | null
+  >(null)
 
   const { executeQuery, resetQuery, data, isLoading } = useSimpleQuery(
     async (searchTerm: string) => {
@@ -64,16 +70,20 @@ function ModalContent({
     },
   )
 
+  const owned_show_tvmaze_ids = shows ? shows.map((s) => s.tvmaze_id) : []
+
   function resetAndCloseModal() {
     resetQuery()
     close()
   }
+
   function handleSubmitSearch(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.target)
     const q = (formData.get("query") ?? "").toString()
     executeQuery(q)
   }
+
   return (
     <>
       <div className="text-right">
@@ -95,12 +105,9 @@ function ModalContent({
             name="query"
             className="flex-1 max-w-80 min-w-8 px-2 py-1 border rounded-md"
           />
-          <button
-            type="submit"
-            className="px-4 py-1 text-white bg-red-800 border-red-800 border-2 rounded-md"
-          >
+          <Button htmlType="submit" disabled={isLoading}>
             Search
-          </button>
+          </Button>
         </form>
       </div>
       {isLoading && "…"}
@@ -108,6 +115,8 @@ function ModalContent({
         <SearchResults
           results={data.results}
           owned_show_tvmaze_ids={owned_show_tvmaze_ids}
+          addingTVmazeIDInProgress={addingTVmazeIDInProgress}
+          setAddingTVmazeIDInProgress={setAddingTVmazeIDInProgress}
           resetAndCloseModal={resetAndCloseModal}
         />
       )}
@@ -118,10 +127,16 @@ function ModalContent({
 function SearchResults({
   results,
   owned_show_tvmaze_ids,
+  addingTVmazeIDInProgress,
+  setAddingTVmazeIDInProgress,
   resetAndCloseModal,
 }: {
   results: ShowSearchResult[]
   owned_show_tvmaze_ids: number[]
+  addingTVmazeIDInProgress: number | null
+  setAddingTVmazeIDInProgress: React.Dispatch<
+    React.SetStateAction<number | null>
+  >
   resetAndCloseModal: () => void
 }) {
   return results.map((result) => (
@@ -129,6 +144,8 @@ function SearchResults({
       result={result}
       owned_show_tvmaze_ids={owned_show_tvmaze_ids}
       resetAndCloseModal={resetAndCloseModal}
+      addingTVmazeIDInProgress={addingTVmazeIDInProgress}
+      setAddingTVmazeIDInProgress={setAddingTVmazeIDInProgress}
       key={result.tvmaze_id}
     />
   ))
@@ -137,20 +154,31 @@ function SearchResults({
 function SearchResult({
   result,
   owned_show_tvmaze_ids,
+  addingTVmazeIDInProgress,
+  setAddingTVmazeIDInProgress,
   resetAndCloseModal,
 }: {
   result: ShowSearchResult
   owned_show_tvmaze_ids: number[]
+  addingTVmazeIDInProgress: number | null
+  setAddingTVmazeIDInProgress: React.Dispatch<
+    React.SetStateAction<number | null>
+  >
   resetAndCloseModal: () => void
 }) {
-  const { executeQuery } = useSimpleQuery((tvmaze_id: number) =>
-    addShowFromTVmazeId(tvmaze_id),
-  )
-
-  function handleAddShow(_: MouseEvent<HTMLButtonElement>, tvmaze_id: number) {
-    console.log("CLICK add this show (", tvmaze_id, ")")
-    executeQuery(tvmaze_id)
-    resetAndCloseModal()
+  async function handleAddShow(
+    _: MouseEvent<HTMLButtonElement>,
+    tvmaze_id: number,
+  ) {
+    try {
+      setAddingTVmazeIDInProgress(tvmaze_id)
+      const json = await addShowFromTVmazeId(tvmaze_id)
+      const new_show: Show = showSchema.parse(json)
+      console.log(new_show)
+      resetAndCloseModal()
+    } catch {
+      toast("An error occurred adding this show")
+    }
   }
 
   return (
@@ -167,12 +195,16 @@ function SearchResult({
           {owned_show_tvmaze_ids.includes(result.tvmaze_id) ? (
             <div>[Already added]</div>
           ) : (
-            <button
-              className="bg-red-800 text-white py-1 px-2 rounded-lg mb-2"
-              onClick={(e) => handleAddShow(e, result.tvmaze_id)}
+            <Button
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                handleAddShow(e, result.tvmaze_id)
+              }
+              disabled={addingTVmazeIDInProgress !== null}
             >
-              Add this show
-            </button>
+              {addingTVmazeIDInProgress === result.tvmaze_id
+                ? "Adding..."
+                : "Add this show"}
+            </Button>
           )}
           <div className="text-2xl font-bold mb-1">{result.name}</div>
           <Details result={result} />
