@@ -1,7 +1,9 @@
 import {
+  createContext,
   type MouseEvent,
   type RefObject,
   type SubmitEvent,
+  use,
   useRef,
   useState,
 } from "react"
@@ -19,6 +21,43 @@ import {
 import { useSimpleQuery } from "../../utils/query"
 import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 
+interface SearchModalContextType {
+  shows: Show[]
+  isSearchResultLoading: boolean
+  tvMazeIdBeingAdded: number | null
+  fn_executeSearch: (query: string) => void
+  fn_setTVmazeIdBeingAdded: (value: number | null) => void
+  fn_resetAndCloseModal: () => void
+}
+
+/**
+ * Search model context defines:
+ * - `shows`: list of shows we're already tracking, so we know which ones we can't
+ *    add again
+ * - `isSearchResultLoading`: true if search results are being loaded
+ * - `tvMazeIdBeingAdded`: if a show is currently being added, its TVmaze id, else null
+ * - `fn_executeSearch`: function that will search on the provided query term
+ * - `fn_setTVmazeIdBeingAdded`: sets the TVmaze id of a show being added
+ * - `fn_resetAndCloseModal`: function; clears and dismisses the Search modal
+ */
+const SearchModalContext = createContext<SearchModalContextType>({
+  shows: [],
+  isSearchResultLoading: false,
+  tvMazeIdBeingAdded: null,
+  fn_executeSearch: (_) => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
+  fn_setTVmazeIdBeingAdded: (_) => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
+  fn_resetAndCloseModal: () => {},
+})
+
+/**
+ * Container for the search modal. Note that `ModalContent` will not render unless the
+ * modal is actually open.
+ *
+ * Props:
+ *   - `isOpen`: true to cause the modal to open
+ *   - `close`: function that will set isOpen to false and close the modal
+ *   - `shows`: the user's current list of shows
+ */
 export function SearchModal({
   isOpen,
   close,
@@ -30,14 +69,11 @@ export function SearchModal({
 }) {
   // put initial focus in the search input field
   const searchFieldRef = useRef<HTMLInputElement>(null)
-  function handleAfterOpen() {
-    searchFieldRef.current?.focus()
-  }
 
   return (
     <Modal
       isOpen={isOpen}
-      onAfterOpen={handleAfterOpen}
+      onAfterOpen={() => searchFieldRef.current?.focus()}
       overlayClassName="fixed top-0 right-0 bottom-0 left-0 bg-black/25"
       className="absolute top-8 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
     >
@@ -50,6 +86,15 @@ export function SearchModal({
   )
 }
 
+/**
+ * Main content of the modal.
+ *
+ * Props:
+ *   - `searchFieldRef`: a ref to be attached to the search query input field; it will
+ *     be given default focus
+ *   - `close`: function that will close the model
+ *   - `shows`: the user's current list of shows
+ */
 function ModalContent({
   searchFieldRef,
   close,
@@ -59,10 +104,11 @@ function ModalContent({
   close: () => void
   shows: Show[] | undefined
 }) {
-  const [addingTVmazeIDInProgress, setAddingTVmazeIDInProgress] = useState<
-    number | null
-  >(null)
+  const [tvMazeIdBeingAdded, setTVmazeIdBeingAdded] = useState<number | null>(
+    null,
+  )
 
+  // Main search query
   const { executeQuery, resetQuery, data, isLoading } = useSimpleQuery(
     async (searchTerm: string) => {
       const fetchResults = await fetchShowSearchResults(searchTerm)
@@ -70,32 +116,70 @@ function ModalContent({
     },
   )
 
-  const owned_show_tvmaze_ids = shows ? shows.map((s) => s.tvmaze_id) : []
-
+  // Function that will both reset the form and close the modal
   function resetAndCloseModal() {
     resetQuery()
     close()
   }
 
+  return (
+    <SearchModalContext
+      value={{
+        shows: shows || [],
+        isSearchResultLoading: isLoading,
+        tvMazeIdBeingAdded: tvMazeIdBeingAdded,
+        fn_executeSearch: executeQuery,
+        fn_setTVmazeIdBeingAdded: setTVmazeIdBeingAdded,
+        fn_resetAndCloseModal: resetAndCloseModal,
+      }}
+    >
+      <CancelWidget />
+      <SearchForm searchFieldRef={searchFieldRef} />
+
+      {/* FIXME: better loading placeholder */}
+      {isLoading && "…"}
+
+      {data && data.results && <SearchResults results={data.results} />}
+    </SearchModalContext>
+  )
+}
+
+/**
+ * Widget for canceling the "Add show" operation.
+ */
+function CancelWidget() {
+  const { fn_resetAndCloseModal } = use(SearchModalContext)
+
+  return (
+    <div className="text-right">
+      <a href="#" onClick={() => fn_resetAndCloseModal()}>
+        Cancel
+      </a>
+    </div>
+  )
+}
+
+/**
+ * The search form.
+ */
+function SearchForm({
+  searchFieldRef,
+}: {
+  searchFieldRef: RefObject<HTMLInputElement | null>
+}) {
+  const { fn_executeSearch, isSearchResultLoading, tvMazeIdBeingAdded } =
+    use(SearchModalContext)
+
+  // Search click handler: executes query
   function handleSubmitSearch(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.target)
     const q = (formData.get("query") ?? "").toString()
-    executeQuery(q)
+    fn_executeSearch(q)
   }
 
   return (
     <>
-      <div className="text-right">
-        <a
-          href="#"
-          onClick={() => {
-            resetAndCloseModal()
-          }}
-        >
-          Cancel
-        </a>
-      </div>
       <div>Search for a show here:</div>
       <div>
         <form onSubmit={handleSubmitSearch} className="flex gap-1">
@@ -105,77 +189,48 @@ function ModalContent({
             name="query"
             className="flex-1 max-w-80 min-w-8 px-2 py-1 border rounded-md"
           />
-          <Button htmlType="submit" disabled={isLoading}>
+          <Button
+            htmlType="submit"
+            disabled={isSearchResultLoading || tvMazeIdBeingAdded !== null}
+          >
             Search
           </Button>
         </form>
       </div>
-      {isLoading && "…"}
-      {data && data.results && (
-        <SearchResults
-          results={data.results}
-          owned_show_tvmaze_ids={owned_show_tvmaze_ids}
-          addingTVmazeIDInProgress={addingTVmazeIDInProgress}
-          setAddingTVmazeIDInProgress={setAddingTVmazeIDInProgress}
-          resetAndCloseModal={resetAndCloseModal}
-        />
-      )}
     </>
   )
 }
 
-function SearchResults({
-  results,
-  owned_show_tvmaze_ids,
-  addingTVmazeIDInProgress,
-  setAddingTVmazeIDInProgress,
-  resetAndCloseModal,
-}: {
-  results: ShowSearchResult[]
-  owned_show_tvmaze_ids: number[]
-  addingTVmazeIDInProgress: number | null
-  setAddingTVmazeIDInProgress: React.Dispatch<
-    React.SetStateAction<number | null>
-  >
-  resetAndCloseModal: () => void
-}) {
+/**
+ * Search results display.
+ */
+function SearchResults({ results }: { results: ShowSearchResult[] }) {
   return results.map((result) => (
-    <SearchResult
-      result={result}
-      owned_show_tvmaze_ids={owned_show_tvmaze_ids}
-      resetAndCloseModal={resetAndCloseModal}
-      addingTVmazeIDInProgress={addingTVmazeIDInProgress}
-      setAddingTVmazeIDInProgress={setAddingTVmazeIDInProgress}
-      key={result.tvmaze_id}
-    />
+    <SearchResult result={result} key={result.tvmaze_id} />
   ))
 }
 
-function SearchResult({
-  result,
-  owned_show_tvmaze_ids,
-  addingTVmazeIDInProgress,
-  setAddingTVmazeIDInProgress,
-  resetAndCloseModal,
-}: {
-  result: ShowSearchResult
-  owned_show_tvmaze_ids: number[]
-  addingTVmazeIDInProgress: number | null
-  setAddingTVmazeIDInProgress: React.Dispatch<
-    React.SetStateAction<number | null>
-  >
-  resetAndCloseModal: () => void
-}) {
+/**
+ * A single search result.
+ */
+function SearchResult({ result }: { result: ShowSearchResult }) {
+  const {
+    shows,
+    tvMazeIdBeingAdded,
+    fn_setTVmazeIdBeingAdded,
+    fn_resetAndCloseModal,
+  } = use(SearchModalContext)
+
   async function handleAddShow(
     _: MouseEvent<HTMLButtonElement>,
     tvmaze_id: number,
   ) {
     try {
-      setAddingTVmazeIDInProgress(tvmaze_id)
+      fn_setTVmazeIdBeingAdded(tvmaze_id)
       const json = await addShowFromTVmazeId(tvmaze_id)
       const new_show: Show = showSchema.parse(json)
       console.log(new_show)
-      resetAndCloseModal()
+      fn_resetAndCloseModal()
     } catch {
       toast("An error occurred adding this show")
     }
@@ -192,21 +247,22 @@ function SearchResult({
           additionalClassNames="mr-4 mb-1"
         />
         <div>
-          {owned_show_tvmaze_ids.includes(result.tvmaze_id) ? (
+          {shows.some((s) => s.tvmaze_id === result.tvmaze_id) ? (
+            // FIXME: better button placeholder
             <div>[Already added]</div>
           ) : (
             <Button
+              htmlType="button"
               onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                 handleAddShow(e, result.tvmaze_id)
               }
-              disabled={addingTVmazeIDInProgress !== null}
+              disabled={tvMazeIdBeingAdded !== null}
             >
-              {addingTVmazeIDInProgress === result.tvmaze_id
+              {tvMazeIdBeingAdded === result.tvmaze_id
                 ? "Adding..."
                 : "Add this show"}
             </Button>
           )}
-          <div className="text-2xl font-bold mb-1">{result.name}</div>
           <Details result={result} />
 
           {/* show summary for larger screens */}
@@ -234,6 +290,9 @@ function SearchResult({
   )
 }
 
+/**
+ * Basic details about the show: years, source, etc.
+ */
 function Details({ result }: { result: ShowSearchResult }) {
   function format_years(
     start: number | null | undefined,
@@ -286,9 +345,12 @@ function Details({ result }: { result: ShowSearchResult }) {
   ) : null
 
   return (
-    <div className="mb-2 sm:mb-2">
-      {dates_and_sources_div}
-      {genres_div}
-    </div>
+    <>
+      <div className="text-2xl font-bold mb-1">{result.name}</div>
+      <div className="mb-2 sm:mb-2">
+        {dates_and_sources_div}
+        {genres_div}
+      </div>
+    </>
   )
 }
