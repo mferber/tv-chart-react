@@ -1,4 +1,4 @@
-import { type SubmitEvent, useRef } from "react"
+import { MouseEvent, type SubmitEvent, useRef } from "react"
 import Modal from "react-modal"
 
 import { fetchShowSearchResults } from "../../api/client"
@@ -30,11 +30,16 @@ export function SearchModal({
     },
   )
 
-  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+  function handleSubmitSearch(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.target)
     const q = (formData.get("query") ?? "").toString()
     executeQuery(q)
+  }
+
+  function closeModal() {
+    resetQuery()
+    close()
   }
 
   return (
@@ -48,8 +53,7 @@ export function SearchModal({
         <a
           href="#"
           onClick={() => {
-            resetQuery()
-            close()
+            closeModal()
           }}
         >
           Cancel
@@ -57,7 +61,7 @@ export function SearchModal({
       </div>
       <div>Search for a show here:</div>
       <div>
-        <form onSubmit={handleSubmit} className="flex gap-1">
+        <form onSubmit={handleSubmitSearch} className="flex gap-1">
           <input
             ref={searchFieldRef}
             type="text"
@@ -73,18 +77,41 @@ export function SearchModal({
         </form>
       </div>
       {isLoading && "…"}
-      {data && data.results && <SearchResults results={data.results} />}
+      {data && data.results && (
+        <SearchResults results={data.results} closeModal={closeModal} />
+      )}
     </Modal>
   )
 }
 
-function SearchResults({ results }: { results: ShowSearchResult[] }) {
+function SearchResults({
+  results,
+  closeModal,
+}: {
+  results: ShowSearchResult[]
+  closeModal: () => void
+}) {
   return results.map((result) => (
-    <SearchResult result={result} key={result.tvmaze_id} />
+    <SearchResult
+      result={result}
+      closeModal={closeModal}
+      key={result.tvmaze_id}
+    />
   ))
 }
 
-function SearchResult({ result }: { result: ShowSearchResult }) {
+function SearchResult({
+  result,
+  closeModal,
+}: {
+  result: ShowSearchResult
+  closeModal: () => void
+}) {
+  function handleAddShow(e: MouseEvent<HTMLButtonElement>, tvmaze_id: number) {
+    console.log("CLICK add this show (", tvmaze_id, ")")
+    closeModal()
+  }
+
   return (
     <div className="flex flex-col" key={result.tvmaze_id}>
       <div className="mt-6 flex">
@@ -96,7 +123,10 @@ function SearchResult({ result }: { result: ShowSearchResult }) {
           additionalClassNames="mr-4 mb-1"
         />
         <div>
-          <button className="bg-red-800 text-white py-1 px-2 rounded-lg mb-2">
+          <button
+            className="bg-red-800 text-white py-1 px-2 rounded-lg mb-2"
+            onClick={(e) => handleAddShow(e, result.tvmaze_id)}
+          >
             Add this show
           </button>
           <div className="text-2xl font-bold mb-1">{result.name}</div>

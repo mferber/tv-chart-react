@@ -12,8 +12,9 @@ export function useSimpleQuery<T, Args extends unknown[]>(
   const [isLoading, setIsLoading] = useState(false)
 
   const executeQuery = async (...args: Args) => {
-    setIsLoading(true)
     try {
+      resetQuery()
+      setIsLoading(true)
       setData(await queryFn(...args))
     } catch (e) {
       setError(e)
