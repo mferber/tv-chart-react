@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
-import { type SubmitEvent, useState } from "react"
+import { type SubmitEvent, useRef } from "react"
 import Modal from "react-modal"
 
 import { fetchShowSearchResults } from "../../api/client"
@@ -7,6 +6,7 @@ import {
   type ShowSearchResult,
   showSearchResultsSchema,
 } from "../../schemas/schemas"
+import { useSimpleQuery } from "../../utils/query"
 import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 
 export function SearchModal({
@@ -16,31 +16,31 @@ export function SearchModal({
   isOpen: boolean
   close: () => void
 }) {
-  const [searchTerm, setSearchTerm] = useState("")
+  const searchFieldRef = useRef<HTMLInputElement>(null)
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["show-search", searchTerm],
-    queryFn: async () => {
-      try {
-        const fetchResults = await fetchShowSearchResults(searchTerm)
-        return showSearchResultsSchema.parse(fetchResults)
-      } catch (e) {
-        console.error(e)
-      }
+  // put initial focus in the search input field
+  function handleAfterOpen() {
+    searchFieldRef.current?.focus()
+  }
+
+  const { executeQuery, resetQuery, data, isLoading } = useSimpleQuery(
+    async (searchTerm: string) => {
+      const fetchResults = await fetchShowSearchResults(searchTerm)
+      return showSearchResultsSchema.parse(fetchResults)
     },
-    enabled: searchTerm != "",
-  })
+  )
 
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.target)
     const q = (formData.get("query") ?? "").toString()
-    setSearchTerm(q)
+    executeQuery(q)
   }
 
   return (
     <Modal
       isOpen={isOpen}
+      onAfterOpen={handleAfterOpen}
       overlayClassName="fixed top-0 right-0 bottom-0 left-0 bg-black/25"
       className="absolute top-8 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
     >
@@ -48,7 +48,7 @@ export function SearchModal({
         <a
           href="#"
           onClick={() => {
-            setSearchTerm("")
+            resetQuery()
             close()
           }}
         >
@@ -59,6 +59,7 @@ export function SearchModal({
       <div>
         <form onSubmit={handleSubmit} className="flex gap-1">
           <input
+            ref={searchFieldRef}
             type="text"
             name="query"
             className="flex-1 max-w-80 min-w-8 px-2 py-1 border rounded-md"
