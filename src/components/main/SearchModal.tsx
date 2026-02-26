@@ -6,7 +6,7 @@ import {
 } from "react"
 import Modal from "react-modal"
 
-import { fetchShowSearchResults } from "../../api/client"
+import { addShowFromTVmazeId, fetchShowSearchResults } from "../../api/client"
 import {
   type Show,
   type ShowSearchResult,
@@ -143,8 +143,13 @@ function SearchResult({
   owned_show_tvmaze_ids: number[]
   resetAndCloseModal: () => void
 }) {
-  function handleAddShow(e: MouseEvent<HTMLButtonElement>, tvmaze_id: number) {
+  const { executeQuery } = useSimpleQuery((tvmaze_id: number) =>
+    addShowFromTVmazeId(tvmaze_id),
+  )
+
+  function handleAddShow(_: MouseEvent<HTMLButtonElement>, tvmaze_id: number) {
     console.log("CLICK add this show (", tvmaze_id, ")")
+    executeQuery(tvmaze_id)
     resetAndCloseModal()
   }
 

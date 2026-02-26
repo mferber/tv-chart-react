@@ -94,3 +94,16 @@ export async function fetchShowSearchResults(
     `HTTP error attempting to fetch show search results: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
   )
 }
+
+export async function addShowFromTVmazeId(tvmaze_id: number): Promise<object> {
+  const fresult = await fetch(`${API_BASE}/add-show?tvmaze_id=${tvmaze_id}`)
+  if (fresult.ok) {
+    return await fresult.json()
+  }
+  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
+    throw new HttpUnauthorizedError("User not authenticated")
+  }
+  throw new HttpError(
+    `HTTP error attempting to add new show: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
+  )
+}
