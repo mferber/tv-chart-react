@@ -266,26 +266,12 @@ function SearchResult({ result }: { result: ShowSearchResult }) {
           <Details result={result} />
 
           {/* show summary for larger screens */}
-          <div
-            className="mt-2 text-sm hidden sm:block"
-            // html is pre-sanitized on the backend
-            // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
-            dangerouslySetInnerHTML={{
-              __html: result.summary_html ?? "(no summary available)",
-            }}
-          />
+          <Summary result={result} className="mt-2 text-sm hidden sm:block" />
         </div>
       </div>
 
       {/* show summary for smaller screens */}
-      <div
-        className="text-sm block sm:hidden"
-        // html is pre-sanitized on the backend
-        // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
-        dangerouslySetInnerHTML={{
-          __html: result.summary_html ?? "(no summary available)",
-        }}
-      />
+      <Summary result={result} className="text-sm block sm:hidden" />
     </div>
   )
 }
@@ -352,5 +338,24 @@ function Details({ result }: { result: ShowSearchResult }) {
         {genres_div}
       </div>
     </>
+  )
+}
+
+function Summary({
+  result,
+  className,
+}: {
+  result: ShowSearchResult
+  className: string
+}) {
+  return (
+    <div
+      className={className}
+      // summary is pre-sanitized on the backend
+      // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+      dangerouslySetInnerHTML={{
+        __html: result.summary_html ?? "(no summary available)",
+      }}
+    />
   )
 }
