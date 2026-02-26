@@ -214,6 +214,32 @@ function SearchResults({ results }: { results: ShowSearchResult[] }) {
  * A single search result.
  */
 function SearchResult({ result }: { result: ShowSearchResult }) {
+  return (
+    <div className="flex flex-col" key={result.tvmaze_id}>
+      <div className="mt-6 flex">
+        <ImageWithPlaceholder
+          src={result.image_sm_url ?? null}
+          alt={result.name}
+          widthClassName="w-32"
+          placeholderHeightClassName="h-50"
+          additionalClassNames="mr-4 mb-1"
+        />
+        <div>
+          <AddThisShowButton result={result} />
+          <Details result={result} />
+
+          {/* show summary for larger screens */}
+          <Summary result={result} className="mt-2 text-sm hidden sm:block" />
+        </div>
+      </div>
+
+      {/* show summary for smaller screens */}
+      <Summary result={result} className="text-sm block sm:hidden" />
+    </div>
+  )
+}
+
+function AddThisShowButton({ result }: { result: ShowSearchResult }) {
   const {
     shows,
     tvMazeIdBeingAdded,
@@ -236,43 +262,19 @@ function SearchResult({ result }: { result: ShowSearchResult }) {
     }
   }
 
-  return (
-    <div className="flex flex-col" key={result.tvmaze_id}>
-      <div className="mt-6 flex">
-        <ImageWithPlaceholder
-          src={result.image_sm_url ?? null}
-          alt={result.name}
-          widthClassName="w-32"
-          placeholderHeightClassName="h-50"
-          additionalClassNames="mr-4 mb-1"
-        />
-        <div>
-          {shows.some((s) => s.tvmaze_id === result.tvmaze_id) ? (
-            // FIXME: better button placeholder
-            <div>[Already added]</div>
-          ) : (
-            <Button
-              htmlType="button"
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                handleAddShow(e, result.tvmaze_id)
-              }
-              disabled={tvMazeIdBeingAdded !== null}
-            >
-              {tvMazeIdBeingAdded === result.tvmaze_id
-                ? "Adding..."
-                : "Add this show"}
-            </Button>
-          )}
-          <Details result={result} />
-
-          {/* show summary for larger screens */}
-          <Summary result={result} className="mt-2 text-sm hidden sm:block" />
-        </div>
-      </div>
-
-      {/* show summary for smaller screens */}
-      <Summary result={result} className="text-sm block sm:hidden" />
-    </div>
+  return shows.some((s) => s.tvmaze_id === result.tvmaze_id) ? (
+    // FIXME: better button placeholder
+    <div>[Already added]</div>
+  ) : (
+    <Button
+      htmlType="button"
+      onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+        handleAddShow(e, result.tvmaze_id)
+      }
+      disabled={tvMazeIdBeingAdded !== null}
+    >
+      {tvMazeIdBeingAdded === result.tvmaze_id ? "Adding..." : "Add this show"}
+    </Button>
   )
 }
 
