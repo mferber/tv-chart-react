@@ -9,8 +9,11 @@ import {
   CurrentUserStatusContextProvider,
   useCurrentUserStatusContext,
 } from "./contexts/CurrentUserStatusContext"
+import { setUpBackgroundRefetchFocusEvents } from "./utils/browsers"
 
 Modal.setAppElement("#root")
+
+setUpBackgroundRefetchFocusEvents()
 
 const queryClient = new QueryClient({
   defaultOptions: {
