@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { type Dispatch, type SetStateAction, useState } from "react"
+import { ThreeDots } from "react-loader-spinner"
 
 import { fetchShows } from "../../api/client"
 import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
@@ -30,6 +31,7 @@ export function MainUI() {
       <AppHeader
         setSearchUIOpen={setSearchUIOpen}
         refetch={showsQuery.refetch}
+        isRefetching={showsQuery.isRefetching}
       />
       {showsQuery.data && <ShowDisplayList shows={showsQuery.data} />}
       {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
@@ -46,16 +48,18 @@ export function MainUI() {
 function AppHeader({
   setSearchUIOpen,
   refetch,
+  isRefetching,
 }: {
   setSearchUIOpen: Dispatch<SetStateAction<boolean>>
   refetch: () => void
+  isRefetching: boolean
 }) {
   // User can't be null or we wouldn't be here
   const currentUser = useCurrentUserStatusContext().user!
 
   return (
-    <div className="flex justify-between border-b mb-4">
-      <span className="flex gap-4">
+    <div className="flex justify-between border-b mb-4 align-middle">
+      <span className="flex gap-4 items-baseline">
         <a
           href="#"
           className="hover:text-red-800"
@@ -63,9 +67,14 @@ function AppHeader({
         >
           Add new show
         </a>
-        <a href="#" className="hover:text-red-800" onClick={() => refetch()}>
-          Refresh
-        </a>
+        <span className="flex items-center gap-2">
+          <a href="#" className="hover:text-red-800" onClick={() => refetch()}>
+            Refresh
+          </a>
+          {isRefetching && (
+            <ThreeDots height="10" wrapperClass="w-4 h-3" color="black" />
+          )}
+        </span>
       </span>
       <span>
         <span className="font-bold">{currentUser.email}</span> (
