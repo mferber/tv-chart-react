@@ -27,7 +27,10 @@ export function MainUI() {
 
   return (
     <main className="m-4">
-      <AppHeader setSearchUIOpen={setSearchUIOpen} />
+      <AppHeader
+        setSearchUIOpen={setSearchUIOpen}
+        refetch={showsQuery.refetch}
+      />
       {showsQuery.data && <ShowDisplayList shows={showsQuery.data} />}
       {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
       {showsQuery.isPending && <div>Loading...</div>}
@@ -42,21 +45,28 @@ export function MainUI() {
 
 function AppHeader({
   setSearchUIOpen,
+  refetch,
 }: {
   setSearchUIOpen: Dispatch<SetStateAction<boolean>>
+  refetch: () => void
 }) {
   // User can't be null or we wouldn't be here
   const currentUser = useCurrentUserStatusContext().user!
 
   return (
     <div className="flex justify-between border-b mb-4">
-      <a
-        href="#"
-        className="hover:text-red-800"
-        onClick={() => setSearchUIOpen(true)}
-      >
-        Add new show
-      </a>
+      <span className="flex gap-4">
+        <a
+          href="#"
+          className="hover:text-red-800"
+          onClick={() => setSearchUIOpen(true)}
+        >
+          Add new show
+        </a>
+        <a href="#" className="hover:text-red-800" onClick={() => refetch()}>
+          Refresh
+        </a>
+      </span>
       <span>
         <span className="font-bold">{currentUser.email}</span> (
         <LogOutLink>Log out</LogOutLink>)
