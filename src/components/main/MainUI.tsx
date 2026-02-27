@@ -28,8 +28,9 @@ export function MainUI() {
   return (
     <main className="m-4">
       <AppHeader setSearchUIOpen={setSearchUIOpen} />
-      {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
       {showsQuery.data && <ShowDisplayList shows={showsQuery.data} />}
+      {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
+      {showsQuery.isPending && <div>Loading...</div>}
       <SearchModal
         isOpen={searchUIOpen}
         close={() => setSearchUIOpen(false)}
