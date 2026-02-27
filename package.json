@@ -21,6 +21,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-hot-toast": "^2.6.0",
+    "react-loader-spinner": "^8.0.2",
     "react-modal": "^3.16.3",
     "tailwindcss": "^4.1.18",
     "zod": "^4.3.6"

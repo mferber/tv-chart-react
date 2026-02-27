@@ -257,14 +257,17 @@ function AddThisShowButton({ result }: { result: ShowSearchResult }) {
       const new_show: Show = showSchema.parse(json)
       console.log(new_show)
       fn_resetAndCloseModal()
-    } catch {
+    } catch (err) {
       toast("An error occurred adding this show")
+      console.error(err)
+      fn_setTVmazeIdBeingAdded(null)
     }
   }
 
   return shows.some((s) => s.tvmaze_id === result.tvmaze_id) ? (
-    // FIXME: better button placeholder
-    <div>[Already added]</div>
+    <Button htmlType="button" disabled={true}>
+      Already tracked
+    </Button>
   ) : (
     <Button
       htmlType="button"
@@ -272,8 +275,9 @@ function AddThisShowButton({ result }: { result: ShowSearchResult }) {
         handleAddShow(e, result.tvmaze_id)
       }
       disabled={tvMazeIdBeingAdded !== null}
+      spinner={tvMazeIdBeingAdded === result.tvmaze_id}
     >
-      {tvMazeIdBeingAdded === result.tvmaze_id ? "Adding..." : "Add this show"}
+      Add this show
     </Button>
   )
 }
