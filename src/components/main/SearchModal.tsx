@@ -1,6 +1,6 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   createContext,
-  type MouseEvent,
   type RefObject,
   type SubmitEvent,
   use,
@@ -15,7 +15,6 @@ import { Button } from "../../components/misc/Button"
 import { useSimpleQuery } from "../../hooks"
 import {
   type Show,
-  showSchema,
   type ShowSearchResult,
   showSearchResultsSchema,
 } from "../../schemas/schemas"
@@ -247,22 +246,22 @@ function AddThisShowButton({ result }: { result: ShowSearchResult }) {
     fn_resetAndCloseModal,
   } = use(SearchModalContext)
 
-  async function handleAddShow(
-    _: MouseEvent<HTMLButtonElement>,
-    tvmaze_id: number,
-  ) {
-    try {
+  const queryClient = useQueryClient()
+  const addShowMutation = useMutation({
+    mutationFn: (tvmaze_id: number) => {
       fn_setTVmazeIdBeingAdded(tvmaze_id)
-      const json = await addShowFromTVmazeId(tvmaze_id)
-      const new_show: Show = showSchema.parse(json)
-      console.log(new_show)
+      return addShowFromTVmazeId(tvmaze_id)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["shows"] })
       fn_resetAndCloseModal()
-    } catch (err) {
+    },
+    onError: (e: Error) => {
+      console.error(e)
       toast("An error occurred adding this show")
-      console.error(err)
       fn_setTVmazeIdBeingAdded(null)
-    }
-  }
+    },
+  })
 
   return shows.some((s) => s.tvmaze_id === result.tvmaze_id) ? (
     <Button htmlType="button" disabled={true}>
@@ -271,9 +270,7 @@ function AddThisShowButton({ result }: { result: ShowSearchResult }) {
   ) : (
     <Button
       htmlType="button"
-      onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-        handleAddShow(e, result.tvmaze_id)
-      }
+      onClick={() => addShowMutation.mutate(result.tvmaze_id)}
       disabled={tvMazeIdBeingAdded !== null}
       spinner={tvMazeIdBeingAdded === result.tvmaze_id}
     >
