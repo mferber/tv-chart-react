@@ -14,10 +14,10 @@ export const showSchema = z.object({
   title: z.string(),
   source: z.string(),
   duration: z.number(),
-  image_sm_url: z.optional(z.url()),
-  image_lg_url: z.optional(z.url()),
-  imdb_id: z.optional(z.string()),
-  thetvdb_id: z.optional(z.number()),
+  image_sm_url: z.nullish(z.url()),
+  image_lg_url: z.nullish(z.url()),
+  imdb_id: z.nullish(z.string()),
+  thetvdb_id: z.nullish(z.number()),
   seasons: z.array(z.array(episodeSchema)),
 })
 export type Show = z.infer<typeof showSchema>
