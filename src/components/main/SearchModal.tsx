@@ -12,13 +12,13 @@ import Modal from "react-modal"
 
 import { addShowFromTVmazeId, fetchShowSearchResults } from "../../api/client"
 import { Button } from "../../components/misc/Button"
+import { useSimpleQuery } from "../../hooks"
 import {
   type Show,
   showSchema,
   type ShowSearchResult,
   showSearchResultsSchema,
 } from "../../schemas/schemas"
-import { useSimpleQuery } from "../../utils/query"
 import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 
 interface SearchModalContextType {
