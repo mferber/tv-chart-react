@@ -3,6 +3,7 @@ import * as z from "zod"
 // Show info schemas
 
 export const episodeSchema = z.object({
+  title: z.nullish(z.string()),
   type: z.literal(["episode", "special"]),
   watched: z.boolean(),
 })

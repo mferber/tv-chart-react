@@ -108,6 +108,7 @@ function EpisodeDisplay({
       type="button"
       className="relative inline-block"
       key={episode_index}
+      title={episode_with_display_marker.episode.title ?? "No title"}
       onClick={() =>
         console.log(
           `clicked show ${show_id}, season ${season_number}, episode@${episode_index}`,
