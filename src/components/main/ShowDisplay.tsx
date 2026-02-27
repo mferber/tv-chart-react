@@ -1,4 +1,5 @@
 import { type Episode, type Show } from "../../schemas/schemas"
+import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 
 type EpisodeWithDisplayMarker = {
   episode: Episode
@@ -45,7 +46,12 @@ export function ShowDisplay({ show }: { show: Show }) {
 function ShowDisplayHeader({ show }: { show: Show }) {
   return (
     <div className="flex gap-2 mb-4">
-      <img src={show.image_sm_url} className="w-16" />
+      <ImageWithPlaceholder
+        src={show.image_sm_url || null}
+        alt={show.title}
+        widthClassName="w-16"
+        placeholderHeightClassName="h-20"
+      />
       <div className="flex flex-col">
         <header className="text-xl font-black">{show.title}</header>
         <span>

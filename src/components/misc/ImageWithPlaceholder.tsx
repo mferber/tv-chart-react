@@ -11,10 +11,10 @@ export function ImageWithPlaceholder({
   additionalClassNames,
 }: {
   src: string | null
-  alt: string
+  alt?: string
   widthClassName: string
   placeholderHeightClassName: string
-  additionalClassNames: string
+  additionalClassNames?: string
 }) {
   const [loaded, setLoaded] = useState(false)
 
