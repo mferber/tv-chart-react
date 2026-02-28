@@ -23,8 +23,8 @@ export const showSchema = z.object({
 })
 export type Show = z.infer<typeof showSchema>
 
-export const showListSchema = z.array(showSchema)
-export type ShowList = z.infer<typeof showListSchema>
+export const showMapSchema = z.record(z.uuid(), showSchema)
+export type ShowRecord = z.infer<typeof showMapSchema>
 
 // Show search result schema
 

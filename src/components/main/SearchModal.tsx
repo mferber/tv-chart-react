@@ -14,14 +14,14 @@ import { addShowFromTVmazeId, fetchShowSearchResults } from "../../api/client"
 import { Button } from "../../components/misc/Button"
 import { useSimpleQuery } from "../../hooks"
 import {
-  type Show,
+  type ShowRecord,
   type ShowSearchResult,
   showSearchResultsSchema,
 } from "../../schemas/schemas"
 import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 
 interface SearchModalContextType {
-  shows: Show[]
+  shows: ShowRecord
   isSearchResultLoading: boolean
   tvMazeIdBeingAdded: number | null
   fn_executeSearch: (query: string) => void
@@ -40,7 +40,7 @@ interface SearchModalContextType {
  * - `fn_resetAndCloseModal`: function; clears and dismisses the Search modal
  */
 const SearchModalContext = createContext<SearchModalContextType>({
-  shows: [],
+  shows: {},
   isSearchResultLoading: false,
   tvMazeIdBeingAdded: null,
   fn_executeSearch: (_) => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -64,7 +64,7 @@ export function SearchModal({
 }: {
   isOpen: boolean
   close: () => void
-  shows: Show[] | undefined
+  shows: ShowRecord | undefined
 }) {
   // put initial focus in the search input field
   const searchFieldRef = useRef<HTMLInputElement>(null)
@@ -101,7 +101,7 @@ function ModalContent({
 }: {
   searchFieldRef: RefObject<HTMLInputElement | null>
   close: () => void
-  shows: Show[] | undefined
+  shows: ShowRecord | undefined
 }) {
   const [tvMazeIdBeingAdded, setTVmazeIdBeingAdded] = useState<number | null>(
     null,
@@ -124,7 +124,7 @@ function ModalContent({
   return (
     <SearchModalContext
       value={{
-        shows: shows || [],
+        shows: shows || {},
         isSearchResultLoading: isLoading,
         tvMazeIdBeingAdded: tvMazeIdBeingAdded,
         fn_executeSearch: executeQuery,
@@ -263,7 +263,8 @@ function AddThisShowButton({ result }: { result: ShowSearchResult }) {
     },
   })
 
-  return shows.some((s) => s.tvmaze_id === result.tvmaze_id) ? (
+  const showList = Object.values(shows)
+  return showList.some((s) => s.tvmaze_id === result.tvmaze_id) ? (
     <Button htmlType="button" disabled={true}>
       Already tracked
     </Button>

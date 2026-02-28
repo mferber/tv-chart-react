@@ -5,7 +5,7 @@ import { ThreeDots } from "react-loader-spinner"
 import { fetchShows } from "../../api/client"
 import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
 import { useQueryErrorToast } from "../../hooks"
-import { showListSchema } from "../../schemas/schemas"
+import { showMapSchema } from "../../schemas/schemas"
 import { LogOutLink } from "../authentication/LogOutLink"
 import { SearchModal } from "./SearchModal"
 import { ShowDisplayList } from "./ShowDisplayList"
@@ -17,7 +17,7 @@ export function MainUI() {
     queryKey: ["shows"],
     queryFn: async () => {
       const fetch_results = await fetchShows()
-      return showListSchema.parse(fetch_results)
+      return showMapSchema.parse(fetch_results)
     },
   })
 
