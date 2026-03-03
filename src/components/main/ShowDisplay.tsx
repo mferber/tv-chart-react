@@ -1,3 +1,6 @@
+import { use } from "react"
+
+import { DisplayedEpisodeDetailContext } from "../../contexts/DisplayedEpisodeDetailContext"
 import { type Episode, type Show } from "../../schemas/schemas"
 import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 
@@ -113,17 +116,21 @@ function EpisodeDisplay({
   season_number: number
   episode_index: number
 }) {
+  const { setDisplayedEpisodeDetail } = use(DisplayedEpisodeDetailContext)
+
   return (
     <button
       type="button"
       className="relative inline-block"
       key={episode_index}
       title={episode_with_display_label.episode.title ?? "No title"}
-      onClick={() =>
-        console.log(
-          `clicked show ${show_id}, season ${season_number}, episode@${episode_index}`,
-        )
-      }
+      onClick={() => {
+        setDisplayedEpisodeDetail({
+          show_id: show_id,
+          season_num: season_number,
+          episode_idx: episode_index,
+        })
+      }}
     >
       <EpisodeSquircle filled={episode_with_display_label.episode.watched} />
 
