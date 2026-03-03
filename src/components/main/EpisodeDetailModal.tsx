@@ -38,9 +38,9 @@ function ModalBody({
     shows: ShowRecord,
     episodeDetailSpecifier: EpisodeSpecifier,
   ): boolean {
-    const show = shows[episodeDetailSpecifier.show_id]
-    const seasonIdx = episodeDetailSpecifier.season_num - 1
-    const episodeIdx = episodeDetailSpecifier.episode_idx
+    const show = shows[episodeDetailSpecifier.showId]
+    const seasonIdx = episodeDetailSpecifier.seasonNum - 1
+    const episodeIdx = episodeDetailSpecifier.episodeIdx
 
     return show.seasons[seasonIdx][episodeIdx].watched
   }
@@ -54,12 +54,12 @@ function ModalBody({
       </div>
       <div>
         <div className="bold text-lg">
-          {shows[episodeDetailSpecifier.show_id].title}
+          {shows[episodeDetailSpecifier.showId].title}
         </div>
-        <div className="text-xs">{episodeDetailSpecifier.show_id}</div>
+        <div className="text-xs">{episodeDetailSpecifier.showId}</div>
         <div className="">
-          Season {episodeDetailSpecifier.season_num}, episode index{" "}
-          {episodeDetailSpecifier.episode_idx}
+          Season {episodeDetailSpecifier.seasonNum}, episode index{" "}
+          {episodeDetailSpecifier.episodeIdx}
         </div>
         <div>
           {isWatched(shows, episodeDetailSpecifier) ? "WATCHED" : "unwatched"}

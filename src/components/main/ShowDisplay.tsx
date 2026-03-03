@@ -43,9 +43,9 @@ export function ShowDisplay({ show }: { show: Show }) {
       <div className="flex flex-col gap-2">
         {show.seasons.map((season, idx) => (
           <SeasonDisplay
-            show_id={show.id}
+            showId={show.id}
             season={season}
-            season_num={idx + 1}
+            seasonNum={idx + 1}
             // eslint-disable-next-line react-x/no-array-index-key
             key={idx}
           />
@@ -75,27 +75,27 @@ function ShowDisplayHeader({ show }: { show: Show }) {
 }
 
 function SeasonDisplay({
-  show_id,
+  showId,
   season,
-  season_num,
+  seasonNum,
 }: {
-  show_id: string
+  showId: string
   season: Episode[]
-  season_num: number
+  seasonNum: number
 }) {
   const episodesWithDisplayLabels =
     EpisodeWithDisplayLabel.fromEpisodeList(season)
 
   return (
     <div className="flex gap-8 items-center">
-      <span className="w-2 shrink-0 text-2xl">{season_num}</span>
+      <span className="w-2 shrink-0 text-2xl">{seasonNum}</span>
       <span className="flex gap-1">
         {episodesWithDisplayLabels.map((ep, idx) => (
           <EpisodeDisplay
-            episode_with_display_label={ep}
-            show_id={show_id}
-            season_number={season_num}
-            episode_index={idx}
+            episodeWithDisplayLabel={ep}
+            showId={showId}
+            seasonNumber={seasonNum}
+            episodeIndex={idx}
             // eslint-disable-next-line react-x/no-array-index-key
             key={idx}
           />
@@ -106,15 +106,15 @@ function SeasonDisplay({
 }
 
 function EpisodeDisplay({
-  episode_with_display_label,
-  show_id,
-  season_number,
-  episode_index,
+  episodeWithDisplayLabel,
+  showId,
+  seasonNumber,
+  episodeIndex,
 }: {
-  episode_with_display_label: EpisodeWithDisplayLabel
-  show_id: string
-  season_number: number
-  episode_index: number
+  episodeWithDisplayLabel: EpisodeWithDisplayLabel
+  showId: string
+  seasonNumber: number
+  episodeIndex: number
 }) {
   const { setDisplayedEpisodeDetail } = use(DisplayedEpisodeDetailContext)
 
@@ -122,28 +122,28 @@ function EpisodeDisplay({
     <button
       type="button"
       className="relative inline-block"
-      key={episode_index}
-      title={episode_with_display_label.episode.title ?? "No title"}
+      key={episodeIndex}
+      title={episodeWithDisplayLabel.episode.title ?? "No title"}
       onClick={() => {
         setDisplayedEpisodeDetail({
-          show_id: show_id,
-          season_num: season_number,
-          episode_idx: episode_index,
+          showId: showId,
+          seasonNum: seasonNumber,
+          episodeIdx: episodeIndex,
         })
       }}
     >
-      <EpisodeSquircle filled={episode_with_display_label.episode.watched} />
+      <EpisodeSquircle filled={episodeWithDisplayLabel.episode.watched} />
 
       {/* center the display marker -- star or episode number -- over the squircle */}
       <div className="absolute inset-0 flex items-center justify-center">
         <span
           className={
-            episode_with_display_label.episode.watched
+            episodeWithDisplayLabel.episode.watched
               ? "text-white"
               : "text-black"
           }
         >
-          {episode_with_display_label.label}
+          {episodeWithDisplayLabel.label}
         </span>
       </div>
     </button>
