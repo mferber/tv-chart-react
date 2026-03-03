@@ -1,27 +1,36 @@
 import { type Episode, type Show } from "../../schemas/schemas"
 import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 
-type EpisodeWithDisplayMarker = {
+/**
+ * An Episode, paired with a label that indicates an episode number, or a star
+ * for specials.
+ */
+class EpisodeWithDisplayLabel {
   episode: Episode
-  marker: string
-}
+  label: string
 
-/** Pair each episode with a display marker, marking special episodes with a
-    star and otherwise assigning consecutive numbers.
-*/
-function addDisplayMarkers(season: Episode[]): EpisodeWithDisplayMarker[] {
-  const result: EpisodeWithDisplayMarker[] = []
-  let nextEpisodeNumber = 1
-  for (const episode of season) {
-    let marker: string
-    if (episode.type == "special") {
-      marker = "★"
-    } else {
-      marker = (nextEpisodeNumber++).toString()
-    }
-    result.push({ episode: episode, marker: marker })
+  constructor(episode: Episode, label: string) {
+    this.episode = episode
+    this.label = label
   }
-  return result
+
+  /** Pair each episode with a display marker, marking special episodes with a
+   * star and otherwise assigning consecutive numbers.
+   */
+  static fromEpisodeList(season: Episode[]): EpisodeWithDisplayLabel[] {
+    const result: EpisodeWithDisplayLabel[] = []
+    let nextEpisodeNumber = 1
+    for (const episode of season) {
+      let label: string
+      if (episode.type == "special") {
+        label = "★"
+      } else {
+        label = (nextEpisodeNumber++).toString()
+      }
+      result.push(new EpisodeWithDisplayLabel(episode, label))
+    }
+    return result
+  }
 }
 
 export function ShowDisplay({ show }: { show: Show }) {
@@ -71,15 +80,16 @@ function SeasonDisplay({
   season: Episode[]
   season_num: number
 }) {
-  const episodesWithDisplayMarkers = addDisplayMarkers(season)
+  const episodesWithDisplayLabels =
+    EpisodeWithDisplayLabel.fromEpisodeList(season)
 
   return (
     <div className="flex gap-8 items-center">
       <span className="w-2 shrink-0 text-2xl">{season_num}</span>
       <span className="flex gap-1">
-        {episodesWithDisplayMarkers.map((ep, idx) => (
+        {episodesWithDisplayLabels.map((ep, idx) => (
           <EpisodeDisplay
-            episode_with_display_marker={ep}
+            episode_with_display_label={ep}
             show_id={show_id}
             season_number={season_num}
             episode_index={idx}
@@ -93,12 +103,12 @@ function SeasonDisplay({
 }
 
 function EpisodeDisplay({
-  episode_with_display_marker,
+  episode_with_display_label,
   show_id,
   season_number,
   episode_index,
 }: {
-  episode_with_display_marker: EpisodeWithDisplayMarker
+  episode_with_display_label: EpisodeWithDisplayLabel
   show_id: string
   season_number: number
   episode_index: number
@@ -108,25 +118,25 @@ function EpisodeDisplay({
       type="button"
       className="relative inline-block"
       key={episode_index}
-      title={episode_with_display_marker.episode.title ?? "No title"}
+      title={episode_with_display_label.episode.title ?? "No title"}
       onClick={() =>
         console.log(
           `clicked show ${show_id}, season ${season_number}, episode@${episode_index}`,
         )
       }
     >
-      <EpisodeSquircle filled={episode_with_display_marker.episode.watched} />
+      <EpisodeSquircle filled={episode_with_display_label.episode.watched} />
 
       {/* center the display marker -- star or episode number -- over the squircle */}
       <div className="absolute inset-0 flex items-center justify-center">
         <span
           className={
-            episode_with_display_marker.episode.watched
+            episode_with_display_label.episode.watched
               ? "text-white"
               : "text-black"
           }
         >
-          {episode_with_display_marker.marker}
+          {episode_with_display_label.label}
         </span>
       </div>
     </button>
