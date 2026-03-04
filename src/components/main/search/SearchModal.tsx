@@ -10,15 +10,18 @@ import {
 import { toast } from "react-hot-toast"
 import Modal from "react-modal"
 
-import { addShowFromTVmazeId, fetchShowSearchResults } from "../../api/client"
-import { Button } from "../../components/misc/Button"
-import { useSimpleQuery } from "../../hooks"
+import {
+  addShowFromTVmazeId,
+  fetchShowSearchResults,
+} from "../../../api/client"
+import { useSimpleQuery } from "../../../hooks"
 import {
   type ShowRecord,
   type ShowSearchResult,
   showSearchResultsSchema,
-} from "../../types/schemas"
-import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
+} from "../../../types/schemas"
+import { Button } from "../../misc/Button"
+import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 
 interface SearchModalContextType {
   shows: ShowRecord

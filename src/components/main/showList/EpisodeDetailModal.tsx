@@ -2,13 +2,13 @@ import { useEffect, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 import Modal from "react-modal"
 
-import { type ShowRecord } from "../../types/schemas"
-import { type EpisodeDetails } from "../../types/schemas"
-import { type EpisodeSpecifierWithDisplayNumber } from "../../types/types"
+import { type ShowRecord } from "../../../types/schemas"
+import { type EpisodeDetails } from "../../../types/schemas"
+import { type EpisodeSpecifierWithDisplayNumber } from "../../../types/types"
 import {
   episodeDetailsCache,
   EpisodeMissingError,
-} from "../../utils/episodesDetailsCache"
+} from "../../../utils/episodesDetailsCache"
 
 export function EpisodeDetailModal({
   episodeDetailSpecifier,

@@ -1,13 +1,17 @@
 import { useState } from "react"
 
-import { DisplayedEpisodeDetailContext } from "../../contexts/DisplayedEpisodeDetailContext"
-import { type ShowRecord } from "../../types/schemas"
-import { type EpisodeSpecifierWithDisplayNumber } from "../../types/types"
-import { titleSort } from "../../utils/showSort"
+import { DisplayedEpisodeDetailContext } from "../../../contexts/DisplayedEpisodeDetailContext"
+import { type ShowRecord } from "../../../types/schemas"
+import { type EpisodeSpecifierWithDisplayNumber } from "../../../types/types"
+import { titleSort } from "../../../utils/showSort"
 import { EpisodeDetailModal } from "./EpisodeDetailModal"
-import { ShowDisplay } from "./ShowDisplay"
+import { Show } from "./Show"
 
-export function ShowDisplayList({ shows }: { shows: ShowRecord }) {
+/**
+ * Displays the main list of shows.
+ * @param shows map (by id) of all the shows to display
+ */
+export function ShowList({ shows }: { shows: ShowRecord }) {
   // specifier for episode whose detail is to be displayed in a modal;
   // null for none
   const [displayedEpisodeDetailSpecifier, setDisplayedEpisodeDetailSpecifier] =
@@ -23,7 +27,7 @@ export function ShowDisplayList({ shows }: { shows: ShowRecord }) {
             setDisplayedEpisodeDetailSpecifier(specifier),
         }}
       >
-        <ShowDisplayListBody shows={shows} />
+        <ShowListBody shows={shows} />
       </DisplayedEpisodeDetailContext>
 
       <EpisodeDetailModal
@@ -35,12 +39,12 @@ export function ShowDisplayList({ shows }: { shows: ShowRecord }) {
   )
 }
 
-export function ShowDisplayListBody({ shows }: { shows: ShowRecord }) {
+export function ShowListBody({ shows }: { shows: ShowRecord }) {
   const showList = Object.values(shows)
   return (
     <div>
       {titleSort(showList).map((show) => (
-        <ShowDisplay show={show} key={show.id} />
+        <Show show={show} key={show.id} />
       ))}
     </div>
   )

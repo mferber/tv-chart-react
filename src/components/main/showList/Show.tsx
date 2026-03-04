@@ -1,50 +1,23 @@
 import { use } from "react"
 
-import { DisplayedEpisodeDetailContext } from "../../contexts/DisplayedEpisodeDetailContext"
-import { type EpisodeDescriptor, type Show } from "../../types/schemas"
-import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
+import { DisplayedEpisodeDetailContext } from "../../../contexts/DisplayedEpisodeDetailContext"
+import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
+import { EpisodeWithDisplayNumber } from "../../../types/types"
+import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
+
+const STAR = "\u2605"
 
 /**
- * An Episode, paired with a label that indicates an episode number, or a star
- * for specials.
+ * Displays seasons and episodes for a given show
+ * @param show the show to display
  */
-class EpisodeWithDisplayNumber {
-  episode: EpisodeDescriptor
-  displayNum: number | null
-
-  constructor(episode: EpisodeDescriptor, displayNum: number | null) {
-    this.episode = episode
-    this.displayNum = displayNum
-  }
-
-  /** Pair each episode with a display marker, marking special episodes with a
-   * star and otherwise assigning consecutive numbers.
-   */
-  static fromEpisodeList(
-    season: EpisodeDescriptor[],
-  ): EpisodeWithDisplayNumber[] {
-    const result: EpisodeWithDisplayNumber[] = []
-    let nextEpisodeNumber = 1
-    for (const episode of season) {
-      let displayNum: number | null
-      if (episode.type == "special") {
-        displayNum = null
-      } else {
-        displayNum = nextEpisodeNumber++
-      }
-      result.push(new EpisodeWithDisplayNumber(episode, displayNum))
-    }
-    return result
-  }
-}
-
-export function ShowDisplay({ show }: { show: Show }) {
+export function Show({ show }: { show: Show }) {
   return (
     <section className="pb-8">
-      <ShowDisplayHeader show={show} />
+      <ShowHeader show={show} />
       <div className="flex flex-col gap-2">
         {show.seasons.map((season, idx) => (
-          <SeasonDisplay
+          <Season
             showId={show.id}
             season={season}
             seasonNum={idx + 1}
@@ -57,7 +30,7 @@ export function ShowDisplay({ show }: { show: Show }) {
   )
 }
 
-function ShowDisplayHeader({ show }: { show: Show }) {
+function ShowHeader({ show }: { show: Show }) {
   return (
     <div className="flex gap-2 mb-4">
       <ImageWithPlaceholder
@@ -76,7 +49,7 @@ function ShowDisplayHeader({ show }: { show: Show }) {
   )
 }
 
-function SeasonDisplay({
+function Season({
   showId,
   season,
   seasonNum,
@@ -93,7 +66,7 @@ function SeasonDisplay({
       <span className="w-2 shrink-0 text-2xl">{seasonNum}</span>
       <span className="flex gap-1">
         {episodesWithDisplayLabels.map((ep, idx) => (
-          <EpisodeDisplay
+          <EpisodeBox
             episodeWithDisplayNumber={ep}
             showId={showId}
             seasonNumber={seasonNum}
@@ -107,7 +80,7 @@ function SeasonDisplay({
   )
 }
 
-function EpisodeDisplay({
+function EpisodeBox({
   episodeWithDisplayNumber,
   showId,
   seasonNumber,
@@ -146,7 +119,7 @@ function EpisodeDisplay({
               : "text-black"
           }
         >
-          {episodeWithDisplayNumber.displayNum ?? "\u2605"}
+          {episodeWithDisplayNumber.displayNum ?? STAR}
         </span>
       </div>
     </button>

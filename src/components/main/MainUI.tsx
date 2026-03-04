@@ -7,8 +7,8 @@ import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusCon
 import { useQueryErrorToast } from "../../hooks"
 import { showMapSchema } from "../../types/schemas"
 import { LogOutLink } from "../authentication/LogOutLink"
-import { SearchModal } from "./SearchModal"
-import { ShowDisplayList } from "./ShowDisplayList"
+import { SearchModal } from "./search/SearchModal"
+import { ShowList } from "./showList/ShowList"
 
 export function MainUI() {
   const [searchUIOpen, setSearchUIOpen] = useState(false)
@@ -33,7 +33,7 @@ export function MainUI() {
         refetch={showsQuery.refetch}
         isRefetching={showsQuery.isRefetching}
       />
-      {showsQuery.data && <ShowDisplayList shows={showsQuery.data} />}
+      {showsQuery.data && <ShowList shows={showsQuery.data} />}
       {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
       {showsQuery.isPending && <div>Loading...</div>}
       <SearchModal
