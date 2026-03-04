@@ -1,6 +1,6 @@
+import * as Dialog from "@radix-ui/react-dialog"
 import { useEffect, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
-import Modal from "react-modal"
 
 import { type ShowRecord } from "../../../types/schemas"
 import { type EpisodeDetails } from "../../../types/schemas"
@@ -20,15 +20,23 @@ export function EpisodeDetailModal({
   close: () => void
 }) {
   return (
-    <Modal isOpen={episodeDetailSpecifier !== null}>
+    <Dialog.Root
+      modal={false}
+      open={episodeDetailSpecifier !== null}
+      onOpenChange={close}
+    >
       {episodeDetailSpecifier && (
-        <ModalBody
-          episodeDetailSpecifier={episodeDetailSpecifier}
-          shows={shows}
-          close={close}
-        />
+        <Dialog.Content className="fixed top-8 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto">
+          <Dialog.Title className="sr-only" />
+          <Dialog.Description className="sr-only" />
+          <ModalBody
+            episodeDetailSpecifier={episodeDetailSpecifier}
+            shows={shows}
+            close={close}
+          />
+        </Dialog.Content>
       )}
-    </Modal>
+    </Dialog.Root>
   )
 }
 

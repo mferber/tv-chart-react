@@ -1,3 +1,4 @@
+import * as Dialog from "@radix-ui/react-dialog"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   createContext,
@@ -8,7 +9,6 @@ import {
   useState,
 } from "react"
 import { toast } from "react-hot-toast"
-import Modal from "react-modal"
 
 import {
   addShowFromTVmazeId,
@@ -73,20 +73,26 @@ export function SearchModal({
   const searchFieldRef = useRef<HTMLInputElement>(null)
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onAfterOpen={() => searchFieldRef.current?.focus()}
-      overlayClassName="fixed top-0 right-0 bottom-0 left-0 bg-black/25"
-      className="absolute top-8 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
-    >
-      {isOpen && (
-        <ModalContent
-          searchFieldRef={searchFieldRef}
-          close={close}
-          shows={shows}
-        />
-      )}
-    </Modal>
+    <Dialog.Root open={isOpen} onOpenChange={close}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <Dialog.Content
+          className="fixed top-8 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
+          onOpenAutoFocus={(e) => {
+            e.preventDefault()
+            searchFieldRef.current?.focus()
+          }}
+        >
+          <Dialog.Title className="sr-only" />
+          <Dialog.Description className="sr-only" />
+          <ModalContent
+            searchFieldRef={searchFieldRef}
+            close={close}
+            shows={shows}
+          />
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }
 
