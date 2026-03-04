@@ -1,26 +1,11 @@
 import { useState } from "react"
 
 import { DisplayedEpisodeDetailContext } from "../../contexts/DisplayedEpisodeDetailContext"
-import { type Show, type ShowRecord } from "../../types/schemas"
+import { type ShowRecord } from "../../types/schemas"
 import { type EpisodeSpecifierWithDisplayNumber } from "../../types/types"
+import { titleSort } from "../../utils/showSort"
 import { EpisodeDetailModal } from "./EpisodeDetailModal"
 import { ShowDisplay } from "./ShowDisplay"
-
-// generates sortable version of show title
-function titleSortKey(show: Show): string {
-  return show.title.replace(/^(a|an|the) /i, "").toLowerCase()
-}
-
-// sorts shows using standard title sort
-function titleSort(showList: Show[]): Show[] {
-  const keyed_shows = showList.map((show) => ({
-    show: show,
-    key: titleSortKey(show),
-  }))
-
-  keyed_shows.sort((a, b) => a.key.localeCompare(b.key))
-  return keyed_shows.map((ks) => ks.show)
-}
 
 export function ShowDisplayList({ shows }: { shows: ShowRecord }) {
   // specifier for episode whose detail is to be displayed in a modal;
