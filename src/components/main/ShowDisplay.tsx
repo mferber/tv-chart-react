@@ -1,36 +1,38 @@
 import { use } from "react"
 
 import { DisplayedEpisodeDetailContext } from "../../contexts/DisplayedEpisodeDetailContext"
-import { type Episode, type Show } from "../../schemas/schemas"
+import { type EpisodeDescriptor, type Show } from "../../types/schemas"
 import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 
 /**
  * An Episode, paired with a label that indicates an episode number, or a star
  * for specials.
  */
-class EpisodeWithDisplayLabel {
-  episode: Episode
-  label: string
+class EpisodeWithDisplayNumber {
+  episode: EpisodeDescriptor
+  displayNum: number | null
 
-  constructor(episode: Episode, label: string) {
+  constructor(episode: EpisodeDescriptor, displayNum: number | null) {
     this.episode = episode
-    this.label = label
+    this.displayNum = displayNum
   }
 
   /** Pair each episode with a display marker, marking special episodes with a
    * star and otherwise assigning consecutive numbers.
    */
-  static fromEpisodeList(season: Episode[]): EpisodeWithDisplayLabel[] {
-    const result: EpisodeWithDisplayLabel[] = []
+  static fromEpisodeList(
+    season: EpisodeDescriptor[],
+  ): EpisodeWithDisplayNumber[] {
+    const result: EpisodeWithDisplayNumber[] = []
     let nextEpisodeNumber = 1
     for (const episode of season) {
-      let label: string
+      let displayNum: number | null
       if (episode.type == "special") {
-        label = "★"
+        displayNum = null
       } else {
-        label = (nextEpisodeNumber++).toString()
+        displayNum = nextEpisodeNumber++
       }
-      result.push(new EpisodeWithDisplayLabel(episode, label))
+      result.push(new EpisodeWithDisplayNumber(episode, displayNum))
     }
     return result
   }
@@ -80,11 +82,11 @@ function SeasonDisplay({
   seasonNum,
 }: {
   showId: string
-  season: Episode[]
+  season: EpisodeDescriptor[]
   seasonNum: number
 }) {
   const episodesWithDisplayLabels =
-    EpisodeWithDisplayLabel.fromEpisodeList(season)
+    EpisodeWithDisplayNumber.fromEpisodeList(season)
 
   return (
     <div className="flex gap-8 items-center">
@@ -92,7 +94,7 @@ function SeasonDisplay({
       <span className="flex gap-1">
         {episodesWithDisplayLabels.map((ep, idx) => (
           <EpisodeDisplay
-            episodeWithDisplayLabel={ep}
+            episodeWithDisplayNumber={ep}
             showId={showId}
             seasonNumber={seasonNum}
             episodeIndex={idx}
@@ -106,12 +108,12 @@ function SeasonDisplay({
 }
 
 function EpisodeDisplay({
-  episodeWithDisplayLabel,
+  episodeWithDisplayNumber,
   showId,
   seasonNumber,
   episodeIndex,
 }: {
-  episodeWithDisplayLabel: EpisodeWithDisplayLabel
+  episodeWithDisplayNumber: EpisodeWithDisplayNumber
   showId: string
   seasonNumber: number
   episodeIndex: number
@@ -123,27 +125,28 @@ function EpisodeDisplay({
       type="button"
       className="relative inline-block"
       key={episodeIndex}
-      title={episodeWithDisplayLabel.episode.title ?? "No title"}
+      title={episodeWithDisplayNumber.episode.title ?? "No title"}
       onClick={() => {
         setDisplayedEpisodeDetail({
           showId: showId,
           seasonNum: seasonNumber,
           episodeIdx: episodeIndex,
+          episodeDisplayNumber: episodeWithDisplayNumber.displayNum,
         })
       }}
     >
-      <EpisodeSquircle filled={episodeWithDisplayLabel.episode.watched} />
+      <EpisodeSquircle filled={episodeWithDisplayNumber.episode.watched} />
 
       {/* center the display marker -- star or episode number -- over the squircle */}
       <div className="absolute inset-0 flex items-center justify-center">
         <span
           className={
-            episodeWithDisplayLabel.episode.watched
+            episodeWithDisplayNumber.episode.watched
               ? "text-white"
               : "text-black"
           }
         >
-          {episodeWithDisplayLabel.label}
+          {episodeWithDisplayNumber.displayNum ?? "\u2605"}
         </span>
       </div>
     </button>

@@ -2,12 +2,12 @@ import * as z from "zod"
 
 // Show info schemas
 
-export const episodeSchema = z.object({
+export const episodeDescriptorSchema = z.object({
   title: z.nullish(z.string()),
   type: z.literal(["episode", "special"]),
   watched: z.boolean(),
 })
-export type Episode = z.infer<typeof episodeSchema>
+export type Episode = z.infer<typeof episodeDescriptorSchema>
 
 export const showSchema = z.object({
   id: z.uuid(),
@@ -19,12 +19,25 @@ export const showSchema = z.object({
   image_lg_url: z.nullish(z.url()),
   imdb_id: z.nullish(z.string()),
   thetvdb_id: z.nullish(z.number()),
-  seasons: z.array(z.array(episodeSchema)),
+  seasons: z.array(z.array(episodeDescriptorSchema)),
 })
 export type Show = z.infer<typeof showSchema>
 
 export const showMapSchema = z.record(z.uuid(), showSchema)
 export type ShowRecord = z.infer<typeof showMapSchema>
+
+// Episode details
+
+export const episodeDetailsSchema = z.object({
+  title: z.nullish(z.string()),
+  type: z.nullish(z.literal(["episode", "special"])),
+  duration: z.nullish(z.number()),
+  release_date: z.nullish(z.coerce.date()),
+  summary: z.nullish(z.string()),
+})
+export type EpisodeDetails = z.infer<typeof episodeDetailsSchema>
+
+export const episodeDetailsTableSchema = z.array(z.array(episodeDetailsSchema))
 
 // Show search result schema
 

@@ -1,10 +1,8 @@
 import { useState } from "react"
 
-import {
-  DisplayedEpisodeDetailContext,
-  type EpisodeSpecifier,
-} from "../../contexts/DisplayedEpisodeDetailContext"
-import { type Show, type ShowRecord } from "../../schemas/schemas"
+import { DisplayedEpisodeDetailContext } from "../../contexts/DisplayedEpisodeDetailContext"
+import { type Show, type ShowRecord } from "../../types/schemas"
+import { type EpisodeSpecifierWithDisplayNumber } from "../../types/types"
 import { EpisodeDetailModal } from "./EpisodeDetailModal"
 import { ShowDisplay } from "./ShowDisplay"
 
@@ -28,7 +26,7 @@ export function ShowDisplayList({ shows }: { shows: ShowRecord }) {
   // specifier for episode whose detail is to be displayed in a modal;
   // null for none
   const [displayedEpisodeDetailSpecifier, setDisplayedEpisodeDetailSpecifier] =
-    useState<EpisodeSpecifier | null>(null)
+    useState<EpisodeSpecifierWithDisplayNumber | null>(null)
 
   return (
     <>

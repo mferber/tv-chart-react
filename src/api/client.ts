@@ -78,6 +78,19 @@ export async function fetchShows(): Promise<object> {
   )
 }
 
+export async function fetchEpisodes(showId: string): Promise<object> {
+  const fresult = await fetch(`${API_BASE}/episodes/${showId}`)
+  if (fresult.ok) {
+    return await fresult.json()
+  }
+  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
+    throw new HttpUnauthorizedError("User not authenticated")
+  }
+  throw new HttpError(
+    `HTTP error attempting to fetch show listings: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
+  )
+}
+
 export async function fetchShowSearchResults(
   searchTerm: string,
 ): Promise<object> {

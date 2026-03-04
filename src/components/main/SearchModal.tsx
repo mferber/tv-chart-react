@@ -17,7 +17,7 @@ import {
   type ShowRecord,
   type ShowSearchResult,
   showSearchResultsSchema,
-} from "../../schemas/schemas"
+} from "../../types/schemas"
 import { ImageWithPlaceholder } from "../misc/ImageWithPlaceholder"
 
 interface SearchModalContextType {

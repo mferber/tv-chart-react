@@ -1,13 +1,11 @@
 import { createContext } from "react"
 
-export interface EpisodeSpecifier {
-  showId: string
-  seasonNum: number
-  episodeIdx: number
-}
+import { type EpisodeSpecifierWithDisplayNumber } from "../types/types"
 
 export interface DisplayedEpisodeDetailContextType {
-  setDisplayedEpisodeDetail: (episodeSpecifier: EpisodeSpecifier) => void
+  setDisplayedEpisodeDetail: (
+    episodeSpecifier: EpisodeSpecifierWithDisplayNumber,
+  ) => void
 }
 
 /**
