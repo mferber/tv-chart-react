@@ -133,8 +133,11 @@ function ModalBody({
                 ? "special"
                 : `episode ${episodeDetailSpecifier.episodeDisplayNumber}`}
             </div>
+            {episodeDetails.duration && (
+              <div className="text-sm">{episodeDetails.duration} min.</div>
+            )}
             <div className="text-2xl font-bold mt-2 mb-2">
-              {episodeDetails.title}
+              {episodeDetails.title ?? "Untitled"}
             </div>
             <div
               // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
