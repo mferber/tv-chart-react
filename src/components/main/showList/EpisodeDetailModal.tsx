@@ -28,7 +28,7 @@ export function EpisodeDetailModal({
       onOpenChange={close}
     >
       {episodeDetailSpecifier && episodeDescriptor && showTitle && (
-        <Dialog.Content className="fixed h-1/3 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto">
+        <Dialog.Content className="fixed max-h-1/3 right-2 md:right-8 bottom-2 md:bottom-8 left-2 md:left-8 p-4 bg-gray-200 border-4 rounded-xl outline-0 overflow-auto">
           <Dialog.Title className="sr-only" />
           <Dialog.Description className="sr-only" />
           <ModalBody
