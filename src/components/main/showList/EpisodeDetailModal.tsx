@@ -99,43 +99,39 @@ function ModalBody({
 
   return (
     <div>
-      <div className="text-right">
-        <button type="button" onClick={close}>
-          Cancel
-        </button>
-      </div>
-      <div>
-        {isLoading && (
-          <div className="flex justify-center w-full">
-            <ThreeDots color="black" width="40" height="20" />
-          </div>
-        )}
+      {isLoading && (
+        <div className="flex justify-center w-full">
+          <ThreeDots color="black" width="40" height="20" />
+        </div>
+      )}
 
-        {isError && <div>⚠️ Error</div>}
+      {isError && <div>⚠️ Error</div>}
 
-        {isEpisodeMissing && (
-          <div>No information available for this episode</div>
-        )}
+      {isEpisodeMissing && <div>No information available for this episode</div>}
 
-        {episodeDetails && (
-          <>
-            <div className="text-xs">
-              {isWatched(shows, episodeDetailSpecifier)
-                ? "*WATCHED*"
-                : "unwatched"}
-            </div>
-            <div className="font-bold">
-              {shows[episodeDetailSpecifier.showId].title}
+      {episodeDetails && (
+        <div className="flex">
+          <div>
+            <div>
+              <input
+                className="text-2xl mr-2"
+                type="checkbox"
+                name="watched"
+                checked={isWatched(shows, episodeDetailSpecifier)}
+              />
+              <span className="font-bold">
+                {shows[episodeDetailSpecifier.showId].title}
+              </span>
             </div>
             <div className="text-sm">
               Season {episodeDetailSpecifier.seasonNum},{" "}
               {episodeDetailSpecifier.episodeDisplayNumber === null
                 ? "special"
                 : `episode ${episodeDetailSpecifier.episodeDisplayNumber}`}
+              {episodeDetails.duration && (
+                <span> ({episodeDetails.duration} min.)</span>
+              )}
             </div>
-            {episodeDetails.duration && (
-              <div className="text-sm">{episodeDetails.duration} min.</div>
-            )}
             <div className="text-2xl font-bold mt-2 mb-2">
               {episodeDetails.title ?? "Untitled"}
             </div>
@@ -149,9 +145,14 @@ function ModalBody({
                   ) || "No summary available",
               }}
             />
-          </>
-        )}
-      </div>
+          </div>
+          <div className="text-right">
+            <button type="button" onClick={close}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
