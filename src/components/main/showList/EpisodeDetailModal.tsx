@@ -56,17 +56,6 @@ function ModalBody({
   const [isEpisodeMissing, setIsEpisodeMissing] = useState(false)
   const [isError, setIsError] = useState(false)
 
-  function isWatched(
-    shows: ShowRecord,
-    episodeDetailSpecifier: EpisodeSpecifierWithDisplayNumber,
-  ): boolean {
-    const show = shows[episodeDetailSpecifier.showId]
-    const seasonIdx = episodeDetailSpecifier.seasonNum - 1
-    const episodeIdx = episodeDetailSpecifier.episodeIdx
-
-    return show.seasons[seasonIdx][episodeIdx].watched
-  }
-
   useEffect(() => {
     if (episodeDetails || isError) {
       return
@@ -97,20 +86,70 @@ function ModalBody({
     })()
   }, [episodeDetailSpecifier, episodeDetails, isError])
 
+  if (isError) {
+    return (
+      <div className="flex justify-between">
+        <div>An error occurred loading episode information.</div>
+        <CloseButton close={close} />
+      </div>
+    )
+  }
+
+  if (isEpisodeMissing) {
+    return (
+      <div className="flex justify-between">
+        <div>No information available for this episode.</div>
+        <CloseButton close={close} />
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center w-full">
+        <ThreeDots color="black" width="40" height="20" />
+      </div>
+    )
+  }
+
+  return (
+    episodeDetails && (
+      <ModalBodyContent
+        episodeDetailSpecifier={episodeDetailSpecifier}
+        episodeDetails={episodeDetails}
+        shows={shows}
+        close={close}
+      />
+    )
+  )
+}
+
+function ModalBodyContent({
+  episodeDetailSpecifier,
+  episodeDetails,
+  shows,
+  close,
+}: {
+  episodeDetailSpecifier: EpisodeSpecifierWithDisplayNumber
+  episodeDetails: EpisodeDetails
+  shows: ShowRecord
+  close: () => void
+}) {
+  function isWatched(
+    shows: ShowRecord,
+    episodeDetailSpecifier: EpisodeSpecifierWithDisplayNumber,
+  ): boolean {
+    const show = shows[episodeDetailSpecifier.showId]
+    const seasonIdx = episodeDetailSpecifier.seasonNum - 1
+    const episodeIdx = episodeDetailSpecifier.episodeIdx
+
+    return show.seasons[seasonIdx][episodeIdx].watched
+  }
+
   return (
     <div>
-      {isLoading && (
-        <div className="flex justify-center w-full">
-          <ThreeDots color="black" width="40" height="20" />
-        </div>
-      )}
-
-      {isError && <div>⚠️ Error</div>}
-
-      {isEpisodeMissing && <div>No information available for this episode</div>}
-
       {episodeDetails && (
-        <div className="flex">
+        <div className="flex justify-between">
           <div>
             <div>
               <input
@@ -146,13 +185,19 @@ function ModalBody({
               }}
             />
           </div>
-          <div className="text-right">
-            <button type="button" onClick={close}>
-              Close
-            </button>
-          </div>
+          <CloseButton close={close} />
         </div>
       )}
+    </div>
+  )
+}
+
+function CloseButton({ close }: { close: () => void }) {
+  return (
+    <div>
+      <button type="button" onClick={close}>
+        Close
+      </button>
     </div>
   )
 }
