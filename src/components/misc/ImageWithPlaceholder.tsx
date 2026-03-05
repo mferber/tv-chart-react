@@ -20,15 +20,13 @@ export function ImageWithPlaceholder({
 
   const divClassNames = [
     widthClassName,
-    "min-" + widthClassName,
-    "max-" + widthClassName,
+    "shrink-0",
     loaded ? "" : placeholderHeightClassName,
     loaded ? "bg-transparent" : "bg-gray-200",
     additionalClassNames,
   ].join(" ")
 
   const imgClassNames = [
-    widthClassName,
     loaded ? "block" : "hidden",
     additionalClassNames,
   ].join(" ")
