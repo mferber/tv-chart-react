@@ -2,6 +2,7 @@ import { use } from "react"
 
 import { DisplayedEpisodeDetailSpecifierContext } from "../../../contexts/DisplayedEpisodeDetailSpecifierContext"
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
+import type { EpisodeSpecifier } from "../../../types/types"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 
 const STAR = "\u2605"
@@ -63,10 +64,12 @@ function Season({
       <span className="flex gap-1">
         {season.map((ep, idx) => (
           <EpisodeBox
+            episodeSpecifier={{
+              showId: showId,
+              seasonNum: seasonNum,
+              episodeIdx: idx,
+            }}
             episodeDescriptor={ep}
-            showId={showId}
-            seasonNumber={seasonNum}
-            episodeIndex={idx}
             // eslint-disable-next-line react-x/no-array-index-key
             key={idx}
           />
@@ -77,15 +80,11 @@ function Season({
 }
 
 function EpisodeBox({
+  episodeSpecifier,
   episodeDescriptor,
-  showId,
-  seasonNumber,
-  episodeIndex,
 }: {
+  episodeSpecifier: EpisodeSpecifier
   episodeDescriptor: EpisodeDescriptor
-  showId: string
-  seasonNumber: number
-  episodeIndex: number
 }) {
   const { setDisplayedEpisodeDetailSpecifier } = use(
     DisplayedEpisodeDetailSpecifierContext,
@@ -95,14 +94,10 @@ function EpisodeBox({
     <button
       type="button"
       className="relative inline-block"
-      key={episodeIndex}
+      key={episodeSpecifier.episodeIdx}
       title={episodeDescriptor.title ?? "No title"}
       onClick={() => {
-        setDisplayedEpisodeDetailSpecifier({
-          showId: showId,
-          seasonNum: seasonNumber,
-          episodeIdx: episodeIndex,
-        })
+        setDisplayedEpisodeDetailSpecifier(episodeSpecifier)
       }}
     >
       <EpisodeSquircle filled={episodeDescriptor.watched} />

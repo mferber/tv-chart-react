@@ -2,9 +2,9 @@ import * as Dialog from "@radix-ui/react-dialog"
 import { useEffect, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
-import { type ShowRecord } from "../../../types/schemas"
+import { type EpisodeDescriptor } from "../../../types/schemas"
 import { type EpisodeDetails } from "../../../types/schemas"
-import { type EpisodeSpecifierWithDisplayNumber } from "../../../types/types"
+import { type EpisodeSpecifier } from "../../../types/types"
 import {
   episodeDetailsCache,
   EpisodeMissingError,
@@ -12,11 +12,13 @@ import {
 
 export function EpisodeDetailModal({
   episodeDetailSpecifier,
-  shows,
+  episodeDescriptor,
+  showTitle,
   close,
 }: {
-  episodeDetailSpecifier: EpisodeSpecifierWithDisplayNumber | null
-  shows: ShowRecord
+  episodeDetailSpecifier: EpisodeSpecifier | null
+  episodeDescriptor: EpisodeDescriptor | null
+  showTitle: string | null
   close: () => void
 }) {
   return (
@@ -25,13 +27,14 @@ export function EpisodeDetailModal({
       open={episodeDetailSpecifier !== null}
       onOpenChange={close}
     >
-      {episodeDetailSpecifier && (
+      {episodeDetailSpecifier && episodeDescriptor && showTitle && (
         <Dialog.Content className="fixed h-1/3 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto">
           <Dialog.Title className="sr-only" />
           <Dialog.Description className="sr-only" />
           <ModalBody
             episodeDetailSpecifier={episodeDetailSpecifier}
-            shows={shows}
+            episodeDescriptor={episodeDescriptor}
+            showTitle={showTitle}
             close={close}
           />
         </Dialog.Content>
@@ -42,11 +45,13 @@ export function EpisodeDetailModal({
 
 function ModalBody({
   episodeDetailSpecifier,
-  shows,
+  episodeDescriptor,
+  showTitle,
   close,
 }: {
-  episodeDetailSpecifier: EpisodeSpecifierWithDisplayNumber
-  shows: ShowRecord
+  episodeDetailSpecifier: EpisodeSpecifier
+  episodeDescriptor: EpisodeDescriptor
+  showTitle: string
   close: () => void
 }) {
   const [episodeDetails, setEpisodeDetails] = useState<EpisodeDetails | null>(
@@ -61,7 +66,7 @@ function ModalBody({
       return
     }
 
-    ;(async () => {
+    const fetcher = async () => {
       setIsLoading(true)
       let fetchedEpisodes: EpisodeDetails[][] | null = null
       try {
@@ -83,7 +88,9 @@ function ModalBody({
           episodeDetailSpecifier.episodeIdx
         ],
       )
-    })()
+    }
+
+    fetcher()
   }, [episodeDetailSpecifier, episodeDetails, isError])
 
   if (isError) {
@@ -116,8 +123,9 @@ function ModalBody({
     episodeDetails && (
       <ModalBodyContent
         episodeDetailSpecifier={episodeDetailSpecifier}
+        episodeDescriptor={episodeDescriptor}
         episodeDetails={episodeDetails}
-        shows={shows}
+        showTitle={showTitle}
         close={close}
       />
     )
@@ -126,26 +134,17 @@ function ModalBody({
 
 function ModalBodyContent({
   episodeDetailSpecifier,
+  episodeDescriptor,
   episodeDetails,
-  shows,
+  showTitle,
   close,
 }: {
-  episodeDetailSpecifier: EpisodeSpecifierWithDisplayNumber
+  episodeDetailSpecifier: EpisodeSpecifier
+  episodeDescriptor: EpisodeDescriptor
   episodeDetails: EpisodeDetails
-  shows: ShowRecord
+  showTitle: string
   close: () => void
 }) {
-  function isWatched(
-    shows: ShowRecord,
-    episodeDetailSpecifier: EpisodeSpecifierWithDisplayNumber,
-  ): boolean {
-    const show = shows[episodeDetailSpecifier.showId]
-    const seasonIdx = episodeDetailSpecifier.seasonNum - 1
-    const episodeIdx = episodeDetailSpecifier.episodeIdx
-
-    return show.seasons[seasonIdx][episodeIdx].watched
-  }
-
   return (
     <div>
       {episodeDetails && (
@@ -156,17 +155,15 @@ function ModalBodyContent({
                 className="text-2xl mr-2"
                 type="checkbox"
                 name="watched"
-                checked={isWatched(shows, episodeDetailSpecifier)}
+                checked={episodeDescriptor.watched}
               />
-              <span className="font-bold">
-                {shows[episodeDetailSpecifier.showId].title}
-              </span>
+              <span className="font-bold">{showTitle}</span>
             </div>
             <div className="text-sm">
               Season {episodeDetailSpecifier.seasonNum},{" "}
-              {episodeDetailSpecifier.episodeDisplayNumber === null
+              {episodeDescriptor.displayNumber === null
                 ? "special"
-                : `episode ${episodeDetailSpecifier.episodeDisplayNumber}`}
+                : `episode ${episodeDescriptor.displayNumber}`}
               {episodeDetails.duration && (
                 <span> ({episodeDetails.duration} min.)</span>
               )}

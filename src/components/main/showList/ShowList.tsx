@@ -14,8 +14,15 @@ import { Show } from "./Show"
 export function ShowList({ shows }: { shows: ShowRecord }) {
   // specifier for episode whose detail is to be displayed in a popup dialog;
   // null for none
-  const [DisplayedEpisodeDetailSpecifier, setDisplayedEpisodeDetailSpecifier] =
+  const [displayedEpisodeDetailSpecifier, setDisplayedEpisodeDetailSpecifier] =
     useState<EpisodeSpecifier | null>(null)
+
+  const specifier = displayedEpisodeDetailSpecifier
+  const episodeDescriptor = specifier
+    ? shows[specifier.showId].seasons[specifier.seasonNum - 1][
+        specifier?.episodeIdx
+      ]
+    : null
 
   return (
     <>
@@ -31,8 +38,9 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
       </DisplayedEpisodeDetailSpecifierContext>
 
       <EpisodeDetailModal
-        episodeDetailSpecifier={DisplayedEpisodeDetailSpecifier}
-        shows={shows}
+        episodeDetailSpecifier={displayedEpisodeDetailSpecifier}
+        episodeDescriptor={episodeDescriptor}
+        showTitle={specifier ? shows[specifier.showId].title : null}
         close={() => setDisplayedEpisodeDetailSpecifier(null)}
       />
     </>
