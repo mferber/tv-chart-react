@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "react-hot-toast"
-import Modal from "react-modal"
 
 import { LoginPanel } from "./components/authentication/LoginPanel"
 import { MainUI } from "./components/main/MainUI"
@@ -10,8 +9,6 @@ import {
   useCurrentUserStatusContext,
 } from "./contexts/CurrentUserStatusContext"
 import { setUpBackgroundRefetchFocusEvents } from "./utils/browsers"
-
-Modal.setAppElement("#root")
 
 setUpBackgroundRefetchFocusEvents()
 
