@@ -6,8 +6,9 @@ export const episodeDescriptorSchema = z.object({
   title: z.nullish(z.string()),
   type: z.literal(["episode", "special"]),
   watched: z.boolean(),
+  displayNumber: z.nullable(z.number()),
 })
-export type Episode = z.infer<typeof episodeDescriptorSchema>
+export type EpisodeDescriptor = z.infer<typeof episodeDescriptorSchema>
 
 export const showSchema = z.object({
   id: z.uuid(),

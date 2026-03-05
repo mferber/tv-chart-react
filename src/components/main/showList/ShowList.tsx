@@ -1,8 +1,8 @@
 import { useState } from "react"
 
-import { DisplayedEpisodeDetailContext } from "../../../contexts/DisplayedEpisodeDetailContext"
+import { DisplayedEpisodeDetailSpecifierContext } from "../../../contexts/DisplayedEpisodeDetailSpecifierContext"
 import { type ShowRecord } from "../../../types/schemas"
-import { type EpisodeSpecifierWithDisplayNumber } from "../../../types/types"
+import type { EpisodeSpecifier } from "../../../types/types"
 import { titleSort } from "../../../utils/showSort"
 import { EpisodeDetailModal } from "./EpisodeDetailModal"
 import { Show } from "./Show"
@@ -12,26 +12,26 @@ import { Show } from "./Show"
  * @param shows map (by id) of all the shows to display
  */
 export function ShowList({ shows }: { shows: ShowRecord }) {
-  // specifier for episode whose detail is to be displayed in a modal;
+  // specifier for episode whose detail is to be displayed in a popup dialog;
   // null for none
-  const [displayedEpisodeDetailSpecifier, setDisplayedEpisodeDetailSpecifier] =
-    useState<EpisodeSpecifierWithDisplayNumber | null>(null)
+  const [DisplayedEpisodeDetailSpecifier, setDisplayedEpisodeDetailSpecifier] =
+    useState<EpisodeSpecifier | null>(null)
 
   return (
     <>
       {/* Context allows deep-nested elements to trigger or cancel display of an
-          episode's detail in the modal below */}
-      <DisplayedEpisodeDetailContext
+          episode's detail in the popup dialog below */}
+      <DisplayedEpisodeDetailSpecifierContext
         value={{
-          setDisplayedEpisodeDetail: (specifier) =>
+          setDisplayedEpisodeDetailSpecifier: (specifier: EpisodeSpecifier) =>
             setDisplayedEpisodeDetailSpecifier(specifier),
         }}
       >
         <ShowListBody shows={shows} />
-      </DisplayedEpisodeDetailContext>
+      </DisplayedEpisodeDetailSpecifierContext>
 
       <EpisodeDetailModal
-        episodeDetailSpecifier={displayedEpisodeDetailSpecifier}
+        episodeDetailSpecifier={DisplayedEpisodeDetailSpecifier}
         shows={shows}
         close={() => setDisplayedEpisodeDetailSpecifier(null)}
       />

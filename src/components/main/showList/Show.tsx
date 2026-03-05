@@ -1,8 +1,7 @@
 import { use } from "react"
 
-import { DisplayedEpisodeDetailContext } from "../../../contexts/DisplayedEpisodeDetailContext"
+import { DisplayedEpisodeDetailSpecifierContext } from "../../../contexts/DisplayedEpisodeDetailSpecifierContext"
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
-import { EpisodeWithDisplayNumber } from "../../../types/types"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 
 const STAR = "\u2605"
@@ -58,16 +57,13 @@ function Season({
   season: EpisodeDescriptor[]
   seasonNum: number
 }) {
-  const episodesWithDisplayLabels =
-    EpisodeWithDisplayNumber.fromEpisodeList(season)
-
   return (
     <div className="flex gap-8 items-center">
       <span className="w-2 shrink-0 text-2xl">{seasonNum}</span>
       <span className="flex gap-1">
-        {episodesWithDisplayLabels.map((ep, idx) => (
+        {season.map((ep, idx) => (
           <EpisodeBox
-            episodeWithDisplayNumber={ep}
+            episodeDescriptor={ep}
             showId={showId}
             seasonNumber={seasonNum}
             episodeIndex={idx}
@@ -81,45 +77,42 @@ function Season({
 }
 
 function EpisodeBox({
-  episodeWithDisplayNumber,
+  episodeDescriptor,
   showId,
   seasonNumber,
   episodeIndex,
 }: {
-  episodeWithDisplayNumber: EpisodeWithDisplayNumber
+  episodeDescriptor: EpisodeDescriptor
   showId: string
   seasonNumber: number
   episodeIndex: number
 }) {
-  const { setDisplayedEpisodeDetail } = use(DisplayedEpisodeDetailContext)
+  const { setDisplayedEpisodeDetailSpecifier } = use(
+    DisplayedEpisodeDetailSpecifierContext,
+  )
 
   return (
     <button
       type="button"
       className="relative inline-block"
       key={episodeIndex}
-      title={episodeWithDisplayNumber.episode.title ?? "No title"}
+      title={episodeDescriptor.title ?? "No title"}
       onClick={() => {
-        setDisplayedEpisodeDetail({
+        setDisplayedEpisodeDetailSpecifier({
           showId: showId,
           seasonNum: seasonNumber,
           episodeIdx: episodeIndex,
-          episodeDisplayNumber: episodeWithDisplayNumber.displayNum,
         })
       }}
     >
-      <EpisodeSquircle filled={episodeWithDisplayNumber.episode.watched} />
+      <EpisodeSquircle filled={episodeDescriptor.watched} />
 
       {/* center the display marker -- star or episode number -- over the squircle */}
       <div className="absolute inset-0 flex items-center justify-center">
         <span
-          className={
-            episodeWithDisplayNumber.episode.watched
-              ? "text-white"
-              : "text-black"
-          }
+          className={episodeDescriptor.watched ? "text-white" : "text-black"}
         >
-          {episodeWithDisplayNumber.displayNum ?? STAR}
+          {episodeDescriptor.displayNumber ?? STAR}
         </span>
       </div>
     </button>

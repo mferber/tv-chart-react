@@ -33,9 +33,11 @@ export function MainUI() {
         refetch={showsQuery.refetch}
         isRefetching={showsQuery.isRefetching}
       />
-      {showsQuery.data && <ShowList shows={showsQuery.data} />}
       {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
       {showsQuery.isPending && <div>Loading...</div>}
+
+      {showsQuery.data && <ShowList shows={showsQuery.data} />}
+
       <SearchModal
         isOpen={searchUIOpen}
         close={() => setSearchUIOpen(false)}
