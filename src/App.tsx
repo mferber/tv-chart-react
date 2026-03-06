@@ -26,7 +26,7 @@ function App() {
       <CurrentUserStatusContextProvider>
         <QueryClientProvider client={queryClient}>
           <AppBody />
-          <Toaster />
+          <Toaster position="top-right" />
         </QueryClientProvider>
       </CurrentUserStatusContextProvider>
     </AppEnvironmentContextProvider>
