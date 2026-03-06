@@ -34,7 +34,11 @@ export function MainUI() {
         isRefetching={showsQuery.isRefetching}
       />
       {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
-      {showsQuery.isPending && <div>Loading...</div>}
+      {showsQuery.isPending && (
+        <div className="flex h-40 justify-center items-center">
+          <ThreeDots width="50" height="15" color="black" />
+        </div>
+      )}
 
       {showsQuery.data && <ShowList shows={showsQuery.data} />}
 
