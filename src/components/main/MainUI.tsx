@@ -33,14 +33,20 @@ export function MainUI() {
         refetch={showsQuery.refetch}
         isRefetching={showsQuery.isRefetching}
       />
-      {showsQuery.error && <div>Couldn't load shows — try reloading</div>}
+      {showsQuery.error && (
+        <div className="flex h-20 justify-center items-center text-xl">
+          Couldn't load shows — try reloading
+        </div>
+      )}
       {showsQuery.isPending && (
         <div className="flex h-40 justify-center items-center">
           <ThreeDots width="50" height="15" color="black" />
         </div>
       )}
 
-      {showsQuery.data && <ShowList shows={showsQuery.data} />}
+      {showsQuery.data && !showsQuery.error && (
+        <ShowList shows={showsQuery.data} />
+      )}
 
       <SearchModal
         isOpen={searchUIOpen}
