@@ -27,11 +27,11 @@ class EpisodeDetailsCache {
     }
     const season = showEpisodes.at(episodeSpecifier.seasonNum - 1)
     if (season === undefined) {
-      throw EpisodeMissingError
+      throw new EpisodeMissingError()
     }
     const episode = season.at(episodeSpecifier.episodeIdx)
     if (episode === undefined) {
-      throw EpisodeMissingError
+      throw new EpisodeMissingError()
     }
     return episode
   }
