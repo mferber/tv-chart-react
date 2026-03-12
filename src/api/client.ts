@@ -1,4 +1,14 @@
 import { type User } from "../providers/CurrentUserStatusProvider"
+import {
+  type EpisodeDetails,
+  episodeDetailsTableSchema,
+  type Show,
+  showMapSchema,
+  type ShowRecord,
+  showSchema,
+  type ShowSearchResults,
+  showSearchResultsSchema,
+} from "../types/schemas"
 import { getCSRFCookie } from "../utils/cookies"
 
 const API_BASE = "/api"
@@ -48,27 +58,29 @@ export async function fetchLogout(): Promise<string> {
   return await fetchResponse.text()
 }
 
-export async function fetchShows(): Promise<object> {
+export async function fetchShows(): Promise<ShowRecord> {
   const fetchResponse = await fetch(`${API_BASE}/shows`, { method: "GET" })
   await handleError(
     fetchResponse,
     "HTTP error attempting to fetch show listings",
   )
-  return await fetchResponse.json()
+  return showMapSchema.parse(await fetchResponse.json())
 }
 
-export async function fetchEpisodes(showId: string): Promise<object> {
+export async function fetchEpisodes(
+  showId: string,
+): Promise<EpisodeDetails[][]> {
   const fetchResponse = await fetch(`${API_BASE}/episodes/${showId}`)
   await handleError(
     fetchResponse,
     "HTTP error attempting to fetch show listings",
   )
-  return await fetchResponse.json()
+  return episodeDetailsTableSchema.parse(await fetchResponse.json())
 }
 
 export async function fetchShowSearchResults(
   searchTerm: string,
-): Promise<object> {
+): Promise<ShowSearchResults> {
   const fetchResponse = await fetch(
     `${API_BASE}/search?q=${encodeURIComponent(searchTerm)}`,
   )
@@ -76,15 +88,15 @@ export async function fetchShowSearchResults(
     fetchResponse,
     "HTTP error attempting to fetch show search results",
   )
-  return await fetchResponse.json()
+  return showSearchResultsSchema.parse(await fetchResponse.json())
 }
 
-export async function addShowFromTVmazeId(tvmaze_id: number): Promise<object> {
+export async function addShowFromTVmazeId(tvmaze_id: number): Promise<Show> {
   const fetchResponse = await fetch(
     `${API_BASE}/add-show?tvmaze_id=${tvmaze_id}`,
   )
   await handleError(fetchResponse, "HTTP error attempting to add new show")
-  return await fetchResponse.json()
+  return showSchema.parse(await fetchResponse.json())
 }
 
 async function handleError(fetchResponse: Response, errorMsg: string) {

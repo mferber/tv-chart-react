@@ -15,11 +15,7 @@ import {
   fetchShowSearchResults,
 } from "../../../api/client"
 import { useSimpleQuery } from "../../../hooks"
-import {
-  type ShowRecord,
-  type ShowSearchResult,
-  showSearchResultsSchema,
-} from "../../../types/schemas"
+import { type ShowRecord, type ShowSearchResult } from "../../../types/schemas"
 import { Button } from "../../misc/Button"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 
@@ -121,8 +117,7 @@ function ModalContent({
   // Main search query
   const { executeQuery, resetQuery, data, isLoading } = useSimpleQuery(
     async (searchTerm: string) => {
-      const fetchResults = await fetchShowSearchResults(searchTerm)
-      return showSearchResultsSchema.parse(fetchResults)
+      return await fetchShowSearchResults(searchTerm)
     },
   )
 

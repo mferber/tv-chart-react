@@ -3,7 +3,7 @@ import React, { type ReactNode, use } from "react"
 
 import { fetchShows } from "../api/client"
 import { useQueryErrorToast } from "../hooks"
-import { showMapSchema, type ShowRecord } from "../types/schemas"
+import { type ShowRecord } from "../types/schemas"
 
 /**
  * Hook to access the query object
@@ -24,8 +24,7 @@ export function ShowsQueryProvider({ children }: { children: ReactNode }) {
   const showsQuery = useQuery({
     queryKey: ["shows"],
     queryFn: async () => {
-      const fetch_results = await fetchShows()
-      return showMapSchema.parse(fetch_results)
+      return await fetchShows()
     },
   })
 

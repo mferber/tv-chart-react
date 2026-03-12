@@ -1,8 +1,5 @@
 import { fetchEpisodes } from "../api/client"
-import {
-  type EpisodeDetails,
-  episodeDetailsTableSchema,
-} from "../types/schemas"
+import { type EpisodeDetails } from "../types/schemas"
 import type { EpisodeSpecifier } from "../types/types"
 
 export class EpisodeMissingError extends Error {}
@@ -39,9 +36,7 @@ class EpisodeDetailsCache {
   async fetchFor(showId: string): Promise<EpisodeDetails[][]> {
     console.log("Fetching for show", showId)
 
-    const json = await fetchEpisodes(showId)
-    const episodeDetails: EpisodeDetails[][] =
-      episodeDetailsTableSchema.parse(json)
+    const episodeDetails: EpisodeDetails[][] = await fetchEpisodes(showId)
     this.storeShowEpisodes(showId, episodeDetails)
     return episodeDetails
   }
