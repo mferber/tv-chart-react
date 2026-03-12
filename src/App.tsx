@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast"
 
 import { LoginPanel } from "./components/authentication/LoginPanel"
 import { MainUI } from "./components/main/MainUI"
-import { AppEnvironmentContextProvider } from "./contexts/AppEnvironmentContext"
+import { AppEnvironmentProvider } from "./contexts/AppEnvironmentProvider"
 import {
   CurrentUserStatusProvider,
   useCurrentUserStatus,
@@ -22,14 +22,14 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <AppEnvironmentContextProvider>
+    <AppEnvironmentProvider>
       <CurrentUserStatusProvider>
         <QueryClientProvider client={queryClient}>
           <AppBody />
           <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
         </QueryClientProvider>
       </CurrentUserStatusProvider>
-    </AppEnvironmentContextProvider>
+    </AppEnvironmentProvider>
   )
 }
 
