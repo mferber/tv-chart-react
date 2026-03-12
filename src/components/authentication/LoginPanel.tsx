@@ -2,7 +2,7 @@ import { type FormEvent, useState } from "react"
 import toast from "react-hot-toast"
 
 import { fetchLogin, HttpUnauthorizedError } from "../../api/client"
-import { useCurrentUserStatus } from "../../contexts/CurrentUserStatusProvider"
+import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
 
 export function LoginPanel() {
   const currentUserStatus = useCurrentUserStatus()

@@ -2,7 +2,7 @@ import { type MouseEvent, type ReactNode } from "react"
 import toast from "react-hot-toast"
 
 import { fetchLogout } from "../../api/client"
-import { useCurrentUserStatus } from "../../contexts/CurrentUserStatusProvider"
+import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
 
 export function LogOutLink({ children }: { children: ReactNode }) {
   const currentStatusContext = useCurrentUserStatus()

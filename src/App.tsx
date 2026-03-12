@@ -3,11 +3,11 @@ import { Toaster } from "react-hot-toast"
 
 import { LoginPanel } from "./components/authentication/LoginPanel"
 import { MainUI } from "./components/main/MainUI"
-import { AppEnvironmentProvider } from "./contexts/AppEnvironmentProvider"
+import { AppEnvironmentProvider } from "./providers/AppEnvironmentProvider"
 import {
   CurrentUserStatusProvider,
   useCurrentUserStatus,
-} from "./contexts/CurrentUserStatusProvider"
+} from "./providers/CurrentUserStatusProvider"
 import { setUpBackgroundRefetchFocusEvents } from "./utils/browsers"
 
 setUpBackgroundRefetchFocusEvents()

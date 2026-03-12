@@ -3,7 +3,7 @@ import { type Dispatch, type SetStateAction, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
 import { fetchShows } from "../../api/client"
-import { useCurrentUserStatus } from "../../contexts/CurrentUserStatusProvider"
+import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
 import { useQueryErrorToast } from "../../hooks"
 import { showMapSchema } from "../../types/schemas"
 import { LogOutLink } from "../authentication/LogOutLink"
