@@ -1,4 +1,4 @@
-import { type User } from "../contexts/CurrentUserStatusContext"
+import { type User } from "../contexts/CurrentUserStatusProvider"
 import { getCSRFCookie } from "../utils/cookies"
 
 const API_BASE = "/api"

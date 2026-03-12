@@ -5,9 +5,9 @@ import { LoginPanel } from "./components/authentication/LoginPanel"
 import { MainUI } from "./components/main/MainUI"
 import { AppEnvironmentContextProvider } from "./contexts/AppEnvironmentContext"
 import {
-  CurrentUserStatusContextProvider,
-  useCurrentUserStatusContext,
-} from "./contexts/CurrentUserStatusContext"
+  CurrentUserStatusProvider,
+  useCurrentUserStatus,
+} from "./contexts/CurrentUserStatusProvider"
 import { setUpBackgroundRefetchFocusEvents } from "./utils/browsers"
 
 setUpBackgroundRefetchFocusEvents()
@@ -23,18 +23,18 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <AppEnvironmentContextProvider>
-      <CurrentUserStatusContextProvider>
+      <CurrentUserStatusProvider>
         <QueryClientProvider client={queryClient}>
           <AppBody />
           <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
         </QueryClientProvider>
-      </CurrentUserStatusContextProvider>
+      </CurrentUserStatusProvider>
     </AppEnvironmentContextProvider>
   )
 }
 
 function AppBody() {
-  const currentUserStatus = useCurrentUserStatusContext()
+  const currentUserStatus = useCurrentUserStatus()
 
   function renderBody() {
     switch (currentUserStatus.authenticationStatus) {

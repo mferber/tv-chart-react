@@ -2,10 +2,10 @@ import { type MouseEvent, type ReactNode } from "react"
 import toast from "react-hot-toast"
 
 import { fetchLogout } from "../../api/client"
-import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
+import { useCurrentUserStatus } from "../../contexts/CurrentUserStatusProvider"
 
 export function LogOutLink({ children }: { children: ReactNode }) {
-  const currentStatusContext = useCurrentUserStatusContext()
+  const currentStatusContext = useCurrentUserStatus()
 
   const logOut = async (evt: MouseEvent<HTMLAnchorElement>) => {
     evt.preventDefault()

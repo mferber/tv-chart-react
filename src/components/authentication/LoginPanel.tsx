@@ -2,10 +2,10 @@ import { type FormEvent, useState } from "react"
 import toast from "react-hot-toast"
 
 import { fetchLogin, HttpUnauthorizedError } from "../../api/client"
-import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
+import { useCurrentUserStatus } from "../../contexts/CurrentUserStatusProvider"
 
 export function LoginPanel() {
-  const currentUserStatus = useCurrentUserStatusContext()
+  const currentUserStatus = useCurrentUserStatus()
   const [loginFailed, setLoginFailed] = useState(false)
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {

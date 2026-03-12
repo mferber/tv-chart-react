@@ -14,43 +14,24 @@ export interface User {
 
 type AuthenticationStatusType = "unknown" | "unauthenticated" | "authenticated"
 
-// App startup check: ask server for currently authenticated user, in case we have a valid JWT
-// cookie lying around
-async function checkCurrentUserStatus(): Promise<
-  [AuthenticationStatusType, User | null]
-> {
-  try {
-    const user = await fetchCurrentUser()
-    return ["authenticated", user]
-  } catch (e) {
-    if (e instanceof HttpUnauthorizedError) {
-      return ["unauthenticated", null]
-    } else {
-      console.error(e)
-      return ["unknown", null]
-    }
-  }
-}
-
-// Context
-
-// Expose current user status and setters for updating it
-interface CurrentUserStatusContextType {
-  authenticationStatus: AuthenticationStatusType
-  user: User | null
-  setCurrentUserAuthenticated: (user: User) => void
-  setCurrentUserUnauthenticated: () => void
-  setCurrentUserUnknown: () => void
-}
-
+/**
+ * Hook to receive current user status
+ */
 // eslint-disable-next-line react-refresh/only-export-components
-export const CurrentUserStatusContext =
-  createContext<CurrentUserStatusContextType>(
-    {} as CurrentUserStatusContextType,
-  )
+export function useCurrentUserStatus() {
+  const context = use(CurrentUserStatusContext)
+  if (context === undefined) {
+    throw new Error(
+      "useCurrentUserStatus must be used within CurrentUserStatusProvider",
+    )
+  }
+  return context
+}
 
-// Context provider
-export function CurrentUserStatusContextProvider({
+/**
+ * Feature provider
+ */
+export function CurrentUserStatusProvider({
   children,
 }: {
   children: ReactNode
@@ -92,13 +73,35 @@ export function CurrentUserStatusContextProvider({
   )
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export function useCurrentUserStatusContext(): CurrentUserStatusContextType {
-  const context = use(CurrentUserStatusContext)
-  if (context === undefined) {
-    throw new Error(
-      "useCurrentUserStatusContext must be used within CurrentUserStatusContextProvider",
-    )
+// Context
+
+// Expose current user status and setters for updating it
+interface CurrentUserStatusContextType {
+  authenticationStatus: AuthenticationStatusType
+  user: User | null
+  setCurrentUserAuthenticated: (user: User) => void
+  setCurrentUserUnauthenticated: () => void
+  setCurrentUserUnknown: () => void
+}
+
+const CurrentUserStatusContext = createContext<CurrentUserStatusContextType>(
+  {} as CurrentUserStatusContextType,
+)
+
+// App startup check: ask server for currently authenticated user, in case we have a valid JWT
+// cookie lying around
+async function checkCurrentUserStatus(): Promise<
+  [AuthenticationStatusType, User | null]
+> {
+  try {
+    const user = await fetchCurrentUser()
+    return ["authenticated", user]
+  } catch (e) {
+    if (e instanceof HttpUnauthorizedError) {
+      return ["unauthenticated", null]
+    } else {
+      console.error(e)
+      return ["unknown", null]
+    }
   }
-  return context
 }

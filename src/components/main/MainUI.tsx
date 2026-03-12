@@ -3,7 +3,7 @@ import { type Dispatch, type SetStateAction, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
 import { fetchShows } from "../../api/client"
-import { useCurrentUserStatusContext } from "../../contexts/CurrentUserStatusContext"
+import { useCurrentUserStatus } from "../../contexts/CurrentUserStatusProvider"
 import { useQueryErrorToast } from "../../hooks"
 import { showMapSchema } from "../../types/schemas"
 import { LogOutLink } from "../authentication/LogOutLink"
@@ -67,7 +67,7 @@ function AppHeader({
   isRefetching: boolean
 }) {
   // User can't be null or we wouldn't be here
-  const currentUser = useCurrentUserStatusContext().user!
+  const currentUser = useCurrentUserStatus().user!
 
   return (
     <div className="flex justify-between border-b mb-4 align-middle">
