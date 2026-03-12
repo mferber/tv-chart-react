@@ -6,117 +6,96 @@ const CSRF_TOKEN_HEADER_NAME = "X-CSRFToken"
 const HTTP_STATUS_UNAUTHORIZED = 401
 
 export class HttpUnauthorizedError extends Error {
-  constructor(message: string) {
-    super(message)
+  constructor() {
+    super()
     this.name = "HttpUnauthorizedError"
   }
 }
 
 export class HttpError extends Error {
-  constructor(message: string) {
-    super(message)
+  constructor() {
+    super()
     this.name = "HttpError"
   }
 }
 
 export async function fetchCurrentUser(): Promise<User> {
-  const fresult = await fetch(`${API_BASE}/auth/users/me`, { method: "GET" })
-  if (fresult.ok) {
-    return (await fresult.json()) as User
-  }
-  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
-    throw new HttpUnauthorizedError("User not authenticated")
-  }
-  throw new HttpError(
-    `HTTP error attempting to fetch user: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
-  )
+  const fetchResponse = await fetch(`${API_BASE}/auth/users/me`, {
+    method: "GET",
+  })
+  await handleError(fetchResponse, "HTTP error attempting to fetch user")
+  return (await fetchResponse.json()) as User
 }
 
 export async function fetchLogin(
   email: string,
   password: string,
 ): Promise<User> {
-  const fresult = await fetch(`${API_BASE}/auth/login`, {
+  const fetchResponse = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     body: JSON.stringify({ email, password }),
     headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
   })
-  if (fresult.ok) {
-    return (await fresult.json()) as User
-  }
-  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
-    throw new HttpUnauthorizedError("Login failed")
-  }
-  throw new HttpError(
-    `HTTP error attempting to log in user: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
-  )
+  await handleError(fetchResponse, "HTTP error attempting to log in user")
+  return (await fetchResponse.json()) as User
 }
 
 export async function fetchLogout(): Promise<string> {
-  const fresult = await fetch(`${API_BASE}/auth/logout`, { method: "GET" })
-  if (fresult.ok) {
-    return await fresult.text()
-  }
-  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
-    throw new HttpUnauthorizedError("User not authenticated")
-  }
-  throw new HttpError(
-    `HTTP error attempting to fetch user: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
-  )
+  const fetchResponse = await fetch(`${API_BASE}/auth/logout`, {
+    method: "GET",
+  })
+  await handleError(fetchResponse, "HTTP error attempting to fetch user")
+  return await fetchResponse.text()
 }
 
 export async function fetchShows(): Promise<object> {
-  const fresult = await fetch(`${API_BASE}/shows`, { method: "GET" })
-  if (fresult.ok) {
-    return await fresult.json()
-  }
-  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
-    throw new HttpUnauthorizedError("User not authenticated")
-  }
-  throw new HttpError(
-    `HTTP error attempting to fetch show listings: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
+  const fetchResponse = await fetch(`${API_BASE}/shows`, { method: "GET" })
+  await handleError(
+    fetchResponse,
+    "HTTP error attempting to fetch show listings",
   )
+  return await fetchResponse.json()
 }
 
 export async function fetchEpisodes(showId: string): Promise<object> {
-  const fresult = await fetch(`${API_BASE}/episodes/${showId}`)
-  if (fresult.ok) {
-    return await fresult.json()
-  }
-  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
-    throw new HttpUnauthorizedError("User not authenticated")
-  }
-  throw new HttpError(
-    `HTTP error attempting to fetch show listings: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
+  const fetchResponse = await fetch(`${API_BASE}/episodes/${showId}`)
+  await handleError(
+    fetchResponse,
+    "HTTP error attempting to fetch show listings",
   )
+  return await fetchResponse.json()
 }
 
 export async function fetchShowSearchResults(
   searchTerm: string,
 ): Promise<object> {
-  const fresult = await fetch(
+  const fetchResponse = await fetch(
     `${API_BASE}/search?q=${encodeURIComponent(searchTerm)}`,
   )
-  if (fresult.ok) {
-    return await fresult.json()
-  }
-  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
-    throw new HttpUnauthorizedError("User not authenticated")
-  }
-  throw new HttpError(
-    `HTTP error attempting to fetch show search results: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
+  await handleError(
+    fetchResponse,
+    "HTTP error attempting to fetch show search results",
   )
+  return await fetchResponse.json()
 }
 
 export async function addShowFromTVmazeId(tvmaze_id: number): Promise<object> {
-  const fresult = await fetch(`${API_BASE}/add-show?tvmaze_id=${tvmaze_id}`)
-  if (fresult.ok) {
-    return await fresult.json()
-  }
-  if (fresult.status === HTTP_STATUS_UNAUTHORIZED) {
-    throw new HttpUnauthorizedError("User not authenticated")
-  }
-  throw new HttpError(
-    `HTTP error attempting to add new show: ${fresult.status} ${fresult.statusText} - ${await fresult.text()}`,
+  const fetchResponse = await fetch(
+    `${API_BASE}/add-show?tvmaze_id=${tvmaze_id}`,
   )
+  await handleError(fetchResponse, "HTTP error attempting to add new show")
+  return await fetchResponse.json()
+}
+
+async function handleError(fetchResponse: Response, errorMsg: string) {
+  if (fetchResponse.ok) {
+    return
+  }
+  if (fetchResponse.status === HTTP_STATUS_UNAUTHORIZED) {
+    throw new HttpUnauthorizedError()
+  }
+  console.error(
+    `${errorMsg}: ${fetchResponse.status} ${fetchResponse.statusText}`,
+  )
+  throw new HttpError()
 }
