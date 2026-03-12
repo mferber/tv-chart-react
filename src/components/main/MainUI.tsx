@@ -1,30 +1,15 @@
-import { useQuery } from "@tanstack/react-query"
 import { type Dispatch, type SetStateAction, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
-import { fetchShows } from "../../api/client"
 import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
-import { useQueryErrorToast } from "../../hooks"
-import { showMapSchema } from "../../types/schemas"
+import { useShowsQuery } from "../../providers/ShowsQueryProvider"
 import { LogOutLink } from "../authentication/LogOutLink"
 import { SearchModal } from "./search/SearchModal"
 import { ShowList } from "./showList/ShowList"
 
 export function MainUI() {
   const [searchUIOpen, setSearchUIOpen] = useState(false)
-
-  const showsQuery = useQuery({
-    queryKey: ["shows"],
-    queryFn: async () => {
-      const fetch_results = await fetchShows()
-      return showMapSchema.parse(fetch_results)
-    },
-  })
-
-  useQueryErrorToast(
-    showsQuery,
-    "Shows could not be loaded due to a network problem",
-  )
+  const showsQuery = useShowsQuery()
 
   return (
     <main className="m-4">

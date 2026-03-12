@@ -8,6 +8,7 @@ import {
   CurrentUserStatusProvider,
   useCurrentUserStatus,
 } from "./providers/CurrentUserStatusProvider"
+import { ShowsQueryProvider } from "./providers/ShowsQueryProvider"
 import { setUpBackgroundRefetchFocusEvents } from "./utils/browsers"
 
 setUpBackgroundRefetchFocusEvents()
@@ -25,8 +26,10 @@ function App() {
     <AppEnvironmentProvider>
       <CurrentUserStatusProvider>
         <QueryClientProvider client={queryClient}>
-          <AppBody />
-          <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
+          <ShowsQueryProvider>
+            <AppBody />
+            <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
+          </ShowsQueryProvider>
         </QueryClientProvider>
       </CurrentUserStatusProvider>
     </AppEnvironmentProvider>
