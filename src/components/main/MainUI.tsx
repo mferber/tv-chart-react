@@ -2,12 +2,23 @@ import { type Dispatch, type SetStateAction, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
 import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
-import { useShowsQuery } from "../../providers/ShowsQueryProvider"
+import {
+  ShowsQueryProvider,
+  useShowsQuery,
+} from "../../providers/ShowsQueryProvider"
 import { LogOutLink } from "../authentication/LogOutLink"
 import { SearchModal } from "./search/SearchModal"
 import { ShowList } from "./showList/ShowList"
 
 export function MainUI() {
+  return (
+    <ShowsQueryProvider>
+      <MainUIBody />
+    </ShowsQueryProvider>
+  )
+}
+
+function MainUIBody() {
   const [searchUIOpen, setSearchUIOpen] = useState(false)
   const showsQuery = useShowsQuery()
 
