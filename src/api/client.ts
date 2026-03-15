@@ -9,6 +9,7 @@ import {
   type ShowSearchResults,
   showSearchResultsSchema,
 } from "../types/schemas"
+import type { EpisodeSpecifier } from "../types/types"
 import { getCSRFCookie } from "../utils/cookies"
 
 const API_BASE = "/api"
@@ -97,6 +98,29 @@ export async function addShowFromTVmazeId(tvmaze_id: number): Promise<Show> {
   )
   await handleError(fetchResponse, "HTTP error attempting to add new show")
   return showSchema.parse(await fetchResponse.json())
+}
+
+export async function toggleEpisodes(
+  showId: string,
+  episodes: EpisodeSpecifier[],
+): Promise<string> {
+  const episodeList = episodes.map((specifier) => [
+    specifier.seasonNum - 1,
+    specifier.episodeIdx,
+  ])
+  const body = { show_id: showId, episodes: episodeList }
+  const fetchResponse = await fetch(`${API_BASE}/toggle-watched-status`, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
+  })
+  await handleError(
+    fetchResponse,
+    "HTTP error attempting to toggle watched status",
+  )
+
+  //FIXME parse and return the response (maybe? we won't use it)
+  return await fetchResponse.text()
 }
 
 async function handleError(fetchResponse: Response, errorMsg: string) {

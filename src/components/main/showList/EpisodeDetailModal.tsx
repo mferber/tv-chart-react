@@ -1,7 +1,11 @@
 import * as Dialog from "@radix-ui/react-dialog"
+import { useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 import { ThreeDots } from "react-loader-spinner"
 
+import { useCommandExecutor } from "../../../providers/commands/CommandExecutorProvider"
+import { ToggleWatchedCommand } from "../../../providers/commands/ToggleWatchedCommand"
 import { type EpisodeDescriptor } from "../../../types/schemas"
 import { type EpisodeDetails } from "../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../types/types"
@@ -145,21 +149,40 @@ function ModalBodyContent({
   showTitle: string
   close: () => void
 }) {
+  const { executor } = useCommandExecutor()
+  const queryClient = useQueryClient()
+
   return (
     <div>
       {episodeDetails && (
         <div className="flex justify-between">
           <div>
             <div>
-              <input
-                className="text-2xl mr-2"
-                type="checkbox"
-                name="watched"
-                checked={episodeDescriptor.watched}
-              />
               <span className="font-bold">{showTitle}</span>
             </div>
             <div className="text-sm">
+              {/* checkbox toggles watched status -- FIXME replace with better UI */}
+              <input
+                className="text-2xl mr-2"
+                readOnly={true}
+                type="checkbox"
+                name="watched"
+                checked={episodeDescriptor.watched}
+                onClick={async () => {
+                  try {
+                    await executor.execute(
+                      new ToggleWatchedCommand(
+                        queryClient,
+                        episodeDetailSpecifier,
+                      ),
+                    )
+                  } catch {
+                    toast(
+                      "An error occurred toggling episode watched status, try reloading",
+                    )
+                  }
+                }}
+              />
               Season {episodeDetailSpecifier.seasonNum},{" "}
               {episodeDescriptor.displayNumber === null
                 ? "special"

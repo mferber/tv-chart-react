@@ -5,6 +5,9 @@ import { fetchShows } from "../api/client"
 import { useQueryErrorToast } from "../hooks"
 import { type ShowRecord } from "../types/schemas"
 
+// eslint-disable-next-line react-refresh/only-export-components
+export const SHOWS_QUERY_KEY = ["shows"]
+
 /**
  * Hook to access the query object
  */
@@ -22,7 +25,7 @@ export function useShowsQuery() {
  */
 export function ShowsQueryProvider({ children }: { children: ReactNode }) {
   const showsQuery = useQuery({
-    queryKey: ["shows"],
+    queryKey: SHOWS_QUERY_KEY,
     queryFn: async () => {
       return await fetchShows()
     },

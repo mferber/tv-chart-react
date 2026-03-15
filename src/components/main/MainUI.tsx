@@ -1,6 +1,10 @@
 import { type Dispatch, type SetStateAction, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
+import {
+  CommandExecutorProvider,
+  useCommandExecutor,
+} from "../../providers/commands/CommandExecutorProvider"
 import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
 import {
   ShowsQueryProvider,
@@ -13,7 +17,9 @@ import { ShowList } from "./showList/ShowList"
 export function MainUI() {
   return (
     <ShowsQueryProvider>
-      <MainUIBody />
+      <CommandExecutorProvider>
+        <MainUIBody />
+      </CommandExecutorProvider>
     </ShowsQueryProvider>
   )
 }
@@ -65,6 +71,8 @@ function AppHeader({
   // User can't be null or we wouldn't be here
   const currentUser = useCurrentUserStatus().user!
 
+  const { executor, canUndo } = useCommandExecutor()
+
   return (
     <div className="flex justify-between border-b mb-4 align-middle">
       <span className="flex gap-4 items-baseline">
@@ -83,6 +91,14 @@ function AppHeader({
             <ThreeDots height="10" wrapperClass="w-4 h-3" color="black" />
           )}
         </span>
+
+        <a
+          href="#"
+          className={`${canUndo ? "text-black" : "text-gray-300"}`}
+          onClick={() => executor.undo()}
+        >
+          Undo
+        </a>
       </span>
       <span>
         <span className="font-bold">{currentUser.email}</span> (

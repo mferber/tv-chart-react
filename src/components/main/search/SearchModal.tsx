@@ -15,6 +15,7 @@ import {
   fetchShowSearchResults,
 } from "../../../api/client"
 import { useSimpleQuery } from "../../../hooks"
+import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { type ShowRecord, type ShowSearchResult } from "../../../types/schemas"
 import { Button } from "../../misc/Button"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
@@ -259,7 +260,7 @@ function AddThisShowButton({ result }: { result: ShowSearchResult }) {
       return addShowFromTVmazeId(tvmaze_id)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["shows"] })
+      queryClient.invalidateQueries({ queryKey: SHOWS_QUERY_KEY })
       fn_resetAndCloseModal()
     },
     onError: (e: Error) => {
