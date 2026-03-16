@@ -1,6 +1,7 @@
 import { type Dispatch, type SetStateAction, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
+import Couch from "../../assets/couch.svg?react"
 import {
   CommandExecutorProvider,
   useCommandExecutor,
@@ -76,6 +77,7 @@ function AppHeader({
   return (
     <div className="flex justify-between border-b mb-4 align-middle">
       <span className="flex gap-4 items-baseline">
+        <Couch className="h-4" />
         <a
           href="#"
           className="hover:text-red-800"

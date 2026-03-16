@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react"
 import toast from "react-hot-toast"
 
 import { fetchLogin, HttpUnauthorizedError } from "../../api/client"
+import Couch from "../../assets/couch.svg?react"
 import howItWorks_Narrow from "../../assets/how-it-works-narrow.png"
 import howItWorks_Wide from "../../assets/how-it-works-wide.png"
 import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
@@ -42,6 +43,9 @@ export function LoginPage() {
       <header className="text-5xl text-center font-bold mb-5">
         Couch Potato
       </header>
+      <div>
+        <Couch className="w-24 h-12 mb-4" />
+      </div>
       <header className="text-3xl text-center mb-10">
         An app for tracking your TV watching progress
       </header>
