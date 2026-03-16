@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "react-hot-toast"
 
-import { LoginPanel } from "./components/authentication/LoginPanel"
+import { LoginPage } from "./components/authentication/LoginPage"
 import { MainUI } from "./components/main/MainUI"
 import { AppEnvironmentProvider } from "./providers/AppEnvironmentProvider"
 import {
@@ -41,7 +41,7 @@ function AppBody() {
       case "unknown":
         return "..."
       case "unauthenticated":
-        return <LoginPanel />
+        return <LoginPage />
       case "authenticated":
         return <MainUI />
     }
