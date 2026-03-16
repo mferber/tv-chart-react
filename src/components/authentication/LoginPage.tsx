@@ -78,8 +78,8 @@ export function LoginPage() {
 
       <div className="flex flex-col items-center mt-6 mb-10 rounded-xl border-gray-200 border shadow-2xl">
         <div className="text-xl font-bold mt-8 mb-0">How it works:</div>
-        <img src={howItWorks_Wide} className="w-200 p-4 hidden md:block" />
-        <img src={howItWorks_Narrow} className="w-100 p-4 md:hidden" />
+        <img src={howItWorks_Wide} className="w-200 p-4 hidden sm:block" />
+        <img src={howItWorks_Narrow} className="w-100 p-4 sm:hidden" />
       </div>
     </main>
   )
