@@ -24,7 +24,7 @@ export class ToggleWatchedCommand {
    * @param cachedData the query cache for all shows
    * @param newWatched is the episode being marked read (false for unread)
    */
-  private async updateLocalState(cachedData: ShowRecord, newWatched: boolean) {
+  private updateLocalState(cachedData: ShowRecord, newWatched: boolean) {
     const newData = produce(cachedData, (draft) => {
       draft[this.episodeSpecifier.showId].seasons[
         this.episodeSpecifier.seasonNum - 1
