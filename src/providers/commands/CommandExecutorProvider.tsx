@@ -49,7 +49,8 @@ const CommandExecutorContext =
  * Command executor: executes Commands on request; maintains an undo stack and undoes
  * the most recent command on request
  */
-class CommandExecutor {
+// eslint-disable-next-line react-refresh/only-export-components
+export class CommandExecutor {
   private undoStack: Command[] = []
   updateCanUndoState: (canUndo: boolean) => void
 
