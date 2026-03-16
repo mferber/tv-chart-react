@@ -123,7 +123,7 @@ function EpisodeSquircle({ filled }: { filled: boolean }) {
       version="1.1"
       fill={filled ? "#000" : "#fff"}
       stroke="#000"
-      strokeWidth="10"
+      strokeWidth="5"
     >
       <path
         d="M 0 50 C 0 7.500000000000001, 7.500000000000001 0,
