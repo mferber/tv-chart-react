@@ -9,8 +9,26 @@ import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
 import { Button } from "../misc/Button"
 
 export function LoginPage() {
-  const currentUserStatus = useCurrentUserStatus()
+  return (
+    <main className="flex flex-col items-center mt-16 px-8">
+      <header className="text-5xl text-center font-bold mb-5">
+        Couch Potato
+      </header>
+      <div>
+        <Couch className="w-24 h-12 mb-4" />
+      </div>
+      <header className="text-3xl text-center mb-10">
+        An app for tracking your TV watching progress
+      </header>
+
+      <LoginForm />
+    </main>
+  )
+}
+
+function LoginForm() {
   const [loginFailed, setLoginFailed] = useState(false)
+  const currentUserStatus = useCurrentUserStatus()
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -39,17 +57,7 @@ export function LoginPage() {
   }
 
   return (
-    <main className="flex flex-col items-center mt-16 px-8">
-      <header className="text-5xl text-center font-bold mb-5">
-        Couch Potato
-      </header>
-      <div>
-        <Couch className="w-24 h-12 mb-4" />
-      </div>
-      <header className="text-3xl text-center mb-10">
-        An app for tracking your TV watching progress
-      </header>
-
+    <>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 items-center justify-items-start">
           <label className="font-medium">Email address</label>
@@ -85,6 +93,6 @@ export function LoginPage() {
         <img src={howItWorks_Wide} className="w-200 p-4 hidden sm:block" />
         <img src={howItWorks_Narrow} className="w-100 p-4 sm:hidden" />
       </div>
-    </main>
+    </>
   )
 }
