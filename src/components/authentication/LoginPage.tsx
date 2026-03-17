@@ -9,6 +9,8 @@ import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
 import { Button } from "../misc/Button"
 
 export function LoginPage() {
+  const [isRegisteringNewUser, setIsRegisteringNewUser] = useState(false)
+
   return (
     <main className="flex flex-col items-center mt-16 px-8">
       <header className="text-5xl text-center font-bold mb-5">
@@ -21,12 +23,24 @@ export function LoginPage() {
         An app for tracking your TV watching progress
       </header>
 
-      <LoginForm />
+      {isRegisteringNewUser ? (
+        <RegistrationForm
+          switchToLoginForm={() => setIsRegisteringNewUser(false)}
+        />
+      ) : (
+        <LoginForm
+          switchToRegistrationForm={() => setIsRegisteringNewUser(true)}
+        />
+      )}
     </main>
   )
 }
 
-function LoginForm() {
+function LoginForm({
+  switchToRegistrationForm,
+}: {
+  switchToRegistrationForm: () => void
+}) {
   const [loginFailed, setLoginFailed] = useState(false)
   const currentUserStatus = useCurrentUserStatus()
 
@@ -80,7 +94,14 @@ function LoginForm() {
           <Button htmlType="submit">Log in</Button>
 
           <div />
-          <a href="#" className="underline text-red-800 hover:text-red-950">
+          <a
+            href="#"
+            className="underline text-red-800 hover:text-red-950"
+            onClick={(e) => {
+              e.preventDefault()
+              switchToRegistrationForm()
+            }}
+          >
             Sign up for a new account
           </a>
         </div>
@@ -92,6 +113,29 @@ function LoginForm() {
         <div className="text-xl font-bold mt-8 mb-0">How it works:</div>
         <img src={howItWorks_Wide} className="w-200 p-4 hidden sm:block" />
         <img src={howItWorks_Narrow} className="w-100 p-4 sm:hidden" />
+      </div>
+    </>
+  )
+}
+
+function RegistrationForm({
+  switchToLoginForm,
+}: {
+  switchToLoginForm: () => void
+}) {
+  return (
+    <>
+      <div>Registration form</div>
+      <div>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault()
+            switchToLoginForm()
+          }}
+        >
+          Back to login form
+        </a>
       </div>
     </>
   )
