@@ -51,18 +51,18 @@ export function LoginPage() {
       </header>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 items-center">
-          <label className="text-right font-medium">Email address</label>
+        <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 items-center justify-items-start">
+          <label className="font-medium">Email address</label>
           <input
-            className="border rounded px-3 py-2"
+            className="w-64 border rounded px-3 py-2"
             name="email"
             type="email"
             defaultValue="test@example.com"
           />
 
-          <label className="text-right font-medium">Password</label>
+          <label className="font-medium">Password</label>
           <input
-            className="border rounded px-3 py-2"
+            className="w-64 border rounded px-3 py-2"
             name="password"
             type="password"
             defaultValue="password"

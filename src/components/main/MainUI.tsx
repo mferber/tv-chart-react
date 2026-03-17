@@ -77,7 +77,7 @@ function AppHeader({
   return (
     <div className="flex justify-between border-b mb-4 align-middle">
       <span className="flex gap-4 items-baseline">
-        <Couch className="h-4" />
+        <Couch className="h-4 relative top-0.5" />
         <a
           href="#"
           className="hover:text-red-800"
