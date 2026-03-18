@@ -1,3 +1,5 @@
+import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { type Dispatch, type SetStateAction, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
@@ -109,11 +111,11 @@ function AppHeader({
           className="hover:text-red-800"
           onClick={() => setSearchUIOpen(true)}
         >
-          Add new show
+          <FontAwesomeIcon icon={faPlus} />
         </a>
         <span className="flex items-center gap-2">
           <a href="#" className="hover:text-red-800" onClick={() => refetch()}>
-            Refresh
+            <FontAwesomeIcon icon={faArrowsRotate} />
           </a>
           {isRefetching && (
             <ThreeDots height="10" wrapperClass="w-4 h-3" color="black" />
