@@ -17,6 +17,13 @@ import {
   EpisodeMissingError,
 } from "../../../utils/episodesDetailsCache"
 
+const RELEASE_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+})
+
 export function EpisodeDetailModal({
   episodeDetailSpecifier,
   episodeDescriptor,
@@ -191,6 +198,12 @@ function ModalBodyContent({
                   ) || "No summary available",
               }}
             />
+            {episodeDetails.release_date && (
+              <div className="text-xs mt-2">
+                Released:{" "}
+                {RELEASE_DATE_FORMATTER.format(episodeDetails.release_date)}
+              </div>
+            )}
           </div>
           <CloseButton close={close} />
         </div>
