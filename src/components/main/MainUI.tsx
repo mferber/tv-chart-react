@@ -80,13 +80,13 @@ function AppHeader({
   const { executor, canUndo } = useCommandExecutor()
 
   return (
-    <div className="flex justify-between border-b mb-4 align-middle">
+    <div className="flex justify-between border-b pb-2 mb-4 align-middle">
       <span className="flex gap-4 items-baseline">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger className="focus:outline-none">
             <button>
               <Couch
-                className="h-4 relative top-0.5 cursor-pointer"
+                className="h-6 relative top-1 cursor-pointer"
                 title="Menu"
               />
             </button>
@@ -103,6 +103,7 @@ function AppHeader({
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
 
+        <span className="text-xl font-black mr-4">Couch Potato</span>
         <a
           href="#"
           className="hover:text-red-800"
