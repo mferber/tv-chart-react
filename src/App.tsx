@@ -26,7 +26,7 @@ function App() {
       <CurrentUserStatusProvider>
         <QueryClientProvider client={queryClient}>
           <AppBody />
-          <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
+          <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
         </QueryClientProvider>
       </CurrentUserStatusProvider>
     </AppEnvironmentProvider>

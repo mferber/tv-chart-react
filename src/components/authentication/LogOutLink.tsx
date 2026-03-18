@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query"
 import { type MouseEvent, type ReactNode } from "react"
 import toast from "react-hot-toast"
 
@@ -6,12 +7,14 @@ import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
 
 export function LogOutLink({ children }: { children: ReactNode }) {
   const currentStatusContext = useCurrentUserStatus()
+  const queryClient = useQueryClient()
 
   const logOut = async (evt: MouseEvent<HTMLAnchorElement>) => {
     evt.preventDefault()
     try {
       await fetchLogout()
       currentStatusContext.setCurrentUserUnauthenticated()
+      queryClient.removeQueries()
     } catch (e) {
       console.error(e)
       toast(

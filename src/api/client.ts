@@ -15,11 +15,19 @@ import { getCSRFCookie } from "../utils/cookies"
 const API_BASE = "/api"
 const CSRF_TOKEN_HEADER_NAME = "X-CSRFToken"
 const HTTP_STATUS_UNAUTHORIZED = 401
+const HTTP_CONFLICT = 409
 
 export class HttpUnauthorizedError extends Error {
   constructor() {
     super()
     this.name = "HttpUnauthorizedError"
+  }
+}
+
+export class HttpConflictError extends Error {
+  constructor() {
+    super()
+    this.name = "HttpConflictError"
   }
 }
 
@@ -49,6 +57,19 @@ export async function fetchLogin(
   })
   await handleError(fetchResponse, "HTTP error attempting to log in user")
   return (await fetchResponse.json()) as User
+}
+
+export async function fetchRegisterUser(
+  email: string,
+  password: string,
+): Promise<User> {
+  const fetchResponse = await fetch(`${API_BASE}/auth/register`, {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
+  })
+  await handleError(fetchResponse, "HTTP error attempting to register user")
+  return (await fetchResponse.json()) as { id: string; email: string }
 }
 
 export async function fetchLogout(): Promise<string> {
@@ -129,6 +150,9 @@ async function handleError(fetchResponse: Response, errorMsg: string) {
   }
   if (fetchResponse.status === HTTP_STATUS_UNAUTHORIZED) {
     throw new HttpUnauthorizedError()
+  }
+  if (fetchResponse.status === HTTP_CONFLICT) {
+    throw new HttpConflictError()
   }
   console.error(
     `${errorMsg}: ${fetchResponse.status} ${fetchResponse.statusText}`,

@@ -1,7 +1,12 @@
-import { type FormEvent, useState } from "react"
+import { type SyntheticEvent, useState } from "react"
 import toast from "react-hot-toast"
 
-import { fetchLogin, HttpUnauthorizedError } from "../../api/client"
+import {
+  fetchLogin,
+  fetchRegisterUser,
+  HttpConflictError,
+  HttpUnauthorizedError,
+} from "../../api/client"
 import Couch from "../../assets/couch.svg?react"
 import howItWorks_Narrow from "../../assets/how-it-works-narrow.png"
 import howItWorks_Wide from "../../assets/how-it-works-wide.png"
@@ -44,7 +49,7 @@ function LoginForm({
   const [loginFailed, setLoginFailed] = useState(false)
   const currentUserStatus = useCurrentUserStatus()
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
 
     const formData = new FormData(e.currentTarget)
@@ -56,11 +61,10 @@ function LoginForm({
         )
         currentUserStatus.setCurrentUserAuthenticated(userInfo)
       } catch (error) {
+        console.error(error)
         if (error instanceof HttpUnauthorizedError) {
-          console.error("Login failed: unauthorized")
           setLoginFailed(true)
         } else {
-          console.error(error)
           toast(
             "Login could not be completed due to a network problem; try again later",
           )
@@ -90,6 +94,13 @@ function LoginForm({
             defaultValue="password"
           />
 
+          {loginFailed && (
+            <>
+              <div />
+              <div className="text-red-800">Login failed, try again</div>
+            </>
+          )}
+
           <div />
           <Button htmlType="submit">Log in</Button>
 
@@ -105,8 +116,6 @@ function LoginForm({
             Sign up for a new account
           </a>
         </div>
-        <div></div>
-        {loginFailed && <div>Login failed, try again</div>}
       </form>
 
       <div className="flex flex-col items-center mt-6 mb-10 rounded-xl border-gray-200 border shadow-2xl">
@@ -123,20 +132,117 @@ function RegistrationForm({
 }: {
   switchToLoginForm: () => void
 }) {
+  const [registrationFailedMessage, setRegistrationFailedMessage] = useState<
+    string | null
+  >(null)
+  const currentUserStatus = useCurrentUserStatus()
+
+  function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    const formData = new FormData(e.currentTarget)
+    if (formData.get("password") !== formData.get("password2")) {
+      setRegistrationFailedMessage("Passwords don't match, try again")
+      return
+    } else {
+      setRegistrationFailedMessage(null)
+    }
+
+    const register = async () => {
+      const email = formData.get("email") as string
+      const password = formData.get("password") as string
+
+      try {
+        await fetchRegisterUser(email, password)
+      } catch (error) {
+        console.error(error)
+        if (error instanceof HttpConflictError) {
+          setRegistrationFailedMessage(
+            "That email address is in use, try another",
+          )
+        } else {
+          toast(
+            "Registration could not be completed due to a network problem; try again later",
+          )
+        }
+        return
+      }
+
+      // registration succeeded, now log the user in
+      try {
+        const userInfo = await fetchLogin(email, password)
+        currentUserStatus.setCurrentUserAuthenticated(userInfo)
+      } catch (error) {
+        console.error(error)
+        if (error instanceof HttpUnauthorizedError) {
+          switchToLoginForm()
+          toast(
+            "Registration succeeded, but login failed for unknown reason; try again",
+          )
+        } else {
+          toast(
+            "Login could not be completed due to a network problem; try again later",
+          )
+        }
+      }
+    }
+    register()
+  }
+
   return (
     <>
-      <div>Registration form</div>
-      <div>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            switchToLoginForm()
-          }}
-        >
-          Back to login form
-        </a>
-      </div>
+      <div className="text-xl mb-4">Register for an account</div>
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 items-center justify-items-start">
+          <label className="font-medium">Email address</label>
+          <input
+            className="w-64 border rounded px-3 py-2"
+            name="email"
+            type="email"
+            defaultValue="test@example.com"
+          />
+
+          <label className="font-medium">Password</label>
+          <input
+            className="w-64 border rounded px-3 py-2"
+            name="password"
+            type="password"
+            defaultValue="password"
+          />
+
+          <label className="font-medium">Reenter password</label>
+          <input
+            className="w-64 border rounded px-3 py-2"
+            name="password2"
+            type="password"
+            defaultValue="password"
+          />
+
+          {registrationFailedMessage && (
+            <>
+              <div />
+              <div className="w-64 text-red-800">
+                {registrationFailedMessage}
+              </div>
+            </>
+          )}
+          <div />
+          <Button htmlType="submit">Register</Button>
+
+          <div />
+          <a
+            href="#"
+            className="underline text-red-800 hover:text-red-950"
+            onClick={(e) => {
+              e.preventDefault()
+              switchToLoginForm()
+            }}
+          >
+            Back to login form
+          </a>
+        </div>
+        <div></div>
+      </form>
     </>
   )
 }
