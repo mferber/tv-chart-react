@@ -111,11 +111,11 @@ function AppHeader({
           className="hover:text-red-800"
           onClick={() => setSearchUIOpen(true)}
         >
-          <FontAwesomeIcon icon={faPlus} />
+          <FontAwesomeIcon icon={faPlus} size="lg" />
         </a>
         <span className="flex items-center gap-2">
           <a href="#" className="hover:text-red-800" onClick={() => refetch()}>
-            <FontAwesomeIcon icon={faArrowsRotate} />
+            <FontAwesomeIcon icon={faArrowsRotate} size="lg" />
           </a>
           {isRefetching && (
             <ThreeDots height="10" wrapperClass="w-4 h-3" color="black" />
