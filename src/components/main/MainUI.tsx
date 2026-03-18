@@ -1,3 +1,4 @@
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { type Dispatch, type SetStateAction, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
@@ -12,6 +13,10 @@ import {
   useShowsQuery,
 } from "../../providers/ShowsQueryProvider"
 import { LogOutLink } from "../authentication/LogOutLink"
+import {
+  CustomDropdownMenuContent,
+  CustomDropdownMenuItem,
+} from "../misc/CustomDropdownMenu"
 import { SearchModal } from "./search/SearchModal"
 import { ShowList } from "./showList/ShowList"
 
@@ -65,7 +70,7 @@ function AppHeader({
   refetch,
   isRefetching,
 }: {
-  setSearchUIOpen: Dispatch<SetStateAction<boolean>>
+  setSearchUIOpen: Dispatch<SetStateAction<boolean>> // FIXME
   refetch: () => void
   isRefetching: boolean
 }) {
@@ -77,7 +82,27 @@ function AppHeader({
   return (
     <div className="flex justify-between border-b mb-4 align-middle">
       <span className="flex gap-4 items-baseline">
-        <Couch className="h-4 relative top-0.5" />
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger className="focus:outline-none">
+            <button>
+              <Couch
+                className="h-4 relative top-0.5 cursor-pointer"
+                title="Menu"
+              />
+            </button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <CustomDropdownMenuContent>
+              <CustomDropdownMenuItem className="font-bold">
+                {currentUser.email}
+              </CustomDropdownMenuItem>
+              <CustomDropdownMenuItem selectable>
+                <LogOutLink>Log out</LogOutLink>
+              </CustomDropdownMenuItem>
+            </CustomDropdownMenuContent>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+
         <a
           href="#"
           className="hover:text-red-800"
@@ -101,10 +126,6 @@ function AppHeader({
         >
           Undo
         </a>
-      </span>
-      <span>
-        <span className="font-bold">{currentUser.email}</span> (
-        <LogOutLink>Log out</LogOutLink>)
       </span>
     </div>
   )

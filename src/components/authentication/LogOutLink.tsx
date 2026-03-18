@@ -9,7 +9,7 @@ export function LogOutLink({ children }: { children: ReactNode }) {
   const currentStatusContext = useCurrentUserStatus()
   const queryClient = useQueryClient()
 
-  const logOut = async (evt: MouseEvent<HTMLAnchorElement>) => {
+  const logOut = async (evt: MouseEvent<HTMLElement>) => {
     evt.preventDefault()
     try {
       await fetchLogout()
@@ -23,9 +23,5 @@ export function LogOutLink({ children }: { children: ReactNode }) {
     }
   }
 
-  return (
-    <a href="#" onClick={logOut}>
-      {children}
-    </a>
-  )
+  return <div onClick={logOut}>{children}</div>
 }
