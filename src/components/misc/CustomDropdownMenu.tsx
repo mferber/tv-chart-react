@@ -9,7 +9,7 @@ export function CustomDropdownMenuContent({
 }) {
   return (
     <DropdownMenu.Content
-      className="bg-gray-200 border rounded-md py-2"
+      className="bg-red-50 border rounded-lg py-2"
       collisionPadding={16}
     >
       {children}
@@ -38,4 +38,8 @@ export function CustomDropdownMenuItem({
       {children}
     </DropdownMenu.Item>
   )
+}
+
+export function CustomDropdownMenuSeparator() {
+  return <DropdownMenu.Separator className="h-px my-2 bg-gray-500 w-full" />
 }
