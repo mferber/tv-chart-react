@@ -70,7 +70,6 @@ function MainUIBody() {
 function AppHeader({
   setSearchUIOpen,
   refetch,
-  isRefetching,
 }: {
   setSearchUIOpen: Dispatch<SetStateAction<boolean>> // FIXME
   refetch: () => void
@@ -82,15 +81,12 @@ function AppHeader({
   const { executor, canUndo } = useCommandExecutor()
 
   return (
-    <div className="flex justify-between border-b pb-2 mb-4 align-middle">
-      <span className="flex gap-4 items-baseline">
+    <div className="flex justify-between border-b pb-2 mb-4 align-middle items-baseline">
+      <span className="flex gap-4 items-baseline" title="Main menu">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger className="focus:outline-none">
             <button>
-              <Couch
-                className="h-6 relative top-1 cursor-pointer"
-                title="Menu"
-              />
+              <Couch className="h-6 relative top-1 cursor-pointer" />
             </button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
@@ -105,23 +101,27 @@ function AppHeader({
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
 
-        <span className="text-xl font-black mr-4">Couch Potato</span>
+        <span className="text-xl font-black">Couch Potato</span>
         <a
           href="#"
           className="hover:text-red-800"
           onClick={() => setSearchUIOpen(true)}
+          title="Add new show"
         >
           <FontAwesomeIcon icon={faPlus} size="lg" />
         </a>
         <span className="flex items-center gap-2">
-          <a href="#" className="hover:text-red-800" onClick={() => refetch()}>
+          <a
+            href="#"
+            className="hover:text-red-800"
+            onClick={() => refetch()}
+            title="Refresh display"
+          >
             <FontAwesomeIcon icon={faArrowsRotate} size="lg" />
           </a>
-          {isRefetching && (
-            <ThreeDots height="10" wrapperClass="w-4 h-3" color="black" />
-          )}
         </span>
-
+      </span>
+      <span className="flex gap-2 items-baseline">
         <a
           href="#"
           className={`${canUndo ? "text-black" : "text-gray-300"}`}
