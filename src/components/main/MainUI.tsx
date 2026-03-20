@@ -86,9 +86,7 @@ function AppHeader({
       <span className="flex gap-4 items-baseline" title="Main menu">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger className="focus:outline-none">
-            <button>
-              <Couch className="h-6 relative top-1 cursor-pointer" />
-            </button>
+            <Couch className="h-6 relative top-1 cursor-pointer" />
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <CustomDropdownMenuContent>
