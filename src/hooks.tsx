@@ -1,6 +1,7 @@
 import { type UseQueryResult } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+
+import { errorToast } from "./utils/toasts"
 
 // Hook: fetches server-side app environment identifier; if run at app startup, also initializes CSRF token
 export function useFetchAppEnvironment(): string | null {
@@ -26,7 +27,7 @@ export function useQueryErrorToast<T>(
       return
     }
     console.error(queryResult.error)
-    toast(message)
+    errorToast(message)
   }, [queryResult.error, message])
 }
 

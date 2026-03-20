@@ -1,5 +1,4 @@
 import { type SyntheticEvent, useState } from "react"
-import toast from "react-hot-toast"
 
 import {
   fetchLogin,
@@ -11,6 +10,7 @@ import Couch from "../../assets/couch.svg?react"
 import howItWorks_Narrow from "../../assets/how-it-works-narrow.png"
 import howItWorks_Wide from "../../assets/how-it-works-wide.png"
 import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
+import { errorToast } from "../../utils/toasts"
 import { Button } from "../misc/Button"
 
 export function LoginPage() {
@@ -65,7 +65,7 @@ function LoginForm({
         if (error instanceof HttpUnauthorizedError) {
           setLoginFailed(true)
         } else {
-          toast(
+          errorToast(
             "Login could not be completed due to a network problem; try again later",
           )
         }

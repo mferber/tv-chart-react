@@ -8,7 +8,6 @@ import {
   useRef,
   useState,
 } from "react"
-import { toast } from "react-hot-toast"
 
 import {
   addShowFromTVmazeId,
@@ -17,6 +16,7 @@ import {
 import { useSimpleQuery } from "../../../hooks"
 import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { type ShowRecord, type ShowSearchResult } from "../../../types/schemas"
+import { errorToast } from "../../../utils/toasts"
 import { Button } from "../../misc/Button"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 
@@ -265,7 +265,7 @@ function AddThisShowButton({ result }: { result: ShowSearchResult }) {
     },
     onError: (e: Error) => {
       console.error(e)
-      toast("An error occurred adding this show")
+      errorToast("An error occurred adding this show")
       fn_setTVmazeIdBeingAdded(null)
     },
   })

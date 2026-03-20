@@ -1,7 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog"
 import { QueryClient, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
 import { ThreeDots } from "react-loader-spinner"
 
 import {
@@ -16,6 +15,7 @@ import {
   episodeDetailsCache,
   EpisodeMissingError,
 } from "../../../utils/episodesDetailsCache"
+import { errorToast } from "../../../utils/toasts"
 
 const RELEASE_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   weekday: "long",
@@ -237,7 +237,7 @@ function WatchedStatusToggle({
             new ToggleWatchedCommand(queryClient, episodeDetailSpecifier),
           )
         } catch {
-          toast(
+          errorToast(
             "An error occurred toggling episode watched status, try reloading",
           )
         }

@@ -14,6 +14,7 @@ import {
   ShowsQueryProvider,
   useShowsQuery,
 } from "../../providers/ShowsQueryProvider"
+import { infoToast } from "../../utils/toasts"
 import { LogOutLink } from "../authentication/LogOutLink"
 import {
   CustomDropdownMenuContent,
@@ -114,7 +115,10 @@ function AppHeader({
           <a
             href="#"
             className="hover:text-red-800"
-            onClick={() => refetch()}
+            onClick={() => {
+              infoToast("Refreshing display")
+              refetch()
+            }}
             title="Refresh display"
           >
             <FontAwesomeIcon icon={faArrowsRotate} size="lg" />

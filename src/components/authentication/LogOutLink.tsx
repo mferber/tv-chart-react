@@ -1,9 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { type MouseEvent, type ReactNode } from "react"
-import toast from "react-hot-toast"
 
 import { fetchLogout } from "../../api/client"
 import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
+import { errorToast } from "../../utils/toasts"
 
 export function LogOutLink({ children }: { children: ReactNode }) {
   const currentStatusContext = useCurrentUserStatus()
@@ -17,7 +17,7 @@ export function LogOutLink({ children }: { children: ReactNode }) {
       queryClient.removeQueries()
     } catch (e) {
       console.error(e)
-      toast(
+      errorToast(
         "Logout couldn't be completed due to a network problem; try again later",
       )
     }
