@@ -60,8 +60,7 @@ function MainUIBody() {
           {Object.keys(showsQuery.data).length === 0 && (
             <div className="text-lg">
               <span className="font-bold">Your show list is empty! </span>
-              Use the <FontAwesomeIcon icon={faPlus} size="lg" /> to add your
-              first show.
+              Use the <FontAwesomeIcon icon={faPlus} /> to add your first show.
             </div>
           )}
           <ShowList shows={showsQuery.data} />
