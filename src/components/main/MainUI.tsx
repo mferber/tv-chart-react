@@ -56,7 +56,16 @@ function MainUIBody() {
       )}
 
       {showsQuery.data && !showsQuery.error && (
-        <ShowList shows={showsQuery.data} />
+        <>
+          {Object.keys(showsQuery.data).length === 0 && (
+            <div className="text-lg">
+              <span className="font-bold">Your show list is empty! </span>
+              Use the <FontAwesomeIcon icon={faPlus} size="lg" /> to add your
+              first show.
+            </div>
+          )}
+          <ShowList shows={showsQuery.data} />
+        </>
       )}
 
       <SearchModal
