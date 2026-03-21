@@ -1,12 +1,9 @@
 import * as Dialog from "@radix-ui/react-dialog"
-import { QueryClient, useQueryClient } from "@tanstack/react-query"
+import { useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
-import {
-  CommandExecutor,
-  useCommandExecutor,
-} from "../../../providers/commands/CommandExecutorProvider"
+import { useCommandExecutor } from "../../../providers/commands/CommandExecutorProvider"
 import { ToggleWatchedCommand } from "../../../providers/commands/ToggleWatchedCommand"
 import { type EpisodeDescriptor } from "../../../types/schemas"
 import { type EpisodeDetails } from "../../../types/schemas"
@@ -16,6 +13,7 @@ import {
   EpisodeMissingError,
 } from "../../../utils/episodesDetailsCache"
 import { errorToast } from "../../../utils/toasts"
+import { EpisodeBox } from "./EpisodeBox"
 
 const RELEASE_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   weekday: "long",
@@ -159,78 +157,108 @@ function ModalBodyContent({
   showTitle: string
   close: () => void
 }) {
-  const { executor } = useCommandExecutor()
-  const queryClient = useQueryClient()
-
   return (
-    <div>
-      {episodeDetails && (
-        <div className="flex justify-between">
+    episodeDetails && (
+      <div>
+        {/* Watched-status toggle control, show title and episode info; close button */}
+        <Header
+          showTitle={showTitle}
+          episodeDetailSpecifier={episodeDetailSpecifier}
+          episodeDescriptor={episodeDescriptor}
+          episodeDetails={episodeDetails}
+          close={close}
+        />
+
+        {/* Episode title */}
+        <div className="text-2xl font-black">
+          {episodeDetails.title ?? "Untitled"}
+        </div>
+
+        {/* Episode summary */}
+        <div
+          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+          dangerouslySetInnerHTML={{
+            __html:
+              episodeDetails.summary?.replaceAll("<p>", '<p class="mb-2">') ||
+              "No summary available",
+          }}
+        />
+        {episodeDetails.release_date && (
+          <div className="text-xs mt-2">
+            Released:{" "}
+            {RELEASE_DATE_FORMATTER.format(episodeDetails.release_date)}
+          </div>
+        )}
+      </div>
+    )
+  )
+}
+
+function Header({
+  showTitle,
+  episodeDetailSpecifier,
+  episodeDescriptor,
+  episodeDetails,
+  close,
+}: {
+  showTitle: string
+  episodeDetailSpecifier: EpisodeSpecifier
+  episodeDescriptor: EpisodeDescriptor
+  episodeDetails: EpisodeDetails
+  close: () => void
+}) {
+  return (
+    <div className="flex justify-between">
+      <div>
+        <div className="flex items-start gap-2">
+          {/* Big watched-status box, clickable to toggle */}
+          <WatchedStatusToggle
+            episodeDetailSpecifier={episodeDetailSpecifier}
+            episodeDescriptor={episodeDescriptor}
+          />
+
           <div>
+            {/* Show title */}
             <div>
               <span className="font-bold">{showTitle}</span>
             </div>
+
+            {/* Episode info */}
             <div className="text-sm">
-              <WatchedStatusToggle
-                episodeDescriptor={episodeDescriptor}
-                episodeDetailSpecifier={episodeDetailSpecifier}
-                queryClient={queryClient}
-                executor={executor}
-              />
-              Season {episodeDetailSpecifier.seasonNum},{" "}
-              {episodeDescriptor.displayNumber === null
-                ? "special"
-                : `episode ${episodeDescriptor.displayNumber}`}
+              <span className="font-bold">
+                Season {episodeDetailSpecifier.seasonNum},{" "}
+                {episodeDescriptor.displayNumber === null
+                  ? "special"
+                  : `episode ${episodeDescriptor.displayNumber}`}
+              </span>
               {episodeDetails.duration && (
                 <span> ({episodeDetails.duration} min.)</span>
               )}
             </div>
-            <div className="text-2xl font-bold mt-2 mb-2">
-              {episodeDetails.title ?? "Untitled"}
-            </div>
-            <div
-              // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
-              dangerouslySetInnerHTML={{
-                __html:
-                  episodeDetails.summary?.replaceAll(
-                    "<p>",
-                    '<p class="mb-2">',
-                  ) || "No summary available",
-              }}
-            />
-            {episodeDetails.release_date && (
-              <div className="text-xs mt-2">
-                Released:{" "}
-                {RELEASE_DATE_FORMATTER.format(episodeDetails.release_date)}
-              </div>
-            )}
           </div>
-          <CloseButton close={close} />
         </div>
-      )}
+      </div>
+      <CloseButton close={close} />
     </div>
   )
 }
 
-// checkbox toggles watched status -- FIXME replace with better UI
+/**
+ * Toggle for watched/unwatched status of an episode. Displays as a larger
+ * version of the episode box.
+ */
 function WatchedStatusToggle({
   episodeDescriptor,
   episodeDetailSpecifier,
-  queryClient,
-  executor,
 }: {
   episodeDescriptor: EpisodeDescriptor
   episodeDetailSpecifier: EpisodeSpecifier
-  queryClient: QueryClient
-  executor: CommandExecutor
 }) {
+  const { executor } = useCommandExecutor()
+  const queryClient = useQueryClient()
+
   return (
-    <input
-      className="text-2xl mr-2"
-      readOnly={true}
-      type="checkbox"
-      name="watched"
-      checked={episodeDescriptor.watched}
+    <div
       onClick={async () => {
         try {
           await executor.execute(
@@ -242,7 +270,13 @@ function WatchedStatusToggle({
           )
         }
       }}
-    />
+    >
+      <EpisodeBox
+        episodeSpecifier={episodeDetailSpecifier}
+        episodeDescriptor={episodeDescriptor}
+        tailwindSize="12"
+      />
+    </div>
   )
 }
 
