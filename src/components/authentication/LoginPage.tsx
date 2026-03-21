@@ -181,7 +181,7 @@ function RegistrationForm({
             "That email address is in use, try another",
           )
         } else {
-          toast(
+          errorToast(
             "Registration could not be completed due to a network problem; try again later",
           )
         }
@@ -196,11 +196,11 @@ function RegistrationForm({
         console.error(error)
         if (error instanceof HttpUnauthorizedError) {
           switchToLoginForm()
-          toast(
+          errorToast(
             "Registration succeeded, but login failed for unknown reason; try again",
           )
         } else {
-          toast(
+          errorToast(
             "Login could not be completed due to a network problem; try again later",
           )
         }
