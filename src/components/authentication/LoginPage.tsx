@@ -120,8 +120,17 @@ function LoginForm({
 
       <div className="flex flex-col items-center mt-6 mb-10 rounded-xl border-gray-200 border shadow-2xl">
         <div className="text-xl font-bold mt-8 mb-0">How it works:</div>
-        <img src={howItWorks_Wide} className="w-200 p-4 hidden sm:block" />
-        <img src={howItWorks_Narrow} className="w-100 p-4 sm:hidden" />
+
+        {/* load the appropriately sized instructional image for the screen dimensions */}
+        <picture>
+          <source media="(max-width: 40rem)" srcSet={howItWorks_Narrow} />
+          <img
+            loading="lazy"
+            src={howItWorks_Wide}
+            alt="Instructional diagram"
+            className="p-4 w-100 sm:w-200"
+          />
+        </picture>
       </div>
     </>
   )
