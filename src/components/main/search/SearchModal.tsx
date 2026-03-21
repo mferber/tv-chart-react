@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react"
+import { ThreeDots } from "react-loader-spinner"
 
 import {
   addShowFromTVmazeId,
@@ -19,7 +20,6 @@ import { type ShowRecord, type ShowSearchResult } from "../../../types/schemas"
 import { errorToast } from "../../../utils/toasts"
 import { Button } from "../../misc/Button"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
-
 interface SearchModalContextType {
   shows: ShowRecord
   isSearchResultLoading: boolean
@@ -142,8 +142,11 @@ function ModalContent({
       <TopBar />
       <SearchForm searchFieldRef={searchFieldRef} />
 
-      {/* FIXME: better loading placeholder */}
-      {isLoading && "…"}
+      {isLoading && (
+        <div className="flex justify-center mt-10">
+          <ThreeDots width="50" height="15" color="black" />
+        </div>
+      )}
 
       {data && data.results && <SearchResults results={data.results} />}
     </SearchModalContext>
