@@ -18,14 +18,12 @@ export function LoginPage() {
   const [isRegisteringNewUser, setIsRegisteringNewUser] = useState(false)
 
   return (
-    <main className="flex flex-col items-center mt-16 px-8">
-      <header className="text-5xl text-center font-bold mb-5">
-        Couch Potato
-      </header>
+    <main className="flex flex-col items-center text-center mt-16 px-8">
+      <header className="text-5xl font-bold mb-5">Couch Potato</header>
       <div>
         <Couch className="w-24 h-12 mb-4" />
       </div>
-      <header className="text-2xl text-center mb-4">
+      <header className="text-2xl mb-4">
         An app for tracking your TV watching progress
       </header>
 
@@ -38,16 +36,6 @@ export function LoginPage() {
           switchToRegistrationForm={() => setIsRegisteringNewUser(true)}
         />
       )}
-
-      <div className="mb-10 text-center text-sm">
-        <div>&copy; {new Date().getFullYear()} by Matthias Ferber</div>
-        <div>
-          Powered by{" "}
-          <a href="https://www.tvmaze.com">
-            <img src={tvmazeLogo} alt="TVmaze" className="w-16 inline" />
-          </a>
-        </div>
-      </div>
     </main>
   )
 }
@@ -143,6 +131,19 @@ function LoginForm({
           />
         </picture>
       </div>
+
+      {/* copyright/acknowledgments footer */}
+      <div className="mb-10 text-sm">
+        <div>
+          Copyright &copy; {new Date().getFullYear()} by Matthias Ferber
+        </div>
+        <div>
+          Powered by{" "}
+          <a href="https://www.tvmaze.com">
+            <img src={tvmazeLogo} alt="TVmaze" className="w-16 inline" />
+          </a>
+        </div>
+      </div>
     </>
   )
 }
@@ -211,7 +212,11 @@ function RegistrationForm({
 
   return (
     <>
-      <div className="text-xl mb-4">Register for an account</div>
+      <div className="text-xl mb-2">Register for an account</div>
+      <div className="text-sm max-w-80 mb-6">
+        <span className="font-bold">NOTE:</span> Want to share your shows with
+        someone else? Create a login you can share.
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-3 items-center justify-items-start">
           <label className="font-medium">Email address</label>
