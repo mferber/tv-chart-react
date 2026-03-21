@@ -1,9 +1,7 @@
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
-import { use } from "react"
 
-import { DisplayedEpisodeDetailSpecifierContext } from "../../../contexts/DisplayedEpisodeDetailSpecifierContext"
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
 import type { EpisodeSpecifier } from "../../../types/types"
 import {
@@ -12,14 +10,19 @@ import {
   CustomDropdownMenuSeparator,
 } from "../../misc/CustomDropdownMenu"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
-
-const STAR = "\u2605"
+import { EpisodeBox } from "./EpisodeBox"
 
 /**
  * Displays seasons and episodes for a given show
  * @param show the show to display
  */
-export function Show({ show }: { show: Show }) {
+export function Show({
+  show,
+  selectedEpisode,
+}: {
+  show: Show
+  selectedEpisode?: EpisodeSpecifier
+}) {
   return (
     <section className="pb-8">
       <ShowHeader show={show} />
@@ -29,6 +32,7 @@ export function Show({ show }: { show: Show }) {
             showId={show.id}
             season={season}
             seasonNum={idx + 1}
+            selectedEpisode={selectedEpisode}
             // eslint-disable-next-line react-x/no-array-index-key
             key={idx}
           />
@@ -107,10 +111,12 @@ function Season({
   showId,
   season,
   seasonNum,
+  selectedEpisode,
 }: {
   showId: string
   season: EpisodeDescriptor[]
   seasonNum: number
+  selectedEpisode?: EpisodeSpecifier
 }) {
   return (
     <div className="flex gap-8 items-center">
@@ -124,67 +130,17 @@ function Season({
               episodeIdx: idx,
             }}
             episodeDescriptor={ep}
+            selected={
+              selectedEpisode !== undefined &&
+              selectedEpisode.showId === showId &&
+              selectedEpisode.seasonNum === seasonNum &&
+              selectedEpisode.episodeIdx === idx
+            }
             // eslint-disable-next-line react-x/no-array-index-key
             key={idx}
           />
         ))}
       </span>
     </div>
-  )
-}
-
-function EpisodeBox({
-  episodeSpecifier,
-  episodeDescriptor,
-}: {
-  episodeSpecifier: EpisodeSpecifier
-  episodeDescriptor: EpisodeDescriptor
-}) {
-  const { setDisplayedEpisodeDetailSpecifier } = use(
-    DisplayedEpisodeDetailSpecifierContext,
-  )
-
-  return (
-    <button
-      type="button"
-      className="relative inline-block"
-      key={episodeSpecifier.episodeIdx}
-      title={episodeDescriptor.title ?? "No title"}
-      onClick={() => {
-        setDisplayedEpisodeDetailSpecifier(episodeSpecifier)
-      }}
-    >
-      <EpisodeSquircle filled={episodeDescriptor.watched} />
-
-      {/* center the display marker -- star or episode number -- over the squircle */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span
-          className={episodeDescriptor.watched ? "text-white" : "text-black"}
-        >
-          {episodeDescriptor.displayNumber ?? STAR}
-        </span>
-      </div>
-    </button>
-  )
-}
-
-function EpisodeSquircle({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      className="w-8 h-8"
-      viewBox="-5 -5 110 110"
-      xmlns="http://www.w3.org/2000/svg"
-      version="1.1"
-      fill={filled ? "#000" : "#fff"}
-      stroke="#000"
-      strokeWidth="5"
-    >
-      <path
-        d="M 0 50 C 0 7.500000000000001, 7.500000000000001 0,
-          50 0 S 100 7.500000000000001, 100 50, 92.5 100 50 100,
-          0 92.5, 0 50"
-        transform="rotate(0, 50, 50) translate(0, 0)"
-      />
-    </svg>
   )
 }

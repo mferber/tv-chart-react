@@ -30,9 +30,9 @@ export function EpisodeDetailModal({
   showTitle,
   close,
 }: {
-  episodeDetailSpecifier: EpisodeSpecifier | null
-  episodeDescriptor: EpisodeDescriptor | null
-  showTitle: string | null
+  episodeDetailSpecifier?: EpisodeSpecifier
+  episodeDescriptor?: EpisodeDescriptor
+  showTitle?: string
   close: () => void
 }) {
   return (

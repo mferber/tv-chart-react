@@ -15,14 +15,14 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
   // specifier for episode whose detail is to be displayed in a popup dialog;
   // null for none
   const [displayedEpisodeDetailSpecifier, setDisplayedEpisodeDetailSpecifier] =
-    useState<EpisodeSpecifier | null>(null)
+    useState<EpisodeSpecifier | undefined>(undefined)
 
   const specifier = displayedEpisodeDetailSpecifier
   const episodeDescriptor = specifier
     ? shows[specifier.showId].seasons[specifier.seasonNum - 1][
         specifier?.episodeIdx
       ]
-    : null
+    : undefined
 
   return (
     <>
@@ -34,25 +34,34 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
             setDisplayedEpisodeDetailSpecifier(specifier),
         }}
       >
-        <ShowListBody shows={shows} />
+        <ShowListBody
+          shows={shows}
+          selectedEpisode={displayedEpisodeDetailSpecifier}
+        />
       </DisplayedEpisodeDetailSpecifierContext>
 
       <EpisodeDetailModal
         episodeDetailSpecifier={displayedEpisodeDetailSpecifier}
         episodeDescriptor={episodeDescriptor}
-        showTitle={specifier ? shows[specifier.showId].title : null}
-        close={() => setDisplayedEpisodeDetailSpecifier(null)}
+        showTitle={specifier ? shows[specifier.showId].title : undefined}
+        close={() => setDisplayedEpisodeDetailSpecifier(undefined)}
       />
     </>
   )
 }
 
-export function ShowListBody({ shows }: { shows: ShowRecord }) {
+export function ShowListBody({
+  shows,
+  selectedEpisode,
+}: {
+  shows: ShowRecord
+  selectedEpisode?: EpisodeSpecifier
+}) {
   const showList = Object.values(shows)
   return (
     <div>
       {titleSort(showList).map((show) => (
-        <Show show={show} key={show.id} />
+        <Show show={show} selectedEpisode={selectedEpisode} key={show.id} />
       ))}
     </div>
   )
