@@ -9,6 +9,7 @@ import {
 import Couch from "../../assets/couch.svg?react"
 import howItWorks_Narrow from "../../assets/how-it-works-narrow.png"
 import howItWorks_Wide from "../../assets/how-it-works-wide.png"
+import tvmazeLogo from "../../assets/tvmaze-logo.png"
 import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
 import { errorToast } from "../../utils/toasts"
 import { Button } from "../misc/Button"
@@ -24,7 +25,7 @@ export function LoginPage() {
       <div>
         <Couch className="w-24 h-12 mb-4" />
       </div>
-      <header className="text-3xl text-center mb-10">
+      <header className="text-2xl text-center mb-4">
         An app for tracking your TV watching progress
       </header>
 
@@ -37,6 +38,16 @@ export function LoginPage() {
           switchToRegistrationForm={() => setIsRegisteringNewUser(true)}
         />
       )}
+
+      <div className="mb-10 text-center text-sm">
+        <div>&copy; {new Date().getFullYear()} by Matthias Ferber</div>
+        <div>
+          Powered by{" "}
+          <a href="https://www.tvmaze.com">
+            <img src={tvmazeLogo} alt="TVmaze" className="w-16 inline" />
+          </a>
+        </div>
+      </div>
     </main>
   )
 }
