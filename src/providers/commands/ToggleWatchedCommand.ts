@@ -76,4 +76,8 @@ export class ToggleWatchedCommand {
     // toggle is its own inverse operation
     this.execute()
   }
+
+  undoDescription(): string {
+    return "change episode watched status"
+  }
 }

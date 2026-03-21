@@ -1,5 +1,7 @@
 import React, { use, useState } from "react"
 
+import { infoToast } from "../../utils/toasts"
+
 /**
  * Hook for accessing a command executor from within a CommandExecutorProvider
  */
@@ -79,10 +81,16 @@ export class CommandExecutor {
       this.updateCanUndoState(false)
     }
     await command.undo()
+
+    const desc = command.undoDescription()
+    if (desc) {
+      infoToast(`Undo: ${desc}`)
+    }
   }
 }
 
 abstract class Command {
   abstract execute(): Promise<void>
   abstract undo(): Promise<void>
+  abstract undoDescription(): string | null
 }
