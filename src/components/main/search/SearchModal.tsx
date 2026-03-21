@@ -139,7 +139,7 @@ function ModalContent({
         fn_resetAndCloseModal: resetAndCloseModal,
       }}
     >
-      <CancelWidget />
+      <TopBar />
       <SearchForm searchFieldRef={searchFieldRef} />
 
       {/* FIXME: better loading placeholder */}
@@ -151,13 +151,14 @@ function ModalContent({
 }
 
 /**
- * Widget for canceling the "Add show" operation.
+ * Title and widget for canceling the "Add show" operation.
  */
-function CancelWidget() {
+function TopBar() {
   const { fn_resetAndCloseModal } = use(SearchModalContext)
 
   return (
-    <div className="text-right">
+    <div className="flex justify-between border-b mb-2">
+      <div className="text-lg font-bold">Add new show</div>
       <button type="button" onClick={() => fn_resetAndCloseModal()}>
         Cancel
       </button>
@@ -186,7 +187,7 @@ function SearchForm({
 
   return (
     <>
-      <div>Search for a show here:</div>
+      <div>Search by title:</div>
       <div>
         <form onSubmit={handleSubmitSearch} className="flex gap-1">
           <input
