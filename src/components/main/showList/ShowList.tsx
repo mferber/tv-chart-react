@@ -4,7 +4,7 @@ import { DisplayedEpisodeDetailSpecifierContext } from "../../../contexts/Displa
 import { type ShowRecord } from "../../../types/schemas"
 import type { EpisodeSpecifier } from "../../../types/types"
 import { titleSort } from "../../../utils/showSort"
-import { EpisodeDetailModal } from "./EpisodeDetailModal"
+import { EpisodeDetailModal } from "./episodeDetailModal/EpisodeDetailModal"
 import { Show } from "./Show"
 
 /**
