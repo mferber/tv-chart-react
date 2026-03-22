@@ -1,3 +1,4 @@
+import * as AlertDialog from "@radix-ui/react-alert-dialog"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { useCommandExecutor } from "../../../../providers/commands/CommandExecutorProvider"
@@ -158,10 +159,37 @@ function WatchedStatusToggle({
 
 function MarkWatchedUpToHereButton() {
   return (
-    <div className="text-sm py-2">
-      <Button htmlType="button" size="narrow">
-        Mark watched up to here
-      </Button>
-    </div>
+    <AlertDialog.Root>
+      <AlertDialog.Trigger asChild>
+        <div className="text-sm py-2">
+          <Button htmlType="button" size="narrow">
+            Mark watched up to here
+          </Button>
+        </div>
+      </AlertDialog.Trigger>
+      <AlertDialog.Portal>
+        <AlertDialog.Overlay className="fixed inset-0 bg-white/80" />
+        <AlertDialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-gray-200 border p-6 rounded-lg shadow-gray-500 shadow-lg">
+          <AlertDialog.Title className="sr-only" />
+          <AlertDialog.Description className="sr-only" />
+          <div className="text-center font-bold mb-1">Confirm update</div>
+          <div className="mb-4">
+            Mark X number of episodes of Show Title as [un]read?
+          </div>
+          <div className="flex gap-4 justify-end">
+            <AlertDialog.Cancel asChild>
+              <Button htmlType="button" buttonStyle="secondary">
+                Cancel
+              </Button>
+            </AlertDialog.Cancel>
+            <AlertDialog.Action asChild>
+              <Button htmlType="button" onClick={() => console.log("Marking")}>
+                Mark [un]read
+              </Button>
+            </AlertDialog.Action>
+          </div>
+        </AlertDialog.Content>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
   )
 }
