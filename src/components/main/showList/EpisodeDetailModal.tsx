@@ -13,6 +13,7 @@ import {
   EpisodeMissingError,
 } from "../../../utils/episodesDetailsCache"
 import { errorToast } from "../../../utils/toasts"
+import { Button } from "../../misc/Button"
 import { EpisodeBox } from "./EpisodeBox"
 
 const RELEASE_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
@@ -40,7 +41,7 @@ export function EpisodeDetailModal({
       onOpenChange={close}
     >
       {episodeDetailSpecifier && episodeDescriptor && showTitle && (
-        <Dialog.Content className="fixed max-h-1/3 right-2 md:right-8 bottom-2 md:bottom-8 left-2 md:left-8 p-4 bg-gray-200 border-4 rounded-xl outline-0 overflow-auto">
+        <Dialog.Content className="fixed max-h-2/5 right-2 md:right-8 bottom-2 md:bottom-8 left-2 md:left-8 p-4 bg-gray-200 border-4 rounded-xl outline-0 overflow-auto">
           <Dialog.Title className="sr-only" />
           <Dialog.Description className="sr-only" />
           <ModalBody
@@ -172,6 +173,13 @@ function ModalBodyContent({
         {/* Episode title */}
         <div className="text-2xl font-black">
           {episodeDetails.title ?? "Untitled"}
+        </div>
+
+        {/* Watched-up-to-here button */}
+        <div className="text-sm py-2">
+          <Button htmlType="button" size="narrow">
+            Mark watched up to here
+          </Button>
         </div>
 
         {/* Episode summary */}

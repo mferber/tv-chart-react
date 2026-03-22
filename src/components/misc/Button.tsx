@@ -4,12 +4,14 @@ import { ThreeDots } from "react-loader-spinner"
 
 export function Button({
   htmlType,
+  size,
   onClick,
   disabled,
   spinner,
   children,
 }: {
   htmlType: ButtonHTMLAttributes<HTMLButtonElement>["type"]
+  size?: "normal" | "narrow"
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   disabled?: boolean
   spinner?: boolean
@@ -17,7 +19,7 @@ export function Button({
 }) {
   const tailwindClasses = clsx(
     "px-4",
-    "py-1",
+    size === "normal" ? "py-1" : "py-0",
     "border-2",
     "rounded-md",
     "text-white",
