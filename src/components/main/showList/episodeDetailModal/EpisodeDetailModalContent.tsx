@@ -48,11 +48,7 @@ export function ModalBodyContent({
         </div>
 
         {/* Watched-up-to-here button */}
-        <div className="text-sm py-2">
-          <Button htmlType="button" size="narrow">
-            Mark watched up to here
-          </Button>
-        </div>
+        <MarkWatchedUpToHereButton />
 
         {/* Episode summary */}
         <div
@@ -156,6 +152,16 @@ function WatchedStatusToggle({
         episodeDescriptor={episodeDescriptor}
         tailwindSize="12"
       />
+    </div>
+  )
+}
+
+function MarkWatchedUpToHereButton() {
+  return (
+    <div className="text-sm py-2">
+      <Button htmlType="button" size="narrow">
+        Mark watched up to here
+      </Button>
     </div>
   )
 }
