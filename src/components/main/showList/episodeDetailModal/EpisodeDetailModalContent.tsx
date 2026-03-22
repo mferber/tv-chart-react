@@ -1,9 +1,14 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog"
 import { useQueryClient } from "@tanstack/react-query"
+import { useCallback } from "react"
 
 import { useCommandExecutor } from "../../../../providers/commands/CommandExecutorProvider"
 import { ToggleWatchedCommand } from "../../../../providers/commands/ToggleWatchedCommand"
-import { type EpisodeDescriptor } from "../../../../types/schemas"
+import { SHOWS_QUERY_KEY } from "../../../../providers/ShowsQueryProvider"
+import {
+  type EpisodeDescriptor,
+  type ShowRecord,
+} from "../../../../types/schemas"
 import { type EpisodeDetails } from "../../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../../types/types"
 import { errorToast } from "../../../../utils/toasts"
@@ -31,6 +36,40 @@ export function ModalBodyContent({
   showTitle: string
   close: () => void
 }) {
+  const queryClient = useQueryClient()
+
+  const countUnwatchedEpisodes = useCallback(
+    (episodeSpecifier: EpisodeSpecifier) => {
+      const shows = queryClient.getQueryData<ShowRecord>(SHOWS_QUERY_KEY)
+      if (!shows) {
+        return 0
+      }
+      const show = shows[episodeSpecifier.showId]
+      if (!show) {
+        return 0
+      }
+
+      let count = 0
+      for (let s = 0; s < episodeSpecifier.seasonNum - 1; s++) {
+        for (const e of show.seasons[s]) {
+          if (!e.watched) {
+            count++
+          }
+        }
+      }
+      for (let eIdx = 0; eIdx <= episodeSpecifier.episodeIdx; eIdx++) {
+        const e = show.seasons[episodeSpecifier.seasonNum - 1][eIdx]
+        if (!e.watched) {
+          count++
+        }
+      }
+      return count
+    },
+    [queryClient],
+  )
+
+  const unwatchedUpToHereCount = countUnwatchedEpisodes(episodeDetailSpecifier)
+
   return (
     episodeDetails && (
       <div>
@@ -49,7 +88,10 @@ export function ModalBodyContent({
         </div>
 
         {/* Watched-up-to-here button */}
-        <MarkWatchedUpToHereButton showTitle={showTitle} />
+        <MarkWatchedUpToHereButton
+          showTitle={showTitle}
+          count={unwatchedUpToHereCount}
+        />
 
         {/* Episode summary */}
         <div
@@ -157,7 +199,13 @@ function WatchedStatusToggle({
   )
 }
 
-function MarkWatchedUpToHereButton({ showTitle }: { showTitle: string }) {
+function MarkWatchedUpToHereButton({
+  showTitle,
+  count,
+}: {
+  showTitle: string
+  count: number
+}) {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>
@@ -174,7 +222,8 @@ function MarkWatchedUpToHereButton({ showTitle }: { showTitle: string }) {
           <AlertDialog.Description className="sr-only" />
           <div className="text-center font-bold mb-1">Confirm update</div>
           <div className="mb-4">
-            Mark X number of episodes of "{showTitle}" as [un]read?
+            Mark {count} episode{count === 1 ? "" : "s"} of "{showTitle}" as
+            watched?
           </div>
           <div className="flex gap-4 justify-end">
             <AlertDialog.Cancel asChild>
@@ -184,7 +233,7 @@ function MarkWatchedUpToHereButton({ showTitle }: { showTitle: string }) {
             </AlertDialog.Cancel>
             <AlertDialog.Action asChild>
               <Button htmlType="button" onClick={() => console.log("Marking")}>
-                Mark [un]read
+                Mark as watched
               </Button>
             </AlertDialog.Action>
           </div>
