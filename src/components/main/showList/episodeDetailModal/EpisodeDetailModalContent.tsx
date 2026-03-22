@@ -49,7 +49,7 @@ export function ModalBodyContent({
         </div>
 
         {/* Watched-up-to-here button */}
-        <MarkWatchedUpToHereButton />
+        <MarkWatchedUpToHereButton showTitle={showTitle} />
 
         {/* Episode summary */}
         <div
@@ -157,7 +157,7 @@ function WatchedStatusToggle({
   )
 }
 
-function MarkWatchedUpToHereButton() {
+function MarkWatchedUpToHereButton({ showTitle }: { showTitle: string }) {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>
@@ -174,7 +174,7 @@ function MarkWatchedUpToHereButton() {
           <AlertDialog.Description className="sr-only" />
           <div className="text-center font-bold mb-1">Confirm update</div>
           <div className="mb-4">
-            Mark X number of episodes of Show Title as [un]read?
+            Mark X number of episodes of "{showTitle}" as [un]read?
           </div>
           <div className="flex gap-4 justify-end">
             <AlertDialog.Cancel asChild>
