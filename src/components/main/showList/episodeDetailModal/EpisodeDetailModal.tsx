@@ -24,11 +24,7 @@ export function EpisodeDetailModal({
   close: () => void
 }) {
   return (
-    <Dialog.Root
-      modal={false}
-      open={episodeSpecifier !== null}
-      onOpenChange={close}
-    >
+    <Dialog.Root modal={false} open={episodeSpecifier !== null}>
       {episodeSpecifier && episodeDescriptor && showTitle && (
         <Dialog.Content className="fixed max-h-2/5 right-2 md:right-8 bottom-2 md:bottom-8 left-2 md:left-8 p-4 bg-gray-200 border-4 rounded-xl outline-0 overflow-auto">
           <Dialog.Title className="sr-only" />
@@ -64,7 +60,7 @@ function ModalBody({
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
-    if (episodeDetails || isError) {
+    if (isError) {
       return
     }
 
@@ -93,7 +89,7 @@ function ModalBody({
     }
 
     fetcher()
-  }, [episodeSpecifier, episodeDetails, isError])
+  }, [episodeSpecifier, isError])
 
   if (isError) {
     return (

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { use, useState } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { type ShowRecord } from "../../../types/schemas"
@@ -31,8 +31,9 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
           episode's detail in the popup dialog below */}
       <SelectedEpisodeContext
         value={{
-          setSelectedEpisode: (specifier: EpisodeSpecifier) =>
-            setSelectedEpisodeSpecifier(specifier),
+          setSelectedEpisode: (specifier: EpisodeSpecifier | undefined) => {
+            setSelectedEpisodeSpecifier(specifier)
+          },
         }}
       >
         <ShowListBody
@@ -58,9 +59,10 @@ export function ShowListBody({
   shows: ShowRecord
   selectedEpisode?: EpisodeSpecifier
 }) {
+  const { setSelectedEpisode } = use(SelectedEpisodeContext)
   const showList = Object.values(shows)
   return (
-    <div>
+    <div onClick={() => setSelectedEpisode(undefined)}>
       {titleSort(showList).map((show) => (
         <Show show={show} selectedEpisode={selectedEpisode} key={show.id} />
       ))}

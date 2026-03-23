@@ -34,6 +34,10 @@ class EpisodeDetailsCache {
   }
 
   async fetchFor(showId: string): Promise<EpisodeDetails[][]> {
+    const cached = this.getShowEpisodes(showId)
+    if (cached) {
+      return cached
+    }
     const episodeDetails: EpisodeDetails[][] = await fetchEpisodes(showId)
     this.storeShowEpisodes(showId, episodeDetails)
     return episodeDetails

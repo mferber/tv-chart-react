@@ -1,7 +1,6 @@
 import clsx from "clsx"
-import { use } from "react"
+import { type MouseEventHandler } from "react"
 
-import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { type EpisodeDescriptor } from "../../../types/schemas"
 import type { EpisodeSpecifier } from "../../../types/types"
 
@@ -12,14 +11,14 @@ export function EpisodeBox({
   episodeDescriptor,
   selected,
   tailwindSize,
+  onClick,
 }: {
   episodeSpecifier: EpisodeSpecifier
   episodeDescriptor: EpisodeDescriptor
   selected?: boolean
   tailwindSize?: string
+  onClick: MouseEventHandler<HTMLButtonElement>
 }) {
-  const { setSelectedEpisode } = use(SelectedEpisodeContext)
-
   const textClassName = clsx(
     episodeDescriptor.watched
       ? "text-white"
@@ -35,9 +34,7 @@ export function EpisodeBox({
       className="relative inline-block cursor-pointer"
       key={episodeSpecifier.episodeIdx}
       title={episodeDescriptor.title ?? "No title"}
-      onClick={() => {
-        setSelectedEpisode(episodeSpecifier)
-      }}
+      onClick={onClick}
     >
       <EpisodeSquircle
         filled={episodeDescriptor.watched}

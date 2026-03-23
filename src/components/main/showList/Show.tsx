@@ -1,7 +1,9 @@
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+import { use } from "react"
 
+import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
 import type { EpisodeSpecifier } from "../../../types/types"
 import {
@@ -118,6 +120,8 @@ function Season({
   seasonNum: number
   selectedEpisode?: EpisodeSpecifier
 }) {
+  const { setSelectedEpisode } = use(SelectedEpisodeContext)
+
   return (
     <div className="flex gap-8 items-center">
       <span className="w-2 shrink-0 text-2xl">{seasonNum}</span>
@@ -136,6 +140,15 @@ function Season({
               selectedEpisode.seasonNum === seasonNum &&
               selectedEpisode.episodeIdx === idx
             }
+            onClick={(e) => {
+              setSelectedEpisode({
+                showId: showId,
+                seasonNum: seasonNum,
+                episodeIdx: idx,
+              })
+              // prevent the event from propagating to the ShowList and closing the details dialog
+              e.stopPropagation()
+            }}
             // eslint-disable-next-line react-x/no-array-index-key
             key={idx}
           />

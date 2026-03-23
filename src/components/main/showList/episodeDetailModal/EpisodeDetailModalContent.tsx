@@ -157,13 +157,12 @@ function WatchedStatusToggle({
   }, [executor, queryClient, episodeSpecifier])
 
   return (
-    <div onClick={clickHandler}>
-      <EpisodeBox
-        episodeSpecifier={episodeSpecifier}
-        episodeDescriptor={episodeDescriptor}
-        tailwindSize="12"
-      />
-    </div>
+    <EpisodeBox
+      episodeSpecifier={episodeSpecifier}
+      episodeDescriptor={episodeDescriptor}
+      tailwindSize="12"
+      onClick={clickHandler}
+    />
   )
 }
 

@@ -3,7 +3,7 @@ import { createContext } from "react"
 import type { EpisodeSpecifier } from "../types/types"
 
 export interface SelectedEpisodeContextType {
-  setSelectedEpisode: (episodeSpecifier: EpisodeSpecifier) => void
+  setSelectedEpisode: (episodeSpecifier: EpisodeSpecifier | undefined) => void
 }
 
 /**
@@ -13,6 +13,6 @@ export interface SelectedEpisodeContextType {
 export const SelectedEpisodeContext = createContext<SelectedEpisodeContextType>(
   {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setSelectedEpisode: (_: EpisodeSpecifier) => {},
+    setSelectedEpisode: (_: EpisodeSpecifier | undefined) => {},
   },
 )
