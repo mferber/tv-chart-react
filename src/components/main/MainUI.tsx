@@ -105,10 +105,10 @@ function AppHeader({
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <CustomDropdownMenuContent>
-              <CustomDropdownMenuItem className="font-bold">
+              <CustomDropdownMenuItem className="font-bold" nonselectable>
                 {currentUser.email}
               </CustomDropdownMenuItem>
-              <CustomDropdownMenuItem selectable>
+              <CustomDropdownMenuItem>
                 <LogOutLink>Log out</LogOutLink>
               </CustomDropdownMenuItem>
               <CustomDropdownMenuSeparator />

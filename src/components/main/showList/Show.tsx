@@ -67,7 +67,7 @@ function ShowHeader({ show }: { show: Show }) {
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
               <CustomDropdownMenuContent>
-                <CustomDropdownMenuItem>
+                <CustomDropdownMenuItem nonselectable>
                   <div className="font-bold">{show.title}</div>
                 </CustomDropdownMenuItem>
                 <CustomDropdownMenuSeparator />
@@ -76,7 +76,7 @@ function ShowHeader({ show }: { show: Show }) {
                     target="_blank"
                     href={`https://imdb.com/title/${show.imdb_id}`}
                   >
-                    <div>View on IMDB</div>
+                    View on IMDB
                   </a>
                 </CustomDropdownMenuItem>
                 <CustomDropdownMenuItem>
@@ -84,7 +84,7 @@ function ShowHeader({ show }: { show: Show }) {
                     target="_blank"
                     href={`https://tvmaze.com/shows/${show.tvmaze_id}`}
                   >
-                    <div>View on TVmaze</div>
+                    View on TVmaze
                   </a>
                 </CustomDropdownMenuItem>
                 <CustomDropdownMenuItem>
@@ -92,7 +92,7 @@ function ShowHeader({ show }: { show: Show }) {
                     target="_blank"
                     href={`https://en.wikipedia.org/wiki/${show.title}`}
                   >
-                    <div>View on Wikipedia</div>
+                    View on Wikipedia
                   </a>
                 </CustomDropdownMenuItem>
                 {/* 

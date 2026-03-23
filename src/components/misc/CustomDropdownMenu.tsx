@@ -9,7 +9,7 @@ export function CustomDropdownMenuContent({
 }) {
   return (
     <DropdownMenu.Content
-      className="z-50 bg-gray-200 border rounded-lg py-2 shadow-gray-500 shadow-lg"
+      className="z-50 bg-gray-200 border rounded-lg py-2 shadow-gray-500 shadow-lg sm:rounded-sm"
       collisionPadding={16}
     >
       {children}
@@ -19,12 +19,12 @@ export function CustomDropdownMenuContent({
 
 export function CustomDropdownMenuItem({
   className,
-  selectable,
+  nonselectable,
   disabled,
   children,
 }: {
   className?: string
-  selectable?: boolean
+  nonselectable?: boolean
   disabled?: boolean
   children: ReactNode
 }) {
@@ -32,10 +32,12 @@ export function CustomDropdownMenuItem({
     <DropdownMenu.Item
       disabled={disabled ? true : undefined}
       className={clsx(
-        "focus:outline-none w-full px-4 py-1 text-lg",
+        "focus:outline-none w-full px-4 py-1 text-lg sm:py-0 sm:text-base",
         disabled && "text-gray-400",
-        !disabled && selectable && "hover:text-red-800 cursor-pointer",
-        (disabled || !selectable) && "cursor-not-allowed",
+        !disabled &&
+          !nonselectable &&
+          "hover:text-red-800 hover:bg-gray-300 cursor-pointer",
+        (disabled || nonselectable) && "cursor-not-allowed",
         className,
       )}
     >
