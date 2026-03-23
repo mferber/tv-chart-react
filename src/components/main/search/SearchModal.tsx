@@ -74,7 +74,7 @@ export function SearchModal({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50" />
         <Dialog.Content
-          className="fixed top-8 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
+          className="fixed top-16 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
           onOpenAutoFocus={(e) => {
             e.preventDefault()
             searchFieldRef.current?.focus()
