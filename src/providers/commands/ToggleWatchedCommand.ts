@@ -95,6 +95,6 @@ export class ToggleWatchedCommand {
   }
 
   undoDescription(): string {
-    return "change episode watched status"
+    return `change watched status for ${this.episodeSpecifiers.length} episode${this.episodeSpecifiers.length > 1 ? "s" : ""}`
   }
 }
