@@ -6,7 +6,7 @@ export function infoToast(message: string) {
     // registered as hover events, causing the toast to stay onscreen until
     // the user taps again
     position: "bottom-center",
-    duration: 2000,
+    duration: 3000,
     className:
       "!text-lg !bg-gray-200 border !rounded-lg !shadow-gray-500 !shadow-lg",
   })
@@ -18,7 +18,7 @@ export function errorToast(message: string) {
     // registered as hover events, causing the toast to stay onscreen until
     // the user taps again
     position: "bottom-center",
-    duration: 3500,
+    duration: 5000,
     className:
       "!text-lg !bg-gray-200 border !rounded-lg !shadow-gray-500 !shadow-lg",
   })
