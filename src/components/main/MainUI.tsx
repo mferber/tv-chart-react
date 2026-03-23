@@ -1,4 +1,8 @@
-import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons"
+import {
+  faArrowsRotate,
+  faClockRotateLeft,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { type Dispatch, type SetStateAction, useState } from "react"
@@ -144,8 +148,9 @@ function AppHeader({
             e.preventDefault()
             executor.undo()
           }}
+          title="Undo last action"
         >
-          Undo
+          <FontAwesomeIcon icon={faClockRotateLeft} size="lg" />
         </a>
       </span>
     </div>
