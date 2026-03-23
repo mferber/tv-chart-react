@@ -4,7 +4,11 @@ import { useCallback, useMemo } from "react"
 
 import { useCommandExecutor } from "../../../../providers/commands/CommandExecutorProvider"
 import { ToggleWatchedCommand } from "../../../../providers/commands/ToggleWatchedCommand"
-import { type EpisodeDescriptor } from "../../../../types/schemas"
+import { SHOWS_QUERY_KEY } from "../../../../providers/ShowsQueryProvider"
+import {
+  type EpisodeDescriptor,
+  type ShowRecord,
+} from "../../../../types/schemas"
 import { type EpisodeDetails } from "../../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../../types/types"
 import { errorToast } from "../../../../utils/toasts"
@@ -140,14 +144,24 @@ function WatchedStatusToggle({
   const queryClient = useQueryClient()
 
   const clickHandler = useCallback(async () => {
+    const data = queryClient.getQueryData<ShowRecord>(SHOWS_QUERY_KEY)
+    const showTitle = data
+      ? `“${data[episodeSpecifier.showId].title}”`
+      : "(title not found)"
+
     try {
       await executor.execute(
-        new ToggleWatchedCommand(queryClient, episodeSpecifier.showId, [
-          {
-            seasonNum: episodeSpecifier.seasonNum,
-            episodeIdx: episodeSpecifier.episodeIdx,
-          },
-        ]),
+        new ToggleWatchedCommand(
+          queryClient,
+          episodeSpecifier.showId,
+          showTitle,
+          [
+            {
+              seasonNum: episodeSpecifier.seasonNum,
+              episodeIdx: episodeSpecifier.episodeIdx,
+            },
+          ],
+        ),
       )
     } catch {
       errorToast(
@@ -182,11 +196,17 @@ function MarkWatchedUpToHereButton({
   )
 
   const clickHandler = useCallback(async () => {
+    const data = queryClient.getQueryData<ShowRecord>(SHOWS_QUERY_KEY)
+    const showTitle = data
+      ? `“${data[episodeSpecifier.showId].title}”`
+      : "(title not found)"
+
     try {
       await executor.execute(
         new ToggleWatchedCommand(
           queryClient,
           episodeSpecifier.showId,
+          showTitle,
           unwatchedEpisodes,
         ),
       )
@@ -214,7 +234,7 @@ function MarkWatchedUpToHereButton({
           <div className="text-center font-bold mb-1">Confirm update</div>
           <div className="mb-4">
             Mark {unwatchedEpisodes.length} episode
-            {unwatchedEpisodes.length === 1 ? "" : "s"} of "{showTitle}" as
+            {unwatchedEpisodes.length === 1 ? "" : "s"} of “{showTitle}” as
             watched?
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-end">

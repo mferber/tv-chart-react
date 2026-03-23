@@ -13,15 +13,18 @@ import { CommandError } from "./errors"
 export class ToggleWatchedCommand {
   private queryClient: QueryClient
   private showId: string
+  private showTitle: string
   private episodeSpecifiers: PartialEpisodeSpecifier[]
 
   constructor(
     queryClient: QueryClient,
     showId: string,
+    showTitle: string,
     episodeSpecifiers: PartialEpisodeSpecifier[],
   ) {
     this.queryClient = queryClient
     this.showId = showId
+    this.showTitle = showTitle
     this.episodeSpecifiers = episodeSpecifiers
   }
 
@@ -95,6 +98,6 @@ export class ToggleWatchedCommand {
   }
 
   undoDescription(): string {
-    return `change watched status for ${this.episodeSpecifiers.length} episode${this.episodeSpecifiers.length > 1 ? "s" : ""}`
+    return `change watched status for ${this.episodeSpecifiers.length} episode${this.episodeSpecifiers.length > 1 ? "s" : ""} of ${this.showTitle}`
   }
 }
