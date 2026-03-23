@@ -127,7 +127,7 @@ function AppHeader({
             className="hover:text-red-800"
             onClick={(e) => {
               e.preventDefault()
-              infoToast("Refreshing display")
+              infoToast("Refreshed show data")
               refetch()
             }}
             title="Refresh display"
