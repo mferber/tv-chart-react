@@ -209,7 +209,7 @@ function MarkWatchedUpToHereButton({
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="fixed inset-0 bg-white/80" />
-        <AlertDialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-gray-200 border p-6 rounded-lg shadow-gray-500 shadow-lg">
+        <AlertDialog.Content className="fixed w-[90vw] max-w-120 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-gray-200 border p-6 rounded-lg shadow-gray-500 shadow-lg">
           <AlertDialog.Title className="sr-only" />
           <AlertDialog.Description className="sr-only" />
           <div className="text-center font-bold mb-1">Confirm update</div>
@@ -218,7 +218,7 @@ function MarkWatchedUpToHereButton({
             {unwatchedEpisodes.length === 1 ? "" : "s"} of "{showTitle}" as
             watched?
           </div>
-          <div className="flex gap-4 justify-end">
+          <div className="flex flex-col sm:flex-row gap-4 justify-end">
             <AlertDialog.Cancel asChild>
               <Button htmlType="button" buttonStyle="secondary">
                 Cancel
