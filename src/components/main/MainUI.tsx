@@ -38,7 +38,8 @@ function MainUIBody() {
   const showsQuery = useShowsQuery()
 
   return (
-    <main className="m-4">
+    // leave room at top for fixed toolbar (see AppHeader)
+    <main className="mx-4 mb-4 mt-14">
       <AppHeader
         setSearchUIOpen={setSearchUIOpen}
         refetch={showsQuery.refetch}
@@ -90,7 +91,7 @@ function AppHeader({
   const { executor, canUndo } = useCommandExecutor()
 
   return (
-    <div className="flex justify-between border-b pb-2 mb-4 align-middle items-baseline">
+    <div className="fixed top-0 left-0 right-0 pt-2 px-4 bg-white z-1 flex justify-between border-b pb-2 mb-4 align-middle items-baseline">
       <span className="flex gap-4 items-baseline" title="Main menu">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger className="focus:outline-none">
@@ -112,7 +113,10 @@ function AppHeader({
         <a
           href="#"
           className="hover:text-red-800"
-          onClick={() => setSearchUIOpen(true)}
+          onClick={(e) => {
+            e.preventDefault()
+            setSearchUIOpen(true)
+          }}
           title="Add new show"
         >
           <FontAwesomeIcon icon={faPlus} size="lg" />
@@ -121,7 +125,8 @@ function AppHeader({
           <a
             href="#"
             className="hover:text-red-800"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               infoToast("Refreshing display")
               refetch()
             }}
@@ -135,7 +140,10 @@ function AppHeader({
         <a
           href="#"
           className={`${canUndo ? "text-black" : "text-gray-300"}`}
-          onClick={() => executor.undo()}
+          onClick={(e) => {
+            e.preventDefault()
+            executor.undo()
+          }}
         >
           Undo
         </a>
