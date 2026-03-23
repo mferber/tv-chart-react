@@ -84,7 +84,7 @@ export class CommandExecutor {
 
     const desc = command.undoDescription()
     if (desc) {
-      infoToast(`Undo: ${desc}`)
+      infoToast(`Undone: ${desc}`)
     }
   }
 }
