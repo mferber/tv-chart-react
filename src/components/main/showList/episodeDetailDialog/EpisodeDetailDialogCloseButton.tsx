@@ -1,4 +1,4 @@
-export function EpisodeDetailModalCloseButton({
+export function EpisodeDetailDialogCloseButton({
   close,
 }: {
   close: () => void

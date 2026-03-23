@@ -4,7 +4,7 @@ import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext
 import { type ShowRecord } from "../../../types/schemas"
 import type { EpisodeSpecifier } from "../../../types/types"
 import { titleSort } from "../../../utils/showSort"
-import { EpisodeDetailModal } from "./episodeDetailModal/EpisodeDetailModal"
+import { EpisodeDetailDialog } from "./episodeDetailDialog/EpisodeDetailDialog"
 import { Show } from "./Show"
 
 /**
@@ -42,7 +42,7 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
         />
       </SelectedEpisodeContext>
 
-      <EpisodeDetailModal
+      <EpisodeDetailDialog
         episodeSpecifier={selectedEpisodeSpecifier}
         episodeDescriptor={episodeDescriptor}
         showTitle={specifier ? shows[specifier.showId].title : undefined}
