@@ -23,6 +23,7 @@ import { LogOutLink } from "../authentication/LogOutLink"
 import {
   CustomDropdownMenuContent,
   CustomDropdownMenuItem,
+  CustomDropdownMenuSeparator,
 } from "../misc/CustomDropdownMenu"
 import { SearchModal } from "./search/SearchModal"
 import { ShowList } from "./showList/ShowList"
@@ -109,6 +110,13 @@ function AppHeader({
               </CustomDropdownMenuItem>
               <CustomDropdownMenuItem selectable>
                 <LogOutLink>Log out</LogOutLink>
+              </CustomDropdownMenuItem>
+              <CustomDropdownMenuSeparator />
+              <CustomDropdownMenuItem disabled>
+                Download my data
+              </CustomDropdownMenuItem>
+              <CustomDropdownMenuItem disabled>
+                Upload replacement data
               </CustomDropdownMenuItem>
             </CustomDropdownMenuContent>
           </DropdownMenu.Portal>

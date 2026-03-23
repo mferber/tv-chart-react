@@ -20,18 +20,22 @@ export function CustomDropdownMenuContent({
 export function CustomDropdownMenuItem({
   className,
   selectable,
+  disabled,
   children,
 }: {
   className?: string
   selectable?: boolean
+  disabled?: boolean
   children: ReactNode
 }) {
   return (
     <DropdownMenu.Item
+      disabled={disabled ? true : undefined}
       className={clsx(
         "focus:outline-none w-full px-4 py-1 text-lg",
-        selectable && "hover:text-red-800 cursor-pointer",
-        !selectable && "cursor-not-allowed",
+        disabled && "text-gray-400",
+        !disabled && selectable && "hover:text-red-800 cursor-pointer",
+        (disabled || !selectable) && "cursor-not-allowed",
         className,
       )}
     >
