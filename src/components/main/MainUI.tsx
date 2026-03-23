@@ -94,8 +94,9 @@ function AppHeader({
     <div className="fixed top-0 left-0 right-0 pt-2 px-4 bg-white z-1 flex justify-between border-b pb-2 mb-4 align-middle items-baseline">
       <span className="flex gap-4 items-baseline" title="Main menu">
         <DropdownMenu.Root>
-          <DropdownMenu.Trigger className="focus:outline-none">
-            <Couch className="h-6 relative top-1 cursor-pointer" />
+          <DropdownMenu.Trigger className="cursor-pointer focus:outline-none">
+            <Couch className="inline h-6 relative -top-1 mr-2" />
+            <span className="text-xl font-black">Couch Potato</span>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <CustomDropdownMenuContent>
@@ -109,7 +110,6 @@ function AppHeader({
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
 
-        <span className="text-xl font-black">Couch Potato</span>
         <a
           href="#"
           className="hover:text-red-800"
