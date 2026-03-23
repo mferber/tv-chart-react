@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { use } from "react"
 
-import { DisplayedEpisodeDetailSpecifierContext } from "../../../contexts/DisplayedEpisodeDetailSpecifierContext"
+import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { type EpisodeDescriptor } from "../../../types/schemas"
 import type { EpisodeSpecifier } from "../../../types/types"
 
@@ -18,9 +18,7 @@ export function EpisodeBox({
   selected?: boolean
   tailwindSize?: string
 }) {
-  const { setDisplayedEpisodeDetailSpecifier } = use(
-    DisplayedEpisodeDetailSpecifierContext,
-  )
+  const { setSelectedEpisode } = use(SelectedEpisodeContext)
 
   const textClassName = clsx(
     episodeDescriptor.watched
@@ -38,7 +36,7 @@ export function EpisodeBox({
       key={episodeSpecifier.episodeIdx}
       title={episodeDescriptor.title ?? "No title"}
       onClick={() => {
-        setDisplayedEpisodeDetailSpecifier(episodeSpecifier)
+        setSelectedEpisode(episodeSpecifier)
       }}
     >
       <EpisodeSquircle

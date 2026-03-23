@@ -1,17 +1,14 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog"
 import { useQueryClient } from "@tanstack/react-query"
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 
 import { useCommandExecutor } from "../../../../providers/commands/CommandExecutorProvider"
 import { ToggleWatchedCommand } from "../../../../providers/commands/ToggleWatchedCommand"
-import { SHOWS_QUERY_KEY } from "../../../../providers/ShowsQueryProvider"
-import {
-  type EpisodeDescriptor,
-  type ShowRecord,
-} from "../../../../types/schemas"
+import { type EpisodeDescriptor } from "../../../../types/schemas"
 import { type EpisodeDetails } from "../../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../../types/types"
 import { errorToast } from "../../../../utils/toasts"
+import { findUnwatchedEpisodesUpTo } from "../../../../utils/unwatchedEpisodes"
 import { Button } from "../../../misc/Button"
 import { EpisodeBox } from "../EpisodeBox"
 import { EpisodeDetailModalCloseButton } from "./EpisodeDetailModalCloseButton"
@@ -24,59 +21,25 @@ const RELEASE_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
 })
 
 export function ModalBodyContent({
-  episodeDetailSpecifier,
+  episodeSpecifier,
   episodeDescriptor,
   episodeDetails,
   showTitle,
   close,
 }: {
-  episodeDetailSpecifier: EpisodeSpecifier
+  episodeSpecifier: EpisodeSpecifier
   episodeDescriptor: EpisodeDescriptor
   episodeDetails: EpisodeDetails
   showTitle: string
   close: () => void
 }) {
-  const queryClient = useQueryClient()
-
-  const countUnwatchedEpisodes = useCallback(
-    (episodeSpecifier: EpisodeSpecifier) => {
-      const shows = queryClient.getQueryData<ShowRecord>(SHOWS_QUERY_KEY)
-      if (!shows) {
-        return 0
-      }
-      const show = shows[episodeSpecifier.showId]
-      if (!show) {
-        return 0
-      }
-
-      let count = 0
-      for (let s = 0; s < episodeSpecifier.seasonNum - 1; s++) {
-        for (const e of show.seasons[s]) {
-          if (!e.watched) {
-            count++
-          }
-        }
-      }
-      for (let eIdx = 0; eIdx <= episodeSpecifier.episodeIdx; eIdx++) {
-        const e = show.seasons[episodeSpecifier.seasonNum - 1][eIdx]
-        if (!e.watched) {
-          count++
-        }
-      }
-      return count
-    },
-    [queryClient],
-  )
-
-  const unwatchedUpToHereCount = countUnwatchedEpisodes(episodeDetailSpecifier)
-
   return (
     episodeDetails && (
       <div>
         {/* Watched-status toggle control, show title and episode info; close button */}
         <Header
           showTitle={showTitle}
-          episodeDetailSpecifier={episodeDetailSpecifier}
+          episodeSpecifier={episodeSpecifier}
           episodeDescriptor={episodeDescriptor}
           episodeDetails={episodeDetails}
           close={close}
@@ -90,7 +53,7 @@ export function ModalBodyContent({
         {/* Watched-up-to-here button */}
         <MarkWatchedUpToHereButton
           showTitle={showTitle}
-          count={unwatchedUpToHereCount}
+          episodeSpecifier={episodeSpecifier}
         />
 
         {/* Episode summary */}
@@ -115,13 +78,13 @@ export function ModalBodyContent({
 
 function Header({
   showTitle,
-  episodeDetailSpecifier,
+  episodeSpecifier,
   episodeDescriptor,
   episodeDetails,
   close,
 }: {
   showTitle: string
-  episodeDetailSpecifier: EpisodeSpecifier
+  episodeSpecifier: EpisodeSpecifier
   episodeDescriptor: EpisodeDescriptor
   episodeDetails: EpisodeDetails
   close: () => void
@@ -132,7 +95,7 @@ function Header({
         <div className="flex items-start gap-2">
           {/* Big watched-status box, clickable to toggle */}
           <WatchedStatusToggle
-            episodeDetailSpecifier={episodeDetailSpecifier}
+            episodeSpecifier={episodeSpecifier}
             episodeDescriptor={episodeDescriptor}
           />
 
@@ -145,7 +108,7 @@ function Header({
             {/* Episode info */}
             <div className="text-sm">
               <span className="font-bold">
-                Season {episodeDetailSpecifier.seasonNum},{" "}
+                Season {episodeSpecifier.seasonNum},{" "}
                 {episodeDescriptor.displayNumber === null
                   ? "special"
                   : `episode ${episodeDescriptor.displayNumber}`}
@@ -168,30 +131,35 @@ function Header({
  */
 function WatchedStatusToggle({
   episodeDescriptor,
-  episodeDetailSpecifier,
+  episodeSpecifier,
 }: {
   episodeDescriptor: EpisodeDescriptor
-  episodeDetailSpecifier: EpisodeSpecifier
+  episodeSpecifier: EpisodeSpecifier
 }) {
   const { executor } = useCommandExecutor()
   const queryClient = useQueryClient()
 
+  const clickHandler = useCallback(async () => {
+    try {
+      await executor.execute(
+        new ToggleWatchedCommand(queryClient, episodeSpecifier.showId, [
+          {
+            seasonNum: episodeSpecifier.seasonNum,
+            episodeIdx: episodeSpecifier.episodeIdx,
+          },
+        ]),
+      )
+    } catch {
+      errorToast(
+        "An error occurred toggling episode watched status, try reloading",
+      )
+    }
+  }, [executor, queryClient, episodeSpecifier])
+
   return (
-    <div
-      onClick={async () => {
-        try {
-          await executor.execute(
-            new ToggleWatchedCommand(queryClient, episodeDetailSpecifier),
-          )
-        } catch {
-          errorToast(
-            "An error occurred toggling episode watched status, try reloading",
-          )
-        }
-      }}
-    >
+    <div onClick={clickHandler}>
       <EpisodeBox
-        episodeSpecifier={episodeDetailSpecifier}
+        episodeSpecifier={episodeSpecifier}
         episodeDescriptor={episodeDescriptor}
         tailwindSize="12"
       />
@@ -201,11 +169,35 @@ function WatchedStatusToggle({
 
 function MarkWatchedUpToHereButton({
   showTitle,
-  count,
+  episodeSpecifier,
 }: {
   showTitle: string
-  count: number
+  episodeSpecifier: EpisodeSpecifier
 }) {
+  const { executor } = useCommandExecutor()
+  const queryClient = useQueryClient()
+
+  const unwatchedEpisodes = useMemo(
+    () => findUnwatchedEpisodesUpTo(episodeSpecifier, queryClient),
+    [episodeSpecifier, queryClient],
+  )
+
+  const clickHandler = useCallback(async () => {
+    try {
+      await executor.execute(
+        new ToggleWatchedCommand(
+          queryClient,
+          episodeSpecifier.showId,
+          unwatchedEpisodes,
+        ),
+      )
+    } catch {
+      errorToast(
+        "An error occurred toggling episode watched status, try reloading",
+      )
+    }
+  }, [executor, queryClient, episodeSpecifier, unwatchedEpisodes])
+
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>
@@ -222,7 +214,8 @@ function MarkWatchedUpToHereButton({
           <AlertDialog.Description className="sr-only" />
           <div className="text-center font-bold mb-1">Confirm update</div>
           <div className="mb-4">
-            Mark {count} episode{count === 1 ? "" : "s"} of "{showTitle}" as
+            Mark {unwatchedEpisodes.length} episode
+            {unwatchedEpisodes.length === 1 ? "" : "s"} of "{showTitle}" as
             watched?
           </div>
           <div className="flex gap-4 justify-end">
@@ -232,7 +225,7 @@ function MarkWatchedUpToHereButton({
               </Button>
             </AlertDialog.Cancel>
             <AlertDialog.Action asChild>
-              <Button htmlType="button" onClick={() => console.log("Marking")}>
+              <Button htmlType="button" onClick={clickHandler}>
                 Mark as watched
               </Button>
             </AlertDialog.Action>

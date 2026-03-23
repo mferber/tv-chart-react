@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { DisplayedEpisodeDetailSpecifierContext } from "../../../contexts/DisplayedEpisodeDetailSpecifierContext"
+import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { type ShowRecord } from "../../../types/schemas"
 import type { EpisodeSpecifier } from "../../../types/types"
 import { titleSort } from "../../../utils/showSort"
@@ -13,11 +13,12 @@ import { Show } from "./Show"
  */
 export function ShowList({ shows }: { shows: ShowRecord }) {
   // specifier for episode whose detail is to be displayed in a popup dialog;
-  // null for none
-  const [displayedEpisodeDetailSpecifier, setDisplayedEpisodeDetailSpecifier] =
-    useState<EpisodeSpecifier | undefined>(undefined)
+  // undefined for none
+  const [selectedEpisodeSpecifier, setSelectedEpisodeSpecifier] = useState<
+    EpisodeSpecifier | undefined
+  >(undefined)
 
-  const specifier = displayedEpisodeDetailSpecifier
+  const specifier = selectedEpisodeSpecifier
   const episodeDescriptor = specifier
     ? shows[specifier.showId].seasons[specifier.seasonNum - 1][
         specifier?.episodeIdx
@@ -28,23 +29,23 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
     <>
       {/* Context allows deep-nested elements to trigger or cancel display of an
           episode's detail in the popup dialog below */}
-      <DisplayedEpisodeDetailSpecifierContext
+      <SelectedEpisodeContext
         value={{
-          setDisplayedEpisodeDetailSpecifier: (specifier: EpisodeSpecifier) =>
-            setDisplayedEpisodeDetailSpecifier(specifier),
+          setSelectedEpisode: (specifier: EpisodeSpecifier) =>
+            setSelectedEpisodeSpecifier(specifier),
         }}
       >
         <ShowListBody
           shows={shows}
-          selectedEpisode={displayedEpisodeDetailSpecifier}
+          selectedEpisode={selectedEpisodeSpecifier}
         />
-      </DisplayedEpisodeDetailSpecifierContext>
+      </SelectedEpisodeContext>
 
       <EpisodeDetailModal
-        episodeDetailSpecifier={displayedEpisodeDetailSpecifier}
+        episodeSpecifier={selectedEpisodeSpecifier}
         episodeDescriptor={episodeDescriptor}
         showTitle={specifier ? shows[specifier.showId].title : undefined}
-        close={() => setDisplayedEpisodeDetailSpecifier(undefined)}
+        close={() => setSelectedEpisodeSpecifier(undefined)}
       />
     </>
   )

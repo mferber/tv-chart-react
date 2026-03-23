@@ -13,12 +13,12 @@ import { EpisodeDetailModalCloseButton } from "./EpisodeDetailModalCloseButton"
 import { ModalBodyContent } from "./EpisodeDetailModalContent"
 
 export function EpisodeDetailModal({
-  episodeDetailSpecifier,
+  episodeSpecifier,
   episodeDescriptor,
   showTitle,
   close,
 }: {
-  episodeDetailSpecifier?: EpisodeSpecifier
+  episodeSpecifier?: EpisodeSpecifier
   episodeDescriptor?: EpisodeDescriptor
   showTitle?: string
   close: () => void
@@ -26,15 +26,15 @@ export function EpisodeDetailModal({
   return (
     <Dialog.Root
       modal={false}
-      open={episodeDetailSpecifier !== null}
+      open={episodeSpecifier !== null}
       onOpenChange={close}
     >
-      {episodeDetailSpecifier && episodeDescriptor && showTitle && (
+      {episodeSpecifier && episodeDescriptor && showTitle && (
         <Dialog.Content className="fixed max-h-2/5 right-2 md:right-8 bottom-2 md:bottom-8 left-2 md:left-8 p-4 bg-gray-200 border-4 rounded-xl outline-0 overflow-auto">
           <Dialog.Title className="sr-only" />
           <Dialog.Description className="sr-only" />
           <ModalBody
-            episodeDetailSpecifier={episodeDetailSpecifier}
+            episodeSpecifier={episodeSpecifier}
             episodeDescriptor={episodeDescriptor}
             showTitle={showTitle}
             close={close}
@@ -46,18 +46,18 @@ export function EpisodeDetailModal({
 }
 
 function ModalBody({
-  episodeDetailSpecifier,
+  episodeSpecifier,
   episodeDescriptor,
   showTitle,
   close,
 }: {
-  episodeDetailSpecifier: EpisodeSpecifier
+  episodeSpecifier: EpisodeSpecifier
   episodeDescriptor: EpisodeDescriptor
   showTitle: string
   close: () => void
 }) {
   const [episodeDetails, setEpisodeDetails] = useState<EpisodeDetails | null>(
-    episodeDetailsCache.getEpisodeDetails(episodeDetailSpecifier),
+    episodeDetailsCache.getEpisodeDetails(episodeSpecifier),
   )
   const [isLoading, setIsLoading] = useState(false)
   const [isEpisodeMissing, setIsEpisodeMissing] = useState(false)
@@ -73,7 +73,7 @@ function ModalBody({
       let fetchedEpisodes: EpisodeDetails[][] | null = null
       try {
         fetchedEpisodes = await episodeDetailsCache.fetchFor(
-          episodeDetailSpecifier.showId,
+          episodeSpecifier.showId,
         )
       } catch (e) {
         if (e instanceof EpisodeMissingError) {
@@ -86,14 +86,14 @@ function ModalBody({
       }
       setIsLoading(false)
       setEpisodeDetails(
-        fetchedEpisodes[episodeDetailSpecifier.seasonNum - 1][
-          episodeDetailSpecifier.episodeIdx
+        fetchedEpisodes[episodeSpecifier.seasonNum - 1][
+          episodeSpecifier.episodeIdx
         ],
       )
     }
 
     fetcher()
-  }, [episodeDetailSpecifier, episodeDetails, isError])
+  }, [episodeSpecifier, episodeDetails, isError])
 
   if (isError) {
     return (
@@ -124,7 +124,7 @@ function ModalBody({
   return (
     episodeDetails && (
       <ModalBodyContent
-        episodeDetailSpecifier={episodeDetailSpecifier}
+        episodeSpecifier={episodeSpecifier}
         episodeDescriptor={episodeDescriptor}
         episodeDetails={episodeDetails}
         showTitle={showTitle}

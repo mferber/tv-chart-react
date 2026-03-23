@@ -3,7 +3,7 @@ import { produce } from "immer"
 
 import { toggleEpisodes } from "../../api/client"
 import type { ShowRecord } from "../../types/schemas"
-import type { EpisodeSpecifier } from "../../types/types"
+import type { PartialEpisodeSpecifier } from "../../types/types"
 import { SHOWS_QUERY_KEY } from "../ShowsQueryProvider"
 import { CommandError } from "./errors"
 
@@ -12,11 +12,17 @@ import { CommandError } from "./errors"
  */
 export class ToggleWatchedCommand {
   private queryClient: QueryClient
-  private episodeSpecifier: EpisodeSpecifier
+  private showId: string
+  private episodeSpecifiers: PartialEpisodeSpecifier[]
 
-  constructor(queryClient: QueryClient, episodeSpecifier: EpisodeSpecifier) {
+  constructor(
+    queryClient: QueryClient,
+    showId: string,
+    episodeSpecifiers: PartialEpisodeSpecifier[],
+  ) {
     this.queryClient = queryClient
-    this.episodeSpecifier = episodeSpecifier
+    this.showId = showId
+    this.episodeSpecifiers = episodeSpecifiers
   }
 
   /**
@@ -24,13 +30,33 @@ export class ToggleWatchedCommand {
    * @param cachedData the query cache for all shows
    * @param newWatched is the episode being marked read (false for unread)
    */
-  private updateLocalState(cachedData: ShowRecord, newWatched: boolean) {
+  private updateLocalState(cachedData: ShowRecord) {
     const newData = produce(cachedData, (draft) => {
-      draft[this.episodeSpecifier.showId].seasons[
-        this.episodeSpecifier.seasonNum - 1
-      ][this.episodeSpecifier.episodeIdx].watched = newWatched
+      for (const episodeSpecifier of this.episodeSpecifiers) {
+        const watched = this.getWatchedStatus(draft, episodeSpecifier)
+        this.setWatchedStatus(draft, episodeSpecifier, !watched)
+      }
     })
     this.queryClient.setQueryData(SHOWS_QUERY_KEY, newData)
+  }
+
+  private getWatchedStatus(
+    draft: ShowRecord, // actually an Immer proxy for ShowRecord
+    episodeSpecifier: PartialEpisodeSpecifier,
+  ) {
+    return draft[this.showId].seasons[episodeSpecifier.seasonNum - 1][
+      episodeSpecifier.episodeIdx
+    ].watched
+  }
+
+  private setWatchedStatus(
+    draft: ShowRecord, // actually an Immer proxy for ShowRecord
+    episodeSpecifier: PartialEpisodeSpecifier,
+    watched: boolean,
+  ) {
+    draft[this.showId].seasons[episodeSpecifier.seasonNum - 1][
+      episodeSpecifier.episodeIdx
+    ].watched = watched
   }
 
   /**
@@ -45,25 +71,16 @@ export class ToggleWatchedCommand {
       )
     }
 
-    const currentlyWatched =
-      cachedData[this.episodeSpecifier.showId].seasons[
-        this.episodeSpecifier.seasonNum - 1
-      ][this.episodeSpecifier.episodeIdx].watched
-
     // update local state optimistically
-    this.updateLocalState(cachedData, !currentlyWatched)
+    this.updateLocalState(cachedData)
 
     try {
-      await toggleEpisodes(this.episodeSpecifier.showId, [
-        this.episodeSpecifier,
-      ])
+      await toggleEpisodes(this.showId, this.episodeSpecifiers)
     } catch (err) {
       console.error(err)
 
       // revert optimistic local state update
-      await toggleEpisodes(this.episodeSpecifier.showId, [
-        this.episodeSpecifier,
-      ])
+      await toggleEpisodes(this.showId, this.episodeSpecifiers)
 
       throw err
     }

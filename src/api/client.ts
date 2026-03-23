@@ -9,7 +9,7 @@ import {
   type ShowSearchResults,
   showSearchResultsSchema,
 } from "../types/schemas"
-import type { EpisodeSpecifier } from "../types/types"
+import { type PartialEpisodeSpecifier } from "../types/types"
 import { getCSRFCookie } from "../utils/cookies"
 
 const API_BASE = "/api"
@@ -123,7 +123,7 @@ export async function addShowFromTVmazeId(tvmaze_id: number): Promise<Show> {
 
 export async function toggleEpisodes(
   showId: string,
-  episodes: EpisodeSpecifier[],
+  episodes: PartialEpisodeSpecifier[],
 ): Promise<string> {
   const episodeList = episodes.map((specifier) => [
     specifier.seasonNum - 1,
