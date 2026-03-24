@@ -82,7 +82,7 @@ function LoginForm({
             className="w-64 border rounded px-3 py-2"
             name="email"
             type="email"
-            defaultValue="test@example.com"
+            autoComplete="username"
           />
 
           <label className="font-medium">Password</label>
@@ -90,7 +90,7 @@ function LoginForm({
             className="w-64 border rounded px-3 py-2"
             name="password"
             type="password"
-            defaultValue="password"
+            autoComplete="current-password"
           />
 
           {loginFailed && (
