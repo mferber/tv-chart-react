@@ -33,7 +33,7 @@ export function CustomDropdownMenuItem({
       disabled={disabled ? true : undefined}
       className={clsx(
         "focus:outline-none w-full px-4 py-1 text-lg sm:py-0 sm:text-base",
-        disabled && "text-gray-400",
+        disabled && "text-gray-400/70",
         !disabled &&
           !nonselectable &&
           "hover:text-red-800 hover:bg-gray-300 cursor-pointer",
