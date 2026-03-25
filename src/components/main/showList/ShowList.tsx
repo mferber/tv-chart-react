@@ -2,7 +2,7 @@ import { use, useState } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { type ShowRecord } from "../../../types/schemas"
-import type { EpisodeSpecifier } from "../../../types/types"
+import { type EpisodeSpecifier } from "../../../types/types"
 import { titleSort } from "../../../utils/showSort"
 import { EpisodeDetailDialog } from "./episodeDetailDialog/EpisodeDetailDialog"
 import { Show } from "./Show"

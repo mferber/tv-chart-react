@@ -1,9 +1,9 @@
-import type { QueryClient } from "@tanstack/react-query"
+import { type QueryClient } from "@tanstack/react-query"
 import { produce } from "immer"
 
 import { toggleEpisodes } from "../../api/client"
-import type { ShowRecord } from "../../types/schemas"
-import type { PartialEpisodeSpecifier } from "../../types/types"
+import { type ShowRecord } from "../../types/schemas"
+import { type PartialEpisodeSpecifier } from "../../types/types"
 import { SHOWS_QUERY_KEY } from "../ShowsQueryProvider"
 import { CommandError } from "./errors"
 

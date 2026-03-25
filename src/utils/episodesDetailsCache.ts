@@ -1,6 +1,6 @@
 import { fetchEpisodes } from "../api/client"
 import { type EpisodeDetails } from "../types/schemas"
-import type { EpisodeSpecifier } from "../types/types"
+import { type EpisodeSpecifier } from "../types/types"
 
 export class EpisodeMissingError extends Error {}
 

@@ -2,7 +2,7 @@ import clsx from "clsx"
 import { type MouseEventHandler } from "react"
 
 import { type EpisodeDescriptor } from "../../../types/schemas"
-import type { EpisodeSpecifier } from "../../../types/types"
+import { type EpisodeSpecifier } from "../../../types/types"
 
 const STAR = "\u2605"
 

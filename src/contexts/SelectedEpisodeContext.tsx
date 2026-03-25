@@ -1,6 +1,6 @@
 import { createContext } from "react"
 
-import type { EpisodeSpecifier } from "../types/types"
+import { type EpisodeSpecifier } from "../types/types"
 
 export interface SelectedEpisodeContextType {
   setSelectedEpisode: (episodeSpecifier: EpisodeSpecifier | undefined) => void

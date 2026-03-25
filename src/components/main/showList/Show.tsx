@@ -5,7 +5,7 @@ import { use } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
-import type { EpisodeSpecifier } from "../../../types/types"
+import { type EpisodeSpecifier } from "../../../types/types"
 import {
   CustomDropdownMenuContent,
   CustomDropdownMenuItem,
