@@ -224,7 +224,6 @@ function RegistrationForm({
             className="w-64 border rounded px-3 py-2"
             name="email"
             type="email"
-            defaultValue="test@example.com"
           />
 
           <label className="font-medium">Password</label>
@@ -232,7 +231,6 @@ function RegistrationForm({
             className="w-64 border rounded px-3 py-2"
             name="password"
             type="password"
-            defaultValue="password"
           />
 
           <label className="font-medium">Reenter password</label>
@@ -240,7 +238,6 @@ function RegistrationForm({
             className="w-64 border rounded px-3 py-2"
             name="password2"
             type="password"
-            defaultValue="password"
           />
 
           {registrationFailedMessage && (
