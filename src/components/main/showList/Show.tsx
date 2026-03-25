@@ -61,7 +61,7 @@ function ShowHeader({ show }: { show: Show }) {
         <div className="mt-2">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <span className="hover:cursor-pointer">
+              <span className="hover:cursor-pointer hover:text-red-800">
                 <FontAwesomeIcon icon={faEllipsis} size="lg" />
               </span>
             </DropdownMenu.Trigger>

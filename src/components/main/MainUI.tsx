@@ -151,7 +151,7 @@ function AppHeader({
       <span className="flex gap-2 items-baseline">
         <a
           href="#"
-          className={`${canUndo ? "text-black" : "text-gray-300"}`}
+          className={`${canUndo ? "text-black hover:text-red-800" : "text-gray-300 cursor-not-allowed"}`}
           onClick={(e) => {
             e.preventDefault()
             executor.undo()
