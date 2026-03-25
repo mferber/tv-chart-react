@@ -174,7 +174,7 @@ function WatchedStatusToggle({
     <EpisodeBox
       episodeSpecifier={episodeSpecifier}
       episodeDescriptor={episodeDescriptor}
-      tailwindSize="12"
+      size="large"
       onClick={clickHandler}
     />
   )

@@ -10,13 +10,13 @@ export function EpisodeBox({
   episodeSpecifier,
   episodeDescriptor,
   selected,
-  tailwindSize,
+  size,
   onClick,
 }: {
   episodeSpecifier: EpisodeSpecifier
   episodeDescriptor: EpisodeDescriptor
   selected?: boolean
-  tailwindSize?: string
+  size?: "regular" | "large"
   onClick: MouseEventHandler<HTMLButtonElement>
 }) {
   const textClassName = clsx(
@@ -39,7 +39,7 @@ export function EpisodeBox({
       <EpisodeSquircle
         filled={episodeDescriptor.watched}
         selected={!!selected}
-        tailwindSize={tailwindSize}
+        size={size}
       />
 
       {/* center the display marker -- star or episode number -- over the squircle */}
@@ -55,17 +55,15 @@ export function EpisodeBox({
 function EpisodeSquircle({
   filled,
   selected,
-  tailwindSize,
+  size,
 }: {
   filled: boolean
   selected: boolean
-  tailwindSize?: string
+  size?: "regular" | "large"
 }) {
-  const actualTailwindSize = tailwindSize ?? "8"
-  const className = `w-${actualTailwindSize} h-${actualTailwindSize}`
   return (
     <svg
-      className={className}
+      className={size === "large" ? "w-12 h-12" : "w-8 h-8"}
       viewBox="-5 -5 110 110"
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
