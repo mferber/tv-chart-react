@@ -1,6 +1,7 @@
 import { type UseQueryResult } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 
+import { apiFetch } from "./api/client"
 import { errorToast } from "./utils/toasts"
 
 // Hook: fetches server-side app environment identifier; if run at app startup, also initializes CSRF token
@@ -9,7 +10,7 @@ export function useFetchAppEnvironment(): string | null {
 
   useEffect(() => {
     const fetchEnv = async () => {
-      setAppEnvironment(await (await fetch("/api/env")).text())
+      setAppEnvironment(await (await apiFetch("/env")).text())
     }
     fetchEnv()
   }, [])

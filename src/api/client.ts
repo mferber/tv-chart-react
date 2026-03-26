@@ -12,7 +12,7 @@ import {
 import { type PartialEpisodeSpecifier } from "../types/types"
 import { getCSRFCookie } from "../utils/cookies"
 
-const API_BASE = "/api"
+const API_BASE = import.meta.env.VITE_API_BASE_URL
 const CSRF_TOKEN_HEADER_NAME = "X-CSRFToken"
 const HTTP_STATUS_UNAUTHORIZED = 401
 const HTTP_CONFLICT = 409
@@ -38,8 +38,17 @@ export class HttpError extends Error {
   }
 }
 
+// Fetch wrapper that (a) prepends the API base URL, and (b) permit credentials
+// (including CSRF cookie) on cross-origin requests
+export function apiFetch(relativeUrl: string, options = {}): Promise<Response> {
+  return fetch(`${API_BASE}${relativeUrl}`, {
+    ...options,
+    credentials: "include",
+  })
+}
+
 export async function fetchCurrentUser(): Promise<User> {
-  const fetchResponse = await fetch(`${API_BASE}/auth/users/me`, {
+  const fetchResponse = await apiFetch("/auth/users/me", {
     method: "GET",
   })
   await handleError(fetchResponse, "HTTP error attempting to fetch user")
@@ -50,7 +59,7 @@ export async function fetchLogin(
   email: string,
   password: string,
 ): Promise<User> {
-  const fetchResponse = await fetch(`${API_BASE}/auth/login`, {
+  const fetchResponse = await apiFetch("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
     headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
@@ -63,7 +72,7 @@ export async function fetchRegisterUser(
   email: string,
   password: string,
 ): Promise<User> {
-  const fetchResponse = await fetch(`${API_BASE}/auth/register`, {
+  const fetchResponse = await apiFetch("/auth/register", {
     method: "POST",
     body: JSON.stringify({ email, password }),
     headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
@@ -73,7 +82,7 @@ export async function fetchRegisterUser(
 }
 
 export async function fetchLogout(): Promise<string> {
-  const fetchResponse = await fetch(`${API_BASE}/auth/logout`, {
+  const fetchResponse = await apiFetch("/auth/logout", {
     method: "GET",
   })
   await handleError(fetchResponse, "HTTP error attempting to fetch user")
@@ -81,7 +90,7 @@ export async function fetchLogout(): Promise<string> {
 }
 
 export async function fetchShows(): Promise<ShowRecord> {
-  const fetchResponse = await fetch(`${API_BASE}/shows`, { method: "GET" })
+  const fetchResponse = await apiFetch("/shows", { method: "GET" })
   await handleError(
     fetchResponse,
     "HTTP error attempting to fetch show listings",
@@ -92,7 +101,7 @@ export async function fetchShows(): Promise<ShowRecord> {
 export async function fetchEpisodes(
   showId: string,
 ): Promise<EpisodeDetails[][]> {
-  const fetchResponse = await fetch(`${API_BASE}/episodes/${showId}`)
+  const fetchResponse = await apiFetch(`/episodes/${showId}`)
   await handleError(
     fetchResponse,
     "HTTP error attempting to fetch show listings",
@@ -103,8 +112,8 @@ export async function fetchEpisodes(
 export async function fetchShowSearchResults(
   searchTerm: string,
 ): Promise<ShowSearchResults> {
-  const fetchResponse = await fetch(
-    `${API_BASE}/search?q=${encodeURIComponent(searchTerm)}`,
+  const fetchResponse = await apiFetch(
+    `/search?q=${encodeURIComponent(searchTerm)}`,
   )
   await handleError(
     fetchResponse,
@@ -114,9 +123,7 @@ export async function fetchShowSearchResults(
 }
 
 export async function addShowFromTVmazeId(tvmaze_id: number): Promise<Show> {
-  const fetchResponse = await fetch(
-    `${API_BASE}/add-show?tvmaze_id=${tvmaze_id}`,
-  )
+  const fetchResponse = await apiFetch(`/add-show?tvmaze_id=${tvmaze_id}`)
   await handleError(fetchResponse, "HTTP error attempting to add new show")
   return showSchema.parse(await fetchResponse.json())
 }
@@ -130,7 +137,7 @@ export async function toggleEpisodes(
     specifier.episodeIdx,
   ])
   const body = { show_id: showId, episodes: episodeList }
-  const fetchResponse = await fetch(`${API_BASE}/toggle-watched-status`, {
+  const fetchResponse = await apiFetch("/toggle-watched-status", {
     method: "POST",
     body: JSON.stringify(body),
     headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
