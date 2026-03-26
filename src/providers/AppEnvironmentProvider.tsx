@@ -26,4 +26,4 @@ export function AppEnvironmentProvider({ children }: { children: ReactNode }) {
 }
 
 // Context that provides the server-side app environment, obtained by a one-time request to /env in the back end.
-const AppEnvironmentContext = createContext<string | null>(null)
+const AppEnvironmentContext = createContext<string | null | Error>(null)

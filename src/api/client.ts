@@ -17,6 +17,13 @@ const CSRF_TOKEN_HEADER_NAME = "X-CSRFToken"
 const HTTP_STATUS_UNAUTHORIZED = 401
 const HTTP_CONFLICT = 409
 
+export class UndefinedApiBaseUrlError extends Error {
+  constructor() {
+    super()
+    this.name = "UndefinedApiBaseUrlError"
+  }
+}
+
 export class HttpUnauthorizedError extends Error {
   constructor() {
     super()
@@ -41,6 +48,13 @@ export class HttpError extends Error {
 // Fetch wrapper that (a) prepends the API base URL, and (b) permit credentials
 // (including CSRF cookie) on cross-origin requests
 export function apiFetch(relativeUrl: string, options = {}): Promise<Response> {
+  if (API_BASE === undefined) {
+    console.error(
+      "Environment var VITE_API_BASE_URL is unset: it must contain the API base URL",
+    )
+    throw new UndefinedApiBaseUrlError()
+  }
+
   return fetch(`${API_BASE}${relativeUrl}`, {
     ...options,
     credentials: "include",

@@ -5,13 +5,28 @@ import { apiFetch } from "./api/client"
 import { errorToast } from "./utils/toasts"
 
 // Hook: fetches server-side app environment identifier; if run at app startup, also initializes CSRF token
-export function useFetchAppEnvironment(): string | null {
-  const [appEnvironment, setAppEnvironment] = useState<string | null>(null)
+export function useFetchAppEnvironment(): string | null | Error {
+  const [appEnvironment, setAppEnvironment] = useState<string | null | Error>(
+    null,
+  )
 
   useEffect(() => {
     const fetchEnv = async () => {
-      setAppEnvironment(await (await apiFetch("/env")).text())
+      try {
+        const env = await (await apiFetch("/env")).text()
+        setAppEnvironment(env)
+      } catch (e) {
+        console.error(e)
+        if (e instanceof Error) {
+          setAppEnvironment(e)
+        } else {
+          console.error(
+            "Something unknown went very wrong fetching the app environment",
+          )
+        }
+      }
     }
+
     fetchEnv()
   }, [])
 
