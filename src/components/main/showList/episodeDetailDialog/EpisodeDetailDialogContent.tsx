@@ -113,9 +113,9 @@ function Header({
             <div className="text-sm">
               <span className="font-bold">
                 Season {episodeSpecifier.seasonNum},{" "}
-                {episodeDescriptor.displayNumber === null
+                {episodeDescriptor.ep_num === null
                   ? "special"
-                  : `episode ${episodeDescriptor.displayNumber}`}
+                  : `episode ${episodeDescriptor.ep_num}`}
               </span>
               {episodeDetails.duration && (
                 <span> ({episodeDetails.duration} min.)</span>
