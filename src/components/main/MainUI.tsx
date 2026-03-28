@@ -100,8 +100,12 @@ function AppHeader({
       <span className="flex gap-4 items-baseline" title="Main menu">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger className="cursor-pointer focus:outline-none">
-            <Couch className="inline h-6 relative -top-1 mr-2" />
-            <span className="text-xl font-black">Couch Potato</span>
+            <div className="group">
+              <Couch className="inline h-6 relative -top-1 mr-2 group-hover:**:stroke-red-800!" />
+              <span className="text-xl font-black group-hover:text-red-800">
+                Couch Potato
+              </span>
+            </div>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
             <CustomDropdownMenuContent>
