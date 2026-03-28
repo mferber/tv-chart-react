@@ -116,8 +116,10 @@ function AppHeader({
                 <LogOutLink>Log out</LogOutLink>
               </CustomDropdownMenuItem>
               <CustomDropdownMenuSeparator />
-              <CustomDropdownMenuItem disabled>
-                Download my data
+              <CustomDropdownMenuItem>
+                <a href={`${import.meta.env.VITE_API_BASE_URL}/data/export`}>
+                  Download my data
+                </a>
               </CustomDropdownMenuItem>
               <CustomDropdownMenuItem disabled>
                 Upload replacement data
