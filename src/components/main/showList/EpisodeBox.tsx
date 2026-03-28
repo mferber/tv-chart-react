@@ -45,7 +45,7 @@ export function EpisodeBox({
       {/* center the display marker -- star or episode number -- over the squircle */}
       <div className="absolute inset-0 flex items-center justify-center @container-[size]">
         <span className={textClassName}>
-          {episodeDescriptor.displayNumber ?? STAR}
+          {episodeDescriptor.ep_num ?? STAR}
         </span>
       </div>
     </button>

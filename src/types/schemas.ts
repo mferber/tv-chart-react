@@ -4,9 +4,8 @@ import * as z from "zod"
 
 export const episodeDescriptorSchema = z.object({
   title: z.nullish(z.string()),
-  type: z.literal(["episode", "special"]),
   watched: z.boolean(),
-  displayNumber: z.nullable(z.number()),
+  ep_num: z.nullable(z.number()),
 })
 export type EpisodeDescriptor = z.infer<typeof episodeDescriptorSchema>
 
