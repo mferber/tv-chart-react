@@ -5,7 +5,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
-import { type Dispatch, type SetStateAction, useState } from "react"
+import {
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  useState,
+} from "react"
 import { ThreeDots } from "react-loader-spinner"
 
 import Couch from "../../assets/couch.svg?react"
@@ -14,6 +19,7 @@ import {
   useCommandExecutor,
 } from "../../providers/commands/CommandExecutorProvider"
 import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
+import { type User } from "../../providers/CurrentUserStatusProvider"
 import {
   ShowsQueryProvider,
   useShowsQuery,
@@ -98,36 +104,17 @@ function AppHeader({
   return (
     <div className="fixed top-0 left-0 right-0 pt-2 px-4 bg-white z-1 flex justify-between border-b pb-2 mb-4 align-middle items-baseline">
       <span className="flex gap-4 items-baseline" title="Main menu">
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger className="cursor-pointer focus:outline-none">
+        <CouchMenu
+          currentUser={currentUser}
+          trigger={
             <div className="group">
               <Couch className="inline h-6 relative -top-1 mr-2 group-hover:**:stroke-red-800!" />
               <span className="text-xl font-black group-hover:text-red-800">
                 Couch Potato
               </span>
             </div>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <CustomDropdownMenuContent>
-              <CustomDropdownMenuItem className="font-bold" nonselectable>
-                {currentUser.email}
-              </CustomDropdownMenuItem>
-              <CustomDropdownMenuItem>
-                <LogOutLink>Log out</LogOutLink>
-              </CustomDropdownMenuItem>
-              <CustomDropdownMenuSeparator />
-              <CustomDropdownMenuItem>
-                <a href={`${import.meta.env.VITE_API_BASE_URL}/data/export`}>
-                  Download backup data
-                </a>
-              </CustomDropdownMenuItem>
-              <CustomDropdownMenuItem disabled>
-                Restore from backup data
-              </CustomDropdownMenuItem>
-            </CustomDropdownMenuContent>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
-
+          }
+        />
         <a
           href="#"
           className="hover:text-red-800"
@@ -168,5 +155,40 @@ function AppHeader({
         </a>
       </span>
     </div>
+  )
+}
+
+function CouchMenu({
+  currentUser,
+  trigger,
+}: {
+  currentUser: User
+  trigger: ReactNode
+}) {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger className="cursor-pointer focus:outline-none">
+        {trigger}
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <CustomDropdownMenuContent>
+          <CustomDropdownMenuItem className="font-bold" nonselectable>
+            {currentUser.email}
+          </CustomDropdownMenuItem>
+          <CustomDropdownMenuItem>
+            <LogOutLink>Log out</LogOutLink>
+          </CustomDropdownMenuItem>
+          <CustomDropdownMenuSeparator />
+          <CustomDropdownMenuItem>
+            <a href={`${import.meta.env.VITE_API_BASE_URL}/data/export`}>
+              Download backup data
+            </a>
+          </CustomDropdownMenuItem>
+          <CustomDropdownMenuItem disabled>
+            Restore from backup data
+          </CustomDropdownMenuItem>
+        </CustomDropdownMenuContent>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   )
 }
