@@ -118,11 +118,11 @@ function AppHeader({
               <CustomDropdownMenuSeparator />
               <CustomDropdownMenuItem>
                 <a href={`${import.meta.env.VITE_API_BASE_URL}/data/export`}>
-                  Download my data
+                  Download backup data
                 </a>
               </CustomDropdownMenuItem>
               <CustomDropdownMenuItem disabled>
-                Upload replacement data
+                Restore from backup data
               </CustomDropdownMenuItem>
             </CustomDropdownMenuContent>
           </DropdownMenu.Portal>
