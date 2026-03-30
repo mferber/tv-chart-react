@@ -65,47 +65,63 @@ function ShowHeader({ show }: { show: Show }) {
                 <FontAwesomeIcon icon={faEllipsis} size="lg" />
               </span>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <CustomDropdownMenuContent>
-                <CustomDropdownMenuItem nonselectable>
-                  <div className="font-bold">{show.title}</div>
-                </CustomDropdownMenuItem>
-                <CustomDropdownMenuSeparator />
-                <CustomDropdownMenuItem>
-                  <a
-                    target="_blank"
-                    href={`https://imdb.com/title/${show.imdb_id}`}
-                  >
-                    View on IMDB
-                  </a>
-                </CustomDropdownMenuItem>
-                <CustomDropdownMenuItem>
-                  <a
-                    target="_blank"
-                    href={`https://tvmaze.com/shows/${show.tvmaze_id}`}
-                  >
-                    View on TVmaze
-                  </a>
-                </CustomDropdownMenuItem>
-                <CustomDropdownMenuItem>
-                  <a
-                    target="_blank"
-                    href={`https://en.wikipedia.org/wiki/${show.title}`}
-                  >
-                    View on Wikipedia
-                  </a>
-                </CustomDropdownMenuItem>
-                {/* 
-                Commented out pending support for this functionality
-                <CustomDropdownMenuSeparator />
-                <CustomDropdownMenuItem><a href="#"><div>Refresh episode listings</div></a></CustomDropdownMenuItem>
-                */}
-              </CustomDropdownMenuContent>
-            </DropdownMenu.Portal>
+            <ShowDropdownMenuContent show={show} />
           </DropdownMenu.Root>
         </div>
       </div>
     </div>
+  )
+}
+
+function ShowDropdownMenuContent({ show }: { show: Show }) {
+  return (
+    <DropdownMenu.Portal>
+      <CustomDropdownMenuContent>
+        <CustomDropdownMenuItem nonselectable>
+          <div className="font-bold">{show.title}</div>
+        </CustomDropdownMenuItem>
+        <CustomDropdownMenuSeparator />
+        <CustomDropdownMenuItem nonselectable>
+          <div className="font-bold">View on:</div>
+        </CustomDropdownMenuItem>
+        <CustomDropdownMenuItem>
+          <a target="_blank" href={`https://imdb.com/title/${show.imdb_id}`}>
+            → IMDB
+          </a>
+        </CustomDropdownMenuItem>
+        <CustomDropdownMenuItem>
+          <a
+            target="_blank"
+            href={`https://tvmaze.com/shows/${show.tvmaze_id}`}
+          >
+            → TVmaze
+          </a>
+        </CustomDropdownMenuItem>
+        {show.thetvdb_id && (
+          <CustomDropdownMenuItem>
+            <a
+              target="_blank"
+              href={`https://www.thetvdb.com/dereferrer/series/${show.thetvdb_id}`}
+            >
+              → TheTVDB
+            </a>
+          </CustomDropdownMenuItem>
+        )}
+        <CustomDropdownMenuItem>
+          <a
+            target="_blank"
+            href={`https://en.wikipedia.org/wiki/${show.title}`}
+          >
+            → Wikipedia
+          </a>
+        </CustomDropdownMenuItem>
+        {/* 
+                Commented out pending support for this functionality
+                <CustomDropdownMenuSeparator />
+                <CustomDropdownMenuItem><a href="#"><div>Refresh episode listings</div></a></CustomDropdownMenuItem>
+                */}
+      </CustomDropdownMenuContent>
+    </DropdownMenu.Portal>
   )
 }
 
