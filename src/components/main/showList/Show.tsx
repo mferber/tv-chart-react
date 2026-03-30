@@ -1,7 +1,7 @@
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
-import { use } from "react"
+import { type ReactNode, use } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
@@ -59,69 +59,80 @@ function ShowHeader({ show }: { show: Show }) {
           {show.source}, {show.duration} min.
         </div>
         <div className="mt-2">
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
+          <ShowInfoDropDownMenu
+            show={show}
+            trigger={
               <span className="hover:cursor-pointer hover:text-red-800">
                 <FontAwesomeIcon icon={faEllipsis} size="lg" />
               </span>
-            </DropdownMenu.Trigger>
-            <ShowDropdownMenuContent show={show} />
-          </DropdownMenu.Root>
+            }
+          />
         </div>
       </div>
     </div>
   )
 }
 
-function ShowDropdownMenuContent({ show }: { show: Show }) {
+function ShowInfoDropDownMenu({
+  show,
+  trigger,
+}: {
+  show: Show
+  trigger: ReactNode
+}) {
   return (
-    <DropdownMenu.Portal>
-      <CustomDropdownMenuContent>
-        <CustomDropdownMenuItem nonselectable>
-          <div className="font-bold">{show.title}</div>
-        </CustomDropdownMenuItem>
-        <CustomDropdownMenuSeparator />
-        <CustomDropdownMenuItem nonselectable>
-          <div className="font-bold">View on:</div>
-        </CustomDropdownMenuItem>
-        <CustomDropdownMenuItem>
-          <a target="_blank" href={`https://imdb.com/title/${show.imdb_id}`}>
-            → IMDB
-          </a>
-        </CustomDropdownMenuItem>
-        <CustomDropdownMenuItem>
-          <a
-            target="_blank"
-            href={`https://tvmaze.com/shows/${show.tvmaze_id}`}
-          >
-            → TVmaze
-          </a>
-        </CustomDropdownMenuItem>
-        {show.thetvdb_id && (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger className="focus-visible:outline-none">
+        {trigger}
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <CustomDropdownMenuContent>
+          <CustomDropdownMenuItem nonselectable>
+            <div className="font-bold">{show.title}</div>
+          </CustomDropdownMenuItem>
+          <CustomDropdownMenuSeparator />
+          <CustomDropdownMenuItem nonselectable>
+            <div className="font-bold">View on:</div>
+          </CustomDropdownMenuItem>
+          <CustomDropdownMenuItem>
+            <a target="_blank" href={`https://imdb.com/title/${show.imdb_id}`}>
+              → IMDB
+            </a>
+          </CustomDropdownMenuItem>
           <CustomDropdownMenuItem>
             <a
               target="_blank"
-              href={`https://www.thetvdb.com/dereferrer/series/${show.thetvdb_id}`}
+              href={`https://tvmaze.com/shows/${show.tvmaze_id}`}
             >
-              → TheTVDB
+              → TVmaze
             </a>
           </CustomDropdownMenuItem>
-        )}
-        <CustomDropdownMenuItem>
-          <a
-            target="_blank"
-            href={`https://en.wikipedia.org/wiki/${show.title}`}
-          >
-            → Wikipedia
-          </a>
-        </CustomDropdownMenuItem>
-        {/* 
+          {show.thetvdb_id && (
+            <CustomDropdownMenuItem>
+              <a
+                target="_blank"
+                href={`https://www.thetvdb.com/dereferrer/series/${show.thetvdb_id}`}
+              >
+                → TheTVDB
+              </a>
+            </CustomDropdownMenuItem>
+          )}
+          <CustomDropdownMenuItem>
+            <a
+              target="_blank"
+              href={`https://en.wikipedia.org/wiki/${show.title}`}
+            >
+              → Wikipedia
+            </a>
+          </CustomDropdownMenuItem>
+          {/* 
                 Commented out pending support for this functionality
                 <CustomDropdownMenuSeparator />
                 <CustomDropdownMenuItem><a href="#"><div>Refresh episode listings</div></a></CustomDropdownMenuItem>
                 */}
-      </CustomDropdownMenuContent>
-    </DropdownMenu.Portal>
+        </CustomDropdownMenuContent>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   )
 }
 
