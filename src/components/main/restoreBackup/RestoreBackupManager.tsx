@@ -5,9 +5,9 @@ import { useState } from "react"
 import { HttpBadRequestError, uploadImportFile } from "../../../api/client"
 import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { errorToast, infoToast } from "../../../utils/toasts"
-import { Button } from "../../misc/Button"
-import { CustomDialogOverlay } from "../../misc/CustomDialogItems"
 import { ThemedAlert } from "../../misc/ThemedAlert"
+import { ThemedButton } from "../../misc/ThemedButton"
+import { ThemedDialogOverlay } from "../../misc/ThemedDialogItems"
 
 export function RestoreBackupManager({
   open,
@@ -89,7 +89,7 @@ function UploadBackupFileModal({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <CustomDialogOverlay />
+        <ThemedDialogOverlay />
         <Dialog.Content className="w-5/6 max-w-100 sm:w-auto sm:min-w-100 sm:max-w-5/6 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 border-4 rounded-xl bg-white overflow-auto">
           <Dialog.Title className="sr-only" />
           <Dialog.Description className="sr-only" />
@@ -114,14 +114,14 @@ function UploadBackupFileModal({
             onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
           />
           <div>
-            <Button
+            <ThemedButton
               htmlType="button"
               disabled={selectedFile == null}
               spinner={isLoading}
               onClick={() => setConfirmationIsOpen(true)}
             >
               Continue
-            </Button>
+            </ThemedButton>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
@@ -147,10 +147,13 @@ function UploadBackupConfirmationAlert({
       open={open}
       onOpenChange={onOpenChange}
       body={
-        <div>
-          Are you sure you want to overwrite your current show listings with the
-          contents of {selectedFile.name}?
-        </div>
+        <>
+          <div className="text-lg font-bold">Confirm replacement</div>
+          <div>
+            Are you sure you want to overwrite your current show listings with
+            the contents of {selectedFile.name}?
+          </div>
+        </>
       }
       actionButtonText="Overwrite"
       onAction={async () => {

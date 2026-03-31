@@ -1,8 +1,8 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog"
 import type { ReactNode } from "react"
 
-import { Button } from "./Button"
-import { CustomAlertOverlay } from "./CustomDialogItems"
+import { ThemedButton } from "./ThemedButton"
+import { ThemedAlertOverlay } from "./ThemedDialogItems"
 
 export function ThemedAlert({
   open,
@@ -31,21 +31,21 @@ export function ThemedAlert({
         </AlertDialog.Trigger>
       )}
       <AlertDialog.Portal>
-        <CustomAlertOverlay />
+        <ThemedAlertOverlay />
         <AlertDialog.Content className="fixed w-[90vw] max-w-120 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-stone-200 border p-6 rounded-lg shadow-gray-500 shadow-lg">
           <AlertDialog.Title className="sr-only" />
           <AlertDialog.Description className="sr-only" />
           {body}
-          <div className="flex flex-col sm:flex-row gap-4 justify-end">
+          <div className="flex flex-col sm:flex-row gap-4 justify-end mt-8">
             <AlertDialog.Cancel asChild>
-              <Button htmlType="button" buttonStyle="secondary">
+              <ThemedButton htmlType="button" buttonStyle="secondary">
                 {cancelButtonText ?? "Cancel"}
-              </Button>
+              </ThemedButton>
             </AlertDialog.Cancel>
             <AlertDialog.Action asChild>
-              <Button htmlType="button" onClick={onAction}>
+              <ThemedButton htmlType="button" onClick={onAction}>
                 {actionButtonText}
-              </Button>
+              </ThemedButton>
             </AlertDialog.Action>
           </div>
         </AlertDialog.Content>

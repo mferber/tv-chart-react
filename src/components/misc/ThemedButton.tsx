@@ -2,7 +2,7 @@ import { clsx } from "clsx"
 import React, { type ButtonHTMLAttributes } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
-export function Button({
+export function ThemedButton({
   htmlType,
   size,
   buttonStyle,

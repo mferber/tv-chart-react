@@ -30,10 +30,10 @@ import {
 import { infoToast } from "../../utils/toasts"
 import { LogOutLink } from "../authentication/LogOutLink"
 import {
-  CustomDropdownMenuContent,
-  CustomDropdownMenuItem,
-  CustomDropdownMenuSeparator,
-} from "../misc/CustomDropdownMenu"
+  ThemedDropdownMenuContent,
+  ThemedDropdownMenuItem,
+  ThemedDropdownMenuSeparator,
+} from "../misc/ThemedDropdownMenu"
 import { RestoreBackupManager } from "./restoreBackup/RestoreBackupManager"
 import { SearchModal } from "./search/SearchModal"
 import { ShowList } from "./showList/ShowList"
@@ -179,23 +179,23 @@ function CouchMenu({
           {trigger}
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
-          <CustomDropdownMenuContent>
-            <CustomDropdownMenuItem className="font-bold" nonselectable>
+          <ThemedDropdownMenuContent>
+            <ThemedDropdownMenuItem className="font-bold" nonselectable>
               {currentUser.email}
-            </CustomDropdownMenuItem>
-            <CustomDropdownMenuItem>
+            </ThemedDropdownMenuItem>
+            <ThemedDropdownMenuItem>
               <LogOutLink>Log out</LogOutLink>
-            </CustomDropdownMenuItem>
-            <CustomDropdownMenuSeparator />
-            <CustomDropdownMenuItem>
+            </ThemedDropdownMenuItem>
+            <ThemedDropdownMenuSeparator />
+            <ThemedDropdownMenuItem>
               <a href={getExportUrl()}>Download backup data</a>
-            </CustomDropdownMenuItem>
-            <CustomDropdownMenuItem
+            </ThemedDropdownMenuItem>
+            <ThemedDropdownMenuItem
               onSelect={() => setRestoreBackupManagerIsOpen(true)}
             >
               Restore data from backup
-            </CustomDropdownMenuItem>
-          </CustomDropdownMenuContent>
+            </ThemedDropdownMenuItem>
+          </ThemedDropdownMenuContent>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>
 

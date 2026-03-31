@@ -7,10 +7,10 @@ import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../types/types"
 import {
-  CustomDropdownMenuContent,
-  CustomDropdownMenuItem,
-  CustomDropdownMenuSeparator,
-} from "../../misc/CustomDropdownMenu"
+  ThemedDropdownMenuContent,
+  ThemedDropdownMenuItem,
+  ThemedDropdownMenuSeparator,
+} from "../../misc/ThemedDropdownMenu"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 import { EpisodeBox } from "./EpisodeBox"
 
@@ -86,51 +86,51 @@ function ShowInfoDropDownMenu({
         {trigger}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <CustomDropdownMenuContent>
-          <CustomDropdownMenuItem nonselectable>
+        <ThemedDropdownMenuContent>
+          <ThemedDropdownMenuItem nonselectable>
             <div className="font-bold">{show.title}</div>
-          </CustomDropdownMenuItem>
-          <CustomDropdownMenuSeparator />
-          <CustomDropdownMenuItem nonselectable>
+          </ThemedDropdownMenuItem>
+          <ThemedDropdownMenuSeparator />
+          <ThemedDropdownMenuItem nonselectable>
             <div className="font-bold">View on:</div>
-          </CustomDropdownMenuItem>
-          <CustomDropdownMenuItem>
+          </ThemedDropdownMenuItem>
+          <ThemedDropdownMenuItem>
             <a target="_blank" href={`https://imdb.com/title/${show.imdb_id}`}>
               → IMDB
             </a>
-          </CustomDropdownMenuItem>
-          <CustomDropdownMenuItem>
+          </ThemedDropdownMenuItem>
+          <ThemedDropdownMenuItem>
             <a
               target="_blank"
               href={`https://tvmaze.com/shows/${show.tvmaze_id}`}
             >
               → TVmaze
             </a>
-          </CustomDropdownMenuItem>
+          </ThemedDropdownMenuItem>
           {show.thetvdb_id && (
-            <CustomDropdownMenuItem>
+            <ThemedDropdownMenuItem>
               <a
                 target="_blank"
                 href={`https://www.thetvdb.com/dereferrer/series/${show.thetvdb_id}`}
               >
                 → TheTVDB
               </a>
-            </CustomDropdownMenuItem>
+            </ThemedDropdownMenuItem>
           )}
-          <CustomDropdownMenuItem>
+          <ThemedDropdownMenuItem>
             <a
               target="_blank"
               href={`https://en.wikipedia.org/wiki/${show.title}`}
             >
               → Wikipedia
             </a>
-          </CustomDropdownMenuItem>
+          </ThemedDropdownMenuItem>
           {/* 
                 Commented out pending support for this functionality
-                <CustomDropdownMenuSeparator />
-                <CustomDropdownMenuItem><a href="#"><div>Refresh episode listings</div></a></CustomDropdownMenuItem>
+                <ThemedDropdownMenuSeparator />
+                <ThemedDropdownMenuItem><a href="#"><div>Refresh episode listings</div></a></ThemedDropdownMenuItem>
                 */}
-        </CustomDropdownMenuContent>
+        </ThemedDropdownMenuContent>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   )

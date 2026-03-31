@@ -18,9 +18,9 @@ import { useSimpleQuery } from "../../../hooks"
 import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { type ShowRecord, type ShowSearchResult } from "../../../types/schemas"
 import { errorToast } from "../../../utils/toasts"
-import { Button } from "../../misc/Button"
-import { CustomDialogOverlay } from "../../misc/CustomDialogItems"
+import { ThemedDialogOverlay } from "../../misc/ThemedDialogItems"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
+import { ThemedButton } from "../../misc/ThemedButton"
 interface SearchModalContextType {
   shows: ShowRecord
   isSearchResultLoading: boolean
@@ -73,7 +73,7 @@ export function SearchModal({
   return (
     <Dialog.Root open={isOpen} onOpenChange={close}>
       <Dialog.Portal>
-        <CustomDialogOverlay />
+        <ThemedDialogOverlay />
         <Dialog.Content
           className="fixed top-16 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
           onOpenAutoFocus={(e) => {
@@ -200,12 +200,12 @@ function SearchForm({
             name="query"
             className="flex-1 max-w-80 min-w-8 px-2 py-1 border rounded-md"
           />
-          <Button
+          <ThemedButton
             htmlType="submit"
             disabled={isSearchResultLoading || tvMazeIdBeingAdded !== null}
           >
             Search
-          </Button>
+          </ThemedButton>
         </form>
       </div>
     </>
@@ -277,18 +277,18 @@ function AddThisShowButton({ result }: { result: ShowSearchResult }) {
 
   const showList = Object.values(shows)
   return showList.some((s) => s.tvmaze_id === result.tvmaze_id) ? (
-    <Button htmlType="button" disabled={true}>
+    <ThemedButton htmlType="button" disabled={true}>
       Already tracked
-    </Button>
+    </ThemedButton>
   ) : (
-    <Button
+    <ThemedButton
       htmlType="button"
       onClick={() => addShowMutation.mutate(result.tvmaze_id)}
       disabled={tvMazeIdBeingAdded !== null}
       spinner={tvMazeIdBeingAdded === result.tvmaze_id}
     >
       Add this show
-    </Button>
+    </ThemedButton>
   )
 }
 

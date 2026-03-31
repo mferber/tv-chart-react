@@ -2,7 +2,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { clsx } from "clsx"
 import { type ReactNode } from "react"
 
-export function CustomDropdownMenuContent({
+export function ThemedDropdownMenuContent({
   children,
 }: {
   children: ReactNode
@@ -17,7 +17,7 @@ export function CustomDropdownMenuContent({
   )
 }
 
-export function CustomDropdownMenuItem({
+export function ThemedDropdownMenuItem({
   className,
   nonselectable,
   disabled,
@@ -49,6 +49,6 @@ export function CustomDropdownMenuItem({
   )
 }
 
-export function CustomDropdownMenuSeparator() {
+export function ThemedDropdownMenuSeparator() {
   return <DropdownMenu.Separator className="h-px my-2 bg-gray-500 w-full" />
 }

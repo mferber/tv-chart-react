@@ -12,8 +12,8 @@ import { type EpisodeDetails } from "../../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../../types/types"
 import { errorToast } from "../../../../utils/toasts"
 import { findUnwatchedEpisodesUpTo } from "../../../../utils/unwatchedEpisodes"
-import { Button } from "../../../misc/Button"
 import { ThemedAlert } from "../../../misc/ThemedAlert"
+import { ThemedButton } from "../../../misc/ThemedButton"
 import { EpisodeBox } from "../EpisodeBox"
 import { EpisodeDetailDialogCloseButton } from "./EpisodeDetailDialogCloseButton"
 
@@ -221,15 +221,15 @@ function MarkWatchedUpToHereButton({
     <ThemedAlert
       trigger={
         <div className="text-sm py-2">
-          <Button htmlType="button" size="narrow">
+          <ThemedButton htmlType="button" size="narrow">
             Mark watched up to here
-          </Button>
+          </ThemedButton>
         </div>
       }
       triggerAsChild
       body={
         <>
-          <div className="text-center font-bold mb-1">Confirm update</div>
+          <div className="text-lg font-bold mb-1">Confirm update</div>
           <div className="mb-4">
             Mark {unwatchedEpisodes.length} episode
             {unwatchedEpisodes.length === 1 ? "" : "s"} of “{showTitle}” as

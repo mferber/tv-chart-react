@@ -12,7 +12,7 @@ import howItWorks_Wide from "../../assets/how-it-works-wide.png"
 import tvmazeLogo from "../../assets/tvmaze-logo.png"
 import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
 import { errorToast } from "../../utils/toasts"
-import { Button } from "../misc/Button"
+import { ThemedButton } from "../misc/ThemedButton"
 
 export function LoginPage() {
   const [isRegisteringNewUser, setIsRegisteringNewUser] = useState(false)
@@ -101,7 +101,7 @@ function LoginForm({
           )}
 
           <div />
-          <Button htmlType="submit">Log in</Button>
+          <ThemedButton htmlType="submit">Log in</ThemedButton>
 
           <div />
           <a
@@ -249,7 +249,7 @@ function RegistrationForm({
             </>
           )}
           <div />
-          <Button htmlType="submit">Register</Button>
+          <ThemedButton htmlType="submit">Register</ThemedButton>
 
           <div />
           <a
