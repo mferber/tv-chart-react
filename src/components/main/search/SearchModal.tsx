@@ -19,6 +19,7 @@ import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { type ShowRecord, type ShowSearchResult } from "../../../types/schemas"
 import { errorToast } from "../../../utils/toasts"
 import { Button } from "../../misc/Button"
+import { CustomDialogOverlay } from "../../misc/CustomDialogItems"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 interface SearchModalContextType {
   shows: ShowRecord
@@ -72,7 +73,7 @@ export function SearchModal({
   return (
     <Dialog.Root open={isOpen} onOpenChange={close}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <CustomDialogOverlay />
         <Dialog.Content
           className="fixed top-16 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
           onOpenAutoFocus={(e) => {
