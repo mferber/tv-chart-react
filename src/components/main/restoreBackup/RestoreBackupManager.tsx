@@ -1,4 +1,3 @@
-import * as AlertDialog from "@radix-ui/react-alert-dialog"
 import * as Dialog from "@radix-ui/react-dialog"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
@@ -7,10 +6,8 @@ import { HttpBadRequestError, uploadImportFile } from "../../../api/client"
 import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { errorToast, infoToast } from "../../../utils/toasts"
 import { Button } from "../../misc/Button"
-import {
-  CustomAlertOverlay,
-  CustomDialogOverlay,
-} from "../../misc/CustomDialogItems"
+import { CustomDialogOverlay } from "../../misc/CustomDialogItems"
+import { ThemedAlert } from "../../misc/ThemedAlert"
 
 export function RestoreBackupManager({
   open,
@@ -146,29 +143,20 @@ function UploadBackupConfirmationAlert({
   closeBackupManager: () => void
 }) {
   return (
-    <AlertDialog.Root open={open} onOpenChange={onOpenChange}>
-      <AlertDialog.Portal>
-        <CustomAlertOverlay />
-        <AlertDialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto">
-          <AlertDialog.Title className="sr-only" />
-          <AlertDialog.Description className="sr-only" />
-          <div>
-            Are you sure you want to overwrite your current show listings with
-            the contents of {selectedFile.name}?
-          </div>
-          <div className="flex justify-end gap-4">
-            <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-            <AlertDialog.Action
-              onClick={async () => {
-                await uploadSelectedFile(selectedFile)
-                closeBackupManager()
-              }}
-            >
-              Overwrite
-            </AlertDialog.Action>
-          </div>
-        </AlertDialog.Content>
-      </AlertDialog.Portal>
-    </AlertDialog.Root>
+    <ThemedAlert
+      open={open}
+      onOpenChange={onOpenChange}
+      body={
+        <div>
+          Are you sure you want to overwrite your current show listings with the
+          contents of {selectedFile.name}?
+        </div>
+      }
+      actionButtonText="Overwrite"
+      onAction={async () => {
+        await uploadSelectedFile(selectedFile)
+        closeBackupManager()
+      }}
+    />
   )
 }
