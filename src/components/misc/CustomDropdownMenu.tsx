@@ -21,11 +21,13 @@ export function CustomDropdownMenuItem({
   className,
   nonselectable,
   disabled,
+  onSelect,
   children,
 }: {
   className?: string
   nonselectable?: boolean
   disabled?: boolean
+  onSelect?: () => void
   children: ReactNode
 }) {
   return (
@@ -40,6 +42,7 @@ export function CustomDropdownMenuItem({
             : "hover:text-red-800 hover:bg-gray-300 cursor-pointer",
         className,
       )}
+      onSelect={onSelect}
     >
       {children}
     </DropdownMenu.Item>
