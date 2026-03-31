@@ -14,6 +14,7 @@ import { getCSRFCookie } from "../utils/cookies"
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL
 const CSRF_TOKEN_HEADER_NAME = "X-CSRFToken"
+const HTTP_BAD_REQUEST = 400
 const HTTP_STATUS_UNAUTHORIZED = 401
 const HTTP_CONFLICT = 409
 
@@ -21,6 +22,13 @@ export class UndefinedApiBaseUrlError extends Error {
   constructor() {
     super()
     this.name = "UndefinedApiBaseUrlError"
+  }
+}
+
+export class HttpBadRequestError extends Error {
+  constructor() {
+    super()
+    this.name = "HttpBadRequestError"
   }
 }
 
@@ -145,7 +153,7 @@ export async function addShowFromTVmazeId(tvmaze_id: number): Promise<Show> {
 export async function toggleEpisodes(
   showId: string,
   episodes: PartialEpisodeSpecifier[],
-): Promise<string> {
+): Promise<void> {
   const episodeList = episodes.map((specifier) => [
     specifier.seasonNum - 1,
     specifier.episodeIdx,
@@ -160,9 +168,26 @@ export async function toggleEpisodes(
     fetchResponse,
     "HTTP error attempting to toggle watched status",
   )
+}
 
-  //FIXME parse and return the response (maybe? we won't use it)
-  return await fetchResponse.text()
+// Clicking on a native download link is far simpler than using fetch
+export function getExportUrl() {
+  return `${API_BASE}/data/export`
+}
+
+export async function uploadImportFile(file: File): Promise<void> {
+  const formData = new FormData()
+  formData.append("file", file)
+
+  const fetchResponse = await apiFetch("/data/import", {
+    method: "POST",
+    body: formData,
+    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
+  })
+  if (fetchResponse.status === HTTP_BAD_REQUEST) {
+    throw new HttpBadRequestError()
+  }
+  handleError(fetchResponse, "HTTP error attempting to restore from backup")
 }
 
 async function handleError(fetchResponse: Response, errorMsg: string) {

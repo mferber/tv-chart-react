@@ -13,13 +13,16 @@ import {
 } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
+import { getExportUrl } from "../../api/client"
 import Couch from "../../assets/couch.svg?react"
 import {
   CommandExecutorProvider,
   useCommandExecutor,
 } from "../../providers/commands/CommandExecutorProvider"
-import { useCurrentUserStatus } from "../../providers/CurrentUserStatusProvider"
-import { type User } from "../../providers/CurrentUserStatusProvider"
+import {
+  useCurrentUserStatus,
+  type User,
+} from "../../providers/CurrentUserStatusProvider"
 import {
   ShowsQueryProvider,
   useShowsQuery,
@@ -31,6 +34,7 @@ import {
   CustomDropdownMenuItem,
   CustomDropdownMenuSeparator,
 } from "../misc/CustomDropdownMenu"
+import { RestoreBackupManager } from "./restoreBackup/RestoreBackupManager"
 import { SearchModal } from "./search/SearchModal"
 import { ShowList } from "./showList/ShowList"
 
@@ -165,30 +169,41 @@ function CouchMenu({
   currentUser: User
   trigger: ReactNode
 }) {
+  const [restoreBackupManagerIsOpen, setRestoreBackupManagerIsOpen] =
+    useState(false)
+
   return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger className="cursor-pointer focus:outline-none">
-        {trigger}
-      </DropdownMenu.Trigger>
-      <DropdownMenu.Portal>
-        <CustomDropdownMenuContent>
-          <CustomDropdownMenuItem className="font-bold" nonselectable>
-            {currentUser.email}
-          </CustomDropdownMenuItem>
-          <CustomDropdownMenuItem>
-            <LogOutLink>Log out</LogOutLink>
-          </CustomDropdownMenuItem>
-          <CustomDropdownMenuSeparator />
-          <CustomDropdownMenuItem>
-            <a href={`${import.meta.env.VITE_API_BASE_URL}/data/export`}>
-              Download backup data
-            </a>
-          </CustomDropdownMenuItem>
-          <CustomDropdownMenuItem disabled>
-            Restore from backup data
-          </CustomDropdownMenuItem>
-        </CustomDropdownMenuContent>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+    <>
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger className="cursor-pointer focus:outline-none">
+          {trigger}
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Portal>
+          <CustomDropdownMenuContent>
+            <CustomDropdownMenuItem className="font-bold" nonselectable>
+              {currentUser.email}
+            </CustomDropdownMenuItem>
+            <CustomDropdownMenuItem>
+              <LogOutLink>Log out</LogOutLink>
+            </CustomDropdownMenuItem>
+            <CustomDropdownMenuSeparator />
+            <CustomDropdownMenuItem>
+              <a href={getExportUrl()}>Download backup data</a>
+            </CustomDropdownMenuItem>
+            <CustomDropdownMenuItem
+              onSelect={() => setRestoreBackupManagerIsOpen(true)}
+            >
+              Restore data from backup
+            </CustomDropdownMenuItem>
+          </CustomDropdownMenuContent>
+        </DropdownMenu.Portal>
+      </DropdownMenu.Root>
+
+      <RestoreBackupManager
+        open={restoreBackupManagerIsOpen}
+        setOpen={setRestoreBackupManagerIsOpen}
+        key={restoreBackupManagerIsOpen ? "open" : "close"} // force state to reset on reopen
+      />
+    </>
   )
 }
