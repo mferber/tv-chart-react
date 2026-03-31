@@ -1,5 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog"
+import { clsx } from "clsx"
 import type { ReactNode } from "react"
+import { twMerge } from "tailwind-merge"
 
 import { ThemedDialogOverlay } from "./ThemedDialogItems"
 
@@ -9,6 +11,7 @@ export function ThemedDialog({
   modal,
   trigger,
   triggerAsChild,
+  contentClassName,
   body,
 }: {
   open?: boolean
@@ -16,6 +19,7 @@ export function ThemedDialog({
   modal?: boolean
   trigger?: ReactNode
   triggerAsChild?: boolean
+  contentClassName?: string
   body: ReactNode
 }) {
   return (
@@ -25,7 +29,14 @@ export function ThemedDialog({
       )}
       <Dialog.Portal>
         <ThemedDialogOverlay />
-        <Dialog.Content className="w-5/6 max-w-100 sm:w-auto sm:min-w-100 sm:max-w-5/6 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-stone-200 border p-6 rounded-lg shadow-gray-500 shadow-lg">
+        <Dialog.Content
+          className={twMerge(
+            clsx(
+              "bg-stone-200 border p-6 rounded-lg shadow-gray-500 shadow-lg overflow-auto focus-visible:outline-none",
+              contentClassName,
+            ),
+          )}
+        >
           <Dialog.Title className="sr-only" />
           <Dialog.Description className="sr-only" />
           {body}

@@ -1,4 +1,3 @@
-import * as Dialog from "@radix-ui/react-dialog"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   createContext,
@@ -20,7 +19,8 @@ import { type ShowRecord, type ShowSearchResult } from "../../../types/schemas"
 import { errorToast } from "../../../utils/toasts"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 import { ThemedButton } from "../../misc/ThemedButton"
-import { ThemedDialogOverlay } from "../../misc/ThemedDialogItems"
+import { ThemedDialog } from "../../misc/ThemedDialog"
+
 interface SearchModalContextType {
   shows: ShowRecord
   isSearchResultLoading: boolean
@@ -71,26 +71,19 @@ export function SearchModal({
   const searchFieldRef = useRef<HTMLInputElement>(null)
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={close}>
-      <Dialog.Portal>
-        <ThemedDialogOverlay />
-        <Dialog.Content
-          className="fixed top-16 right-8 bottom-8 left-8 p-4 border-4 rounded-xl bg-white outline-0 overflow-auto"
-          onOpenAutoFocus={(e) => {
-            e.preventDefault()
-            searchFieldRef.current?.focus()
-          }}
-        >
-          <Dialog.Title className="sr-only" />
-          <Dialog.Description className="sr-only" />
-          <ModalContent
-            searchFieldRef={searchFieldRef}
-            close={close}
-            shows={shows}
-          />
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    // FIXME onOpenChange={close} is wrong
+    <ThemedDialog
+      open={isOpen}
+      onOpenChange={close}
+      contentClassName="fixed top-16 right-8 bottom-8 left-8 bg-white"
+      body={
+        <ModalContent
+          searchFieldRef={searchFieldRef}
+          close={close}
+          shows={shows}
+        />
+      }
+    />
   )
 }
 
@@ -161,7 +154,7 @@ function TopBar() {
   const { fn_resetAndCloseModal } = use(SearchModalContext)
 
   return (
-    <div className="flex justify-between border-b mb-2">
+    <div className="flex justify-between border-b mb-2 focus-visible:outline-none">
       <div className="text-lg font-bold">Add new show</div>
       <button type="button" onClick={() => fn_resetAndCloseModal()}>
         Cancel

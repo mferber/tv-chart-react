@@ -89,6 +89,7 @@ function UploadBackupFileModal({
     <ThemedDialog
       open={open}
       onOpenChange={onOpenChange}
+      contentClassName="w-5/6 max-w-100 sm:w-auto sm:min-w-100 sm:max-w-5/6 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       body={
         <>
           <div className="flex justify-end focus-visible:outline-none">
