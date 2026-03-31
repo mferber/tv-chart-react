@@ -6,12 +6,12 @@ import { type ReactNode, use } from "react"
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../types/types"
+import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 import {
   ThemedDropdownMenuContent,
   ThemedDropdownMenuItem,
   ThemedDropdownMenuSeparator,
 } from "../../misc/ThemedDropdownMenu"
-import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 import { EpisodeBox } from "./EpisodeBox"
 
 /**

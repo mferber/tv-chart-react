@@ -18,9 +18,9 @@ import { useSimpleQuery } from "../../../hooks"
 import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { type ShowRecord, type ShowSearchResult } from "../../../types/schemas"
 import { errorToast } from "../../../utils/toasts"
-import { ThemedDialogOverlay } from "../../misc/ThemedDialogItems"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 import { ThemedButton } from "../../misc/ThemedButton"
+import { ThemedDialogOverlay } from "../../misc/ThemedDialogItems"
 interface SearchModalContextType {
   shows: ShowRecord
   isSearchResultLoading: boolean
