@@ -1,4 +1,3 @@
-import * as Dialog from "@radix-ui/react-dialog"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 
@@ -7,7 +6,7 @@ import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { errorToast, infoToast } from "../../../utils/toasts"
 import { ThemedAlert } from "../../misc/ThemedAlert"
 import { ThemedButton } from "../../misc/ThemedButton"
-import { ThemedDialogOverlay } from "../../misc/ThemedDialogItems"
+import { ThemedDialog } from "../../misc/ThemedDialog"
 
 export function RestoreBackupManager({
   open,
@@ -87,13 +86,12 @@ function UploadBackupFileModal({
   isLoading: boolean
 }) {
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <ThemedDialogOverlay />
-        <Dialog.Content className="w-5/6 max-w-100 sm:w-auto sm:min-w-100 sm:max-w-5/6 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 border-4 rounded-xl bg-white overflow-auto">
-          <Dialog.Title className="sr-only" />
-          <Dialog.Description className="sr-only" />
-          <div className="flex justify-end">
+    <ThemedDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      body={
+        <>
+          <div className="flex justify-end focus-visible:outline-none">
             <button
               type="button"
               className="text-right mb-2"
@@ -123,9 +121,9 @@ function UploadBackupFileModal({
               Continue
             </ThemedButton>
           </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+        </>
+      }
+    />
   )
 }
 
