@@ -5,12 +5,13 @@ import { toggleEpisodes } from "../../api/client"
 import { type ShowRecord } from "../../types/schemas"
 import { type PartialEpisodeSpecifier } from "../../types/types"
 import { SHOWS_QUERY_KEY } from "../ShowsQueryProvider"
+import { UndoableCommand } from "./command"
 import { CommandError } from "./errors"
 
 /**
  * Command to toggle the watched state of an episode
  */
-export class ToggleWatchedCommand {
+export class ToggleWatchedCommand extends UndoableCommand {
   private queryClient: QueryClient
   private showId: string
   private showTitle: string
@@ -22,10 +23,15 @@ export class ToggleWatchedCommand {
     showTitle: string,
     episodeSpecifiers: PartialEpisodeSpecifier[],
   ) {
+    super()
     this.queryClient = queryClient
     this.showId = showId
     this.showTitle = showTitle
     this.episodeSpecifiers = episodeSpecifiers
+  }
+
+  isUndoable(): boolean {
+    return true
   }
 
   /**

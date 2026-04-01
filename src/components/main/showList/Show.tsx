@@ -1,12 +1,17 @@
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons"
+import { faCircleInfo, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+import { useQueryClient } from "@tanstack/react-query"
 import { type ReactNode, use } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
+import { useCommandExecutor } from "../../../providers/commands/CommandExecutorProvider"
+import { DeleteShowCommand } from "../../../providers/commands/DeleteShowCommand"
+import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../types/types"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
+import { ThemedAlert } from "../../misc/ThemedAlert"
 import {
   ThemedDropdownMenuContent,
   ThemedDropdownMenuItem,
@@ -45,6 +50,9 @@ export function Show({
 }
 
 function ShowHeader({ show }: { show: Show }) {
+  const { executor } = useCommandExecutor()
+  const queryClient = useQueryClient()
+
   return (
     <div className="flex gap-2 mb-4">
       <ImageWithPlaceholder
@@ -58,11 +66,24 @@ function ShowHeader({ show }: { show: Show }) {
         <div>
           {show.source}, {show.duration} min.
         </div>
-        <div className="mt-2">
+        <div className="flex gap-2 items-center mt-2 text-lg">
+          <ThemedAlert
+            trigger={
+              <span className="hover:cursor-pointer hover:text-red-800">
+                <FontAwesomeIcon icon={faTrashCan} />
+              </span>
+            }
+            body={<div>Are you sure you want to delete {show.title}?</div>}
+            actionButtonText="Delete"
+            onAction={async () => {
+              await executor.execute(new DeleteShowCommand(show.id))
+              queryClient.invalidateQueries({ queryKey: SHOWS_QUERY_KEY })
+            }}
+          />
           <ShowInfoDropDownMenu
             show={show}
             trigger={
-              <span className="text-lg hover:cursor-pointer hover:text-red-800">
+              <span className="hover:cursor-pointer hover:text-red-800">
                 <FontAwesomeIcon icon={faCircleInfo} />
               </span>
             }

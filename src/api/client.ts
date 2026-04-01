@@ -170,6 +170,14 @@ export async function toggleEpisodes(
   )
 }
 
+export async function deleteShow(showId: string): Promise<void> {
+  const fetchResponse = await apiFetch(`/shows/${showId}`, {
+    method: "DELETE",
+    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
+  })
+  await handleError(fetchResponse, "HTTP error attempting to delete show")
+}
+
 // Clicking on a native download link is far simpler than using fetch
 export function getExportUrl() {
   return `${API_BASE}/data/export`

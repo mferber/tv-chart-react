@@ -1,6 +1,7 @@
 import React, { use, useState } from "react"
 
 import { infoToast } from "../../utils/toasts"
+import { Command, UndoableCommand } from "./command"
 
 /**
  * Hook for accessing a command executor from within a CommandExecutorProvider
@@ -53,7 +54,7 @@ const CommandExecutorContext =
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export class CommandExecutor {
-  private undoStack: Command[] = []
+  private readonly undoStack: UndoableCommand[] = []
   updateCanUndoState: (canUndo: boolean) => void
 
   constructor(updateCanUndoState: (canUndo: boolean) => void) {
@@ -63,8 +64,15 @@ export class CommandExecutor {
   async execute(command: Command) {
     try {
       await command.execute()
-      this.undoStack.push(command)
-      this.updateCanUndoState(true)
+
+      if (command instanceof UndoableCommand) {
+        this.undoStack.push(command)
+        this.updateCanUndoState(true)
+      } else {
+        // non-undoable command acts as a barrier
+        this.undoStack.length = 0
+        this.updateCanUndoState(false)
+      }
     } catch (err) {
       console.error(err)
       throw err
@@ -77,6 +85,7 @@ export class CommandExecutor {
       // the UI should prevent this scenario
       return console.log("Undo requested: nothing to undo")
     }
+
     if (this.undoStack.length === 0) {
       this.updateCanUndoState(false)
     }
@@ -87,10 +96,4 @@ export class CommandExecutor {
       infoToast(`Undone: ${desc}`)
     }
   }
-}
-
-abstract class Command {
-  abstract execute(): Promise<void>
-  abstract undo(): Promise<void>
-  abstract undoDescription(): string | null
 }
