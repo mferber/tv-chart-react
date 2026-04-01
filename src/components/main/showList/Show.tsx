@@ -1,4 +1,4 @@
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons"
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { type ReactNode, use } from "react"
@@ -62,8 +62,8 @@ function ShowHeader({ show }: { show: Show }) {
           <ShowInfoDropDownMenu
             show={show}
             trigger={
-              <span className="hover:cursor-pointer hover:text-red-800">
-                <FontAwesomeIcon icon={faEllipsis} size="lg" />
+              <span className="text-lg hover:cursor-pointer hover:text-red-800">
+                <FontAwesomeIcon icon={faCircleInfo} />
               </span>
             }
           />
