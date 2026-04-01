@@ -61,15 +61,15 @@ function ShowHeader({ show }: { show: Show }) {
         placeholderHeightClassName="h-20"
       />
       <div className="flex flex-col items-start">
-        <header className="text-xl font-black">{show.title}</header>
-        <div>
+        <header className="text-xl font-medium">{show.title}</header>
+        <div className="font-extralight">
           {show.source}, {show.duration} min.
         </div>
         <div className="flex gap-3 items-center mt-2 sm:gap-1">
           <ThemedAlert
             trigger={
               <span className="hover:cursor-pointer hover:text-red-800">
-                <Trash2 className="w-6 h-6" />
+                <Trash2 className="w-6 h-6" strokeWidth="1" />
               </span>
             }
             body={<div>Are you sure you want to delete {show.title}?</div>}
@@ -83,7 +83,7 @@ function ShowHeader({ show }: { show: Show }) {
             show={show}
             trigger={
               <span className="hover:cursor-pointer hover:text-red-800">
-                <Info className="w-6 h-6" />
+                <Info className="w-6 h-6" strokeWidth="1" />
               </span>
             }
           />

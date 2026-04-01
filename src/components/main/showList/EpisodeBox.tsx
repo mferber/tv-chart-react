@@ -25,7 +25,8 @@ export function EpisodeBox({
       : selected
         ? "text-red-800"
         : "text-black",
-    "text-[55cqh]", // percentage of the container height
+    "text-[55cqh]", // percentage of the container height,
+    "font-light",
   )
 
   return (

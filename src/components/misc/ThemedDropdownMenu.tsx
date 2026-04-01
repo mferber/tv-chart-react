@@ -9,7 +9,7 @@ export function ThemedDropdownMenuContent({
 }) {
   return (
     <DropdownMenu.Content
-      className="z-50 bg-white border-2 rounded-lg py-2 shadow-gray-400 shadow-md sm:rounded-md"
+      className="z-50 bg-white font-light border rounded-lg py-2 shadow-gray-400 shadow-md sm:rounded-md"
       collisionPadding={16}
     >
       {children}

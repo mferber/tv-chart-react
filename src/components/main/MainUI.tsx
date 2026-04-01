@@ -108,7 +108,7 @@ function AppHeader({
           trigger={
             <div className="group">
               <Couch className="inline h-6 relative -top-1 mr-2 group-hover:**:stroke-red-800!" />
-              <span className="text-xl font-black group-hover:text-red-800">
+              <span className="text-xl font-extralight group-hover:text-red-800">
                 Couch Potato
               </span>
             </div>
@@ -123,7 +123,7 @@ function AppHeader({
           }}
           title="Add new show"
         >
-          <Plus />
+          <Plus strokeWidth="1" />
         </a>
         <span className="flex items-center gap-2">
           <a
@@ -136,7 +136,7 @@ function AppHeader({
             }}
             title="Refresh display"
           >
-            <RefreshCcw />
+            <RefreshCcw strokeWidth="1" />
           </a>
         </span>
       </span>
@@ -150,7 +150,7 @@ function AppHeader({
           }}
           title="Undo last action"
         >
-          <Undo2 />
+          <Undo2 strokeWidth="1" />
         </a>
       </span>
     </div>

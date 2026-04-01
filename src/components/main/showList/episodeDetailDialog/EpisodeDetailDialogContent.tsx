@@ -50,7 +50,7 @@ export function ModalBodyContent({
         />
 
         {/* Episode title */}
-        <div className="text-2xl font-black">
+        <div className="text-2xl font-light">
           {episodeDetails.title ?? "Untitled"}
         </div>
 
@@ -106,12 +106,12 @@ function Header({
           <div>
             {/* Show title */}
             <div>
-              <span className="font-bold">{showTitle}</span>
+              <span className="font-light">{showTitle}</span>
             </div>
 
             {/* Episode info */}
             <div className="text-sm">
-              <span className="font-bold">
+              <span className="font-medium">
                 Season {episodeSpecifier.seasonNum},{" "}
                 {episodeDescriptor.ep_num === null
                   ? "special"
