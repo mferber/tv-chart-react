@@ -1,10 +1,5 @@
-import {
-  faArrowsRotate,
-  faClockRotateLeft,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+import { Plus, RefreshCcw, Undo2 } from "lucide-react"
 import {
   type Dispatch,
   type ReactNode,
@@ -76,7 +71,7 @@ function MainUIBody() {
           {Object.keys(showsQuery.data).length === 0 && (
             <div className="text-lg">
               <span className="font-bold">Your show list is empty! </span>
-              Use the <FontAwesomeIcon icon={faPlus} /> to add your first show.
+              Use the <Plus className="inline" /> to add your first show.
             </div>
           )}
           <ShowList shows={showsQuery.data} />
@@ -106,8 +101,8 @@ function AppHeader({
   const { executor, canUndo } = useCommandExecutor()
 
   return (
-    <div className="fixed top-0 left-0 right-0 pt-2 px-4 bg-white z-1 flex justify-between border-b pb-2 mb-4 align-middle items-baseline">
-      <span className="flex gap-4 items-baseline" title="Main menu">
+    <div className="fixed top-0 left-0 right-0 pt-2 px-4 bg-white z-1 flex justify-between border-b pb-2 mb-4 align-middle items-center">
+      <span className="flex gap-4 items-center" title="Main menu">
         <CouchMenu
           currentUser={currentUser}
           trigger={
@@ -128,7 +123,7 @@ function AppHeader({
           }}
           title="Add new show"
         >
-          <FontAwesomeIcon icon={faPlus} size="lg" />
+          <Plus />
         </a>
         <span className="flex items-center gap-2">
           <a
@@ -141,7 +136,7 @@ function AppHeader({
             }}
             title="Refresh display"
           >
-            <FontAwesomeIcon icon={faArrowsRotate} size="lg" />
+            <RefreshCcw />
           </a>
         </span>
       </span>
@@ -155,7 +150,7 @@ function AppHeader({
           }}
           title="Undo last action"
         >
-          <FontAwesomeIcon icon={faClockRotateLeft} size="lg" />
+          <Undo2 />
         </a>
       </span>
     </div>

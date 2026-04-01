@@ -1,7 +1,6 @@
-import { faCircleInfo, faTrashCan } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { useQueryClient } from "@tanstack/react-query"
+import { Info, Trash2 } from "lucide-react"
 import { type ReactNode, use } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
@@ -66,11 +65,11 @@ function ShowHeader({ show }: { show: Show }) {
         <div>
           {show.source}, {show.duration} min.
         </div>
-        <div className="flex gap-2 items-center mt-2 text-lg">
+        <div className="flex gap-3 items-center mt-2 sm:gap-1">
           <ThemedAlert
             trigger={
               <span className="hover:cursor-pointer hover:text-red-800">
-                <FontAwesomeIcon icon={faTrashCan} />
+                <Trash2 className="w-6 h-6" />
               </span>
             }
             body={<div>Are you sure you want to delete {show.title}?</div>}
@@ -84,7 +83,7 @@ function ShowHeader({ show }: { show: Show }) {
             show={show}
             trigger={
               <span className="hover:cursor-pointer hover:text-red-800">
-                <FontAwesomeIcon icon={faCircleInfo} />
+                <Info className="w-6 h-6" />
               </span>
             }
           />
