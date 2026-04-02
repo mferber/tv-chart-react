@@ -154,9 +154,13 @@ function TopBar() {
   const { fn_resetAndCloseModal } = use(SearchModalContext)
 
   return (
-    <div className="flex justify-between border-b mb-2 focus-visible:outline-none">
+    <div className="flex justify-between border-b mb-2">
       <div className="text-lg font-bold">Add new show</div>
-      <button type="button" onClick={() => fn_resetAndCloseModal()}>
+      <button
+        type="button"
+        className="focus-visible:outline-none"
+        onClick={() => fn_resetAndCloseModal()}
+      >
         Cancel
       </button>
     </div>

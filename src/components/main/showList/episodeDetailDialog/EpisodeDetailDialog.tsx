@@ -26,7 +26,7 @@ export function EpisodeDetailDialog({
   return (
     <Dialog.Root modal={false} open={episodeSpecifier !== null}>
       {episodeSpecifier && episodeDescriptor && showTitle && (
-        <Dialog.Content className="fixed max-h-2/5 right-2 md:right-8 bottom-2 md:bottom-8 left-2 md:left-8 p-4 bg-stone-200 border-4 rounded-xl outline-0 overflow-auto">
+        <Dialog.Content className="fixed max-h-2/5 right-2 md:right-8 bottom-2 md:bottom-8 left-2 md:left-8 p-4 bg-stone-200 shadow-gray-500 shadow-lg border rounded-xl outline-0 overflow-auto">
           <Dialog.Title className="sr-only" />
           <Dialog.Description className="sr-only" />
           <ModalBody
@@ -112,7 +112,7 @@ function ModalBody({
   if (isLoading) {
     return (
       <div className="flex justify-center w-full">
-        <ThreeDots color="black" width="40" height="20" />
+        <ThreeDots color="black" width="40" height="150" />
       </div>
     )
   }
