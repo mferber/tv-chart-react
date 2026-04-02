@@ -1,12 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import {
-  createContext,
-  type RefObject,
-  type SubmitEvent,
-  use,
-  useRef,
-  useState,
-} from "react"
+import { createContext, type SubmitEvent, use, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
 import {
@@ -67,22 +60,13 @@ export function SearchModal({
   close: () => void
   shows: ShowRecord | undefined
 }) {
-  // put initial focus in the search input field
-  const searchFieldRef = useRef<HTMLInputElement>(null)
-
   return (
     // FIXME onOpenChange={close} is wrong
     <ThemedDialog
       open={isOpen}
       onOpenChange={close}
       contentClassName="fixed top-16 right-8 bottom-8 left-8 bg-white"
-      body={
-        <ModalContent
-          searchFieldRef={searchFieldRef}
-          close={close}
-          shows={shows}
-        />
-      }
+      body={<ModalContent close={close} shows={shows} />}
     />
   )
 }
@@ -91,17 +75,13 @@ export function SearchModal({
  * Main content of the modal.
  *
  * Props:
- *   - `searchFieldRef`: a ref to be attached to the search query input field; it will
- *     be given default focus
  *   - `close`: function that will close the model
  *   - `shows`: the user's current list of shows
  */
 function ModalContent({
-  searchFieldRef,
   close,
   shows,
 }: {
-  searchFieldRef: RefObject<HTMLInputElement | null>
   close: () => void
   shows: ShowRecord | undefined
 }) {
@@ -134,7 +114,7 @@ function ModalContent({
       }}
     >
       <TopBar />
-      <SearchForm searchFieldRef={searchFieldRef} />
+      <SearchForm />
 
       {isLoading && (
         <div className="flex justify-center mt-10">
@@ -170,11 +150,7 @@ function TopBar() {
 /**
  * The search form.
  */
-function SearchForm({
-  searchFieldRef,
-}: {
-  searchFieldRef: RefObject<HTMLInputElement | null>
-}) {
+function SearchForm() {
   const { fn_executeSearch, isSearchResultLoading, tvMazeIdBeingAdded } =
     use(SearchModalContext)
 
@@ -192,7 +168,7 @@ function SearchForm({
       <div>
         <form onSubmit={handleSubmitSearch} className="flex gap-1">
           <input
-            ref={searchFieldRef}
+            autoFocus
             type="text"
             name="query"
             className="flex-1 max-w-80 min-w-8 px-2 py-1 border rounded-md"
