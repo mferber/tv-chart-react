@@ -172,7 +172,7 @@ function Season({
   return (
     <div className="flex gap-8 items-center">
       <span className="w-2 shrink-0 text-2xl">{seasonNum}</span>
-      <span className="flex gap-1">
+      <span className="flex gap-1 items-center overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {season.map((ep, idx) => (
           <EpisodeBox
             episodeSpecifier={{
@@ -200,6 +200,11 @@ function Season({
             key={idx}
           />
         ))}
+        {
+          <span className="text-lg" title="end-of-season indicator">
+            {"\u2666"}
+          </span>
+        }
       </span>
     </div>
   )
