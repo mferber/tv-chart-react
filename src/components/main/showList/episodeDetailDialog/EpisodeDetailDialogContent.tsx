@@ -253,7 +253,12 @@ function MarkWatchedUpToHereButton({
     <ThemedAlert
       trigger={
         <span className="text-sm py-2">
-          <ThemedButton htmlType="button">Mark watched up to here</ThemedButton>
+          <ThemedButton
+            htmlType="button"
+            disabled={unwatchedEpisodes.length === 0}
+          >
+            Mark watched up to here
+          </ThemedButton>
         </span>
       }
       triggerAsChild
