@@ -49,7 +49,7 @@ function MainUIBody() {
 
   return (
     // leave room at top for fixed toolbar (see AppHeader)
-    <main className="mx-4 mb-4 mt-14">
+    <main className="px-4 pb-4 pt-14 bg-stone-100">
       <AppHeader
         setSearchUIOpen={setSearchUIOpen}
         refetch={showsQuery.refetch}
