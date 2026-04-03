@@ -10,7 +10,7 @@ import {
   EpisodeMissingError,
 } from "../../../../utils/episodesDetailsCache"
 import { EpisodeDetailDialogCloseButton } from "./EpisodeDetailDialogCloseButton"
-import { ModalBodyContent } from "./EpisodeDetailDialogContent"
+import { EpisodeDetailDialogContent } from "./EpisodeDetailDialogContent"
 
 export function EpisodeDetailDialog({
   episodeSpecifier,
@@ -119,7 +119,7 @@ function ModalBody({
 
   return (
     episodeDetails && (
-      <ModalBodyContent
+      <EpisodeDetailDialogContent
         episodeSpecifier={episodeSpecifier}
         episodeDescriptor={episodeDescriptor}
         episodeDetails={episodeDetails}

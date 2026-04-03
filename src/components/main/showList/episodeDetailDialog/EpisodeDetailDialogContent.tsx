@@ -1,7 +1,11 @@
-import { useQueryClient } from "@tanstack/react-query"
-import { useCallback, useMemo } from "react"
+import { QueryClient, useQueryClient } from "@tanstack/react-query"
+import { Square, SquareCheck } from "lucide-react"
+import { useMemo } from "react"
 
-import { useCommandExecutor } from "../../../../providers/commands/CommandExecutorProvider"
+import {
+  CommandExecutor,
+  useCommandExecutor,
+} from "../../../../providers/commands/CommandExecutorProvider"
 import { ToggleWatchedCommand } from "../../../../providers/commands/ToggleWatchedCommand"
 import { SHOWS_QUERY_KEY } from "../../../../providers/ShowsQueryProvider"
 import {
@@ -9,7 +13,10 @@ import {
   type ShowRecord,
 } from "../../../../types/schemas"
 import { type EpisodeDetails } from "../../../../types/schemas"
-import { type EpisodeSpecifier } from "../../../../types/types"
+import {
+  type EpisodeSpecifier,
+  type PartialEpisodeSpecifier,
+} from "../../../../types/types"
 import { errorToast } from "../../../../utils/toasts"
 import { findUnwatchedEpisodesUpTo } from "../../../../utils/unwatchedEpisodes"
 import { ThemedAlert } from "../../../misc/ThemedAlert"
@@ -24,7 +31,50 @@ const RELEASE_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
 })
 
-export function ModalBodyContent({
+const toggleWatchedMultiple = async (
+  executor: CommandExecutor,
+  showId: string,
+  episodeSpecifiers: PartialEpisodeSpecifier[],
+  queryClient: QueryClient,
+) => {
+  const data = queryClient.getQueryData<ShowRecord>(SHOWS_QUERY_KEY)
+  const showTitle = data ? `“${data[showId].title}”` : "(title not found)"
+
+  try {
+    await executor.execute(
+      new ToggleWatchedCommand(
+        queryClient,
+        showId,
+        showTitle,
+        episodeSpecifiers,
+      ),
+    )
+  } catch {
+    errorToast(
+      "An error occurred toggling episode watched status, try reloading",
+    )
+  }
+}
+
+const toggleWatchedSingle = async (
+  executor: CommandExecutor,
+  episodeSpecifier: EpisodeSpecifier,
+  queryClient: QueryClient,
+) => {
+  toggleWatchedMultiple(
+    executor,
+    episodeSpecifier.showId,
+    [
+      {
+        seasonNum: episodeSpecifier.seasonNum,
+        episodeIdx: episodeSpecifier.episodeIdx,
+      },
+    ],
+    queryClient,
+  )
+}
+
+export function EpisodeDetailDialogContent({
   episodeSpecifier,
   episodeDescriptor,
   episodeDetails,
@@ -40,7 +90,7 @@ export function ModalBodyContent({
   return (
     episodeDetails && (
       <div>
-        {/* Watched-status toggle control, show title and episode info; close button */}
+        {/* Toggleable episode box, show title and episode info; close button */}
         <Header
           showTitle={showTitle}
           episodeSpecifier={episodeSpecifier}
@@ -54,13 +104,13 @@ export function ModalBodyContent({
           {episodeDetails.title ?? "Untitled"}
         </div>
 
-        {/* Watched-up-to-here button */}
-        <MarkWatchedUpToHereButton
+        <MarkWatchedControlBar
           showTitle={showTitle}
           episodeSpecifier={episodeSpecifier}
+          episodeDescriptor={episodeDescriptor}
         />
 
-        {/* Episode summary */}
+        {/* Episode summary - note HTML from TVmaze has been pre-sanitized on the backend */}
         <div
           // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
           dangerouslySetInnerHTML={{
@@ -93,14 +143,21 @@ function Header({
   episodeDetails: EpisodeDetails
   close: () => void
 }) {
+  const { executor } = useCommandExecutor()
+  const queryClient = useQueryClient()
+
   return (
     <div className="flex justify-between">
       <div>
         <div className="flex items-start gap-2">
           {/* Big watched-status box, clickable to toggle */}
-          <WatchedStatusToggle
+          <EpisodeBox
             episodeSpecifier={episodeSpecifier}
             episodeDescriptor={episodeDescriptor}
+            size="large"
+            onClick={async () =>
+              await toggleWatchedSingle(executor, episodeSpecifier, queryClient)
+            }
           />
 
           <div>
@@ -129,54 +186,43 @@ function Header({
   )
 }
 
-/**
- * Toggle for watched/unwatched status of an episode. Displays as a larger
- * version of the episode box.
- */
-function WatchedStatusToggle({
-  episodeDescriptor,
+function MarkWatchedControlBar({
+  showTitle,
   episodeSpecifier,
+  episodeDescriptor,
 }: {
-  episodeDescriptor: EpisodeDescriptor
+  showTitle: string
   episodeSpecifier: EpisodeSpecifier
+  episodeDescriptor: EpisodeDescriptor
 }) {
   const { executor } = useCommandExecutor()
   const queryClient = useQueryClient()
 
-  const clickHandler = useCallback(async () => {
-    const data = queryClient.getQueryData<ShowRecord>(SHOWS_QUERY_KEY)
-    const showTitle = data
-      ? `“${data[episodeSpecifier.showId].title}”`
-      : "(title not found)"
-
-    try {
-      await executor.execute(
-        new ToggleWatchedCommand(
-          queryClient,
-          episodeSpecifier.showId,
-          showTitle,
-          [
-            {
-              seasonNum: episodeSpecifier.seasonNum,
-              episodeIdx: episodeSpecifier.episodeIdx,
-            },
-          ],
-        ),
-      )
-    } catch {
-      errorToast(
-        "An error occurred toggling episode watched status, try reloading",
-      )
-    }
-  }, [executor, queryClient, episodeSpecifier])
-
   return (
-    <EpisodeBox
-      episodeSpecifier={episodeSpecifier}
-      episodeDescriptor={episodeDescriptor}
-      size="large"
-      onClick={clickHandler}
-    />
+    <div
+      className="flex px-2 my-2 bg-stone-300 rounded-lg items-center justify-between"
+      onClick={async () =>
+        toggleWatchedSingle(executor, episodeSpecifier, queryClient)
+      }
+    >
+      <span className="flex gap-1 items-center w-30 font-light cursor-pointer">
+        {episodeDescriptor.watched ? (
+          <>
+            <SquareCheck className="inline w-8 h-8" /> Watched
+          </>
+        ) : (
+          <>
+            <Square className="inline w-8 h-8" /> Unwatched
+          </>
+        )}
+      </span>
+
+      {/* Watched-up-to-here button */}
+      <MarkWatchedUpToHereButton
+        showTitle={showTitle}
+        episodeSpecifier={episodeSpecifier}
+      />
+    </div>
   )
 }
 
@@ -195,36 +241,20 @@ function MarkWatchedUpToHereButton({
     [episodeSpecifier, queryClient],
   )
 
-  const clickHandler = useCallback(async () => {
-    const data = queryClient.getQueryData<ShowRecord>(SHOWS_QUERY_KEY)
-    const showTitle = data
-      ? `“${data[episodeSpecifier.showId].title}”`
-      : "(title not found)"
-
-    try {
-      await executor.execute(
-        new ToggleWatchedCommand(
-          queryClient,
-          episodeSpecifier.showId,
-          showTitle,
-          unwatchedEpisodes,
-        ),
-      )
-    } catch {
-      errorToast(
-        "An error occurred toggling episode watched status, try reloading",
-      )
-    }
-  }, [executor, queryClient, episodeSpecifier, unwatchedEpisodes])
+  const clickHandler = async () =>
+    await toggleWatchedMultiple(
+      executor,
+      episodeSpecifier.showId,
+      unwatchedEpisodes,
+      queryClient,
+    )
 
   return (
     <ThemedAlert
       trigger={
-        <div className="text-sm py-2">
-          <ThemedButton htmlType="button" size="narrow">
-            Mark watched up to here
-          </ThemedButton>
-        </div>
+        <span className="text-sm py-2">
+          <ThemedButton htmlType="button">Mark watched up to here</ThemedButton>
+        </span>
       }
       triggerAsChild
       body={
