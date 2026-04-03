@@ -208,13 +208,14 @@ function MarkWatchedControlBar({
       <span className="flex gap-1 items-center w-30 font-light cursor-pointer">
         {episodeDescriptor.watched ? (
           <>
-            <SquareCheck className="inline w-8 h-8" /> Watched
+            <SquareCheck className="inline w-8 h-8" />
           </>
         ) : (
           <>
-            <Square className="inline w-8 h-8" /> Unwatched
+            <Square className="inline w-8 h-8" />
           </>
         )}
+        Watched
       </span>
 
       {/* Watched-up-to-here button */}
