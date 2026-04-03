@@ -101,14 +101,14 @@ function AppHeader({
   const { executor, canUndo } = useCommandExecutor()
 
   return (
-    <div className="fixed top-0 left-0 right-0 pt-2 px-4 bg-white z-1 flex justify-between border-b pb-2 mb-4 align-middle items-center">
+    <div className="fixed top-0 left-0 right-0 pt-2 px-4 bg-white z-1 flex justify-between border-b pb-2 mb-4 items-center">
       <span className="flex gap-4 items-center" title="Main menu">
         <CouchMenu
           currentUser={currentUser}
           trigger={
-            <div className="group">
-              <Couch className="inline h-6 relative -top-1 mr-2 group-hover:**:stroke-red-800!" />
-              <span className="text-xl font-extralight group-hover:text-red-800">
+            <div className="group flex gap-2 items-center">
+              <Couch className="inline h-6 relative group-hover:**:stroke-red-800!" />
+              <span className="text-xl font-extralight group-hover:text-red-800 hidden sm:inline-block">
                 Couch Potato
               </span>
             </div>
@@ -175,7 +175,14 @@ function CouchMenu({
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <ThemedDropdownMenuContent>
-            <ThemedDropdownMenuItem className="font-bold" nonselectable>
+            <ThemedDropdownMenuItem
+              classNameOverride="font-light text-2xl sm:hidden"
+              nonselectable
+            >
+              Couch Potato
+            </ThemedDropdownMenuItem>
+            <ThemedDropdownMenuSeparator classNameOverride="sm:hidden" />
+            <ThemedDropdownMenuItem classNameOverride="font-bold" nonselectable>
               {currentUser.email}
             </ThemedDropdownMenuItem>
             <ThemedDropdownMenuItem>

@@ -1,6 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { clsx } from "clsx"
 import { type ReactNode } from "react"
+import { twMerge } from "tailwind-merge"
 
 export function ThemedDropdownMenuContent({
   children,
@@ -18,13 +19,13 @@ export function ThemedDropdownMenuContent({
 }
 
 export function ThemedDropdownMenuItem({
-  className,
+  classNameOverride,
   nonselectable,
   disabled,
   onSelect,
   children,
 }: {
-  className?: string
+  classNameOverride?: string
   nonselectable?: boolean
   disabled?: boolean
   onSelect?: () => void
@@ -33,14 +34,16 @@ export function ThemedDropdownMenuItem({
   return (
     <DropdownMenu.Item
       disabled={disabled ? true : undefined}
-      className={clsx(
-        "focus:outline-none w-full px-4 py-1 text-lg sm:py-0 sm:text-base",
-        disabled
-          ? "text-gray-300 cursor-not-allowed"
-          : nonselectable
-            ? "cursor-default"
-            : "hover:text-red-800 hover:bg-gray-300 cursor-pointer",
-        className,
+      className={twMerge(
+        clsx(
+          "focus:outline-none w-full px-4 py-1 text-lg sm:py-0 sm:text-base",
+          disabled
+            ? "text-gray-300 cursor-not-allowed"
+            : nonselectable
+              ? "cursor-default"
+              : "hover:text-red-800 hover:bg-stone-200 cursor-pointer",
+          classNameOverride,
+        ),
       )}
       onSelect={onSelect}
     >
@@ -49,6 +52,13 @@ export function ThemedDropdownMenuItem({
   )
 }
 
-export function ThemedDropdownMenuSeparator() {
-  return <DropdownMenu.Separator className="h-px my-2 bg-gray-500 w-full" />
+export function ThemedDropdownMenuSeparator({
+  classNameOverride,
+}: {
+  classNameOverride?: string
+}) {
+  const classname = twMerge(
+    clsx("h-px my-2 bg-gray-500 w-full", classNameOverride),
+  )
+  return <DropdownMenu.Separator className={classname} />
 }
