@@ -9,7 +9,7 @@ import {
   episodeDetailsCache,
   EpisodeMissingError,
 } from "../../../../utils/episodesDetailsCache"
-import { EpisodeDetailDialogCloseButton } from "./EpisodeDetailDialogCloseButton"
+import { ThemedCloseButton } from "../../../misc/ThemedCloseButton"
 import { EpisodeDetailDialogContent } from "./EpisodeDetailDialogContent"
 
 export function EpisodeDetailDialog({
@@ -95,7 +95,7 @@ function ModalBody({
     return (
       <div className="flex justify-between">
         <div>An error occurred loading episode information.</div>
-        <EpisodeDetailDialogCloseButton close={close} />
+        <ThemedCloseButton onClick={close} />
       </div>
     )
   }
@@ -104,7 +104,7 @@ function ModalBody({
     return (
       <div className="flex justify-between">
         <div>No information available for this episode.</div>
-        <EpisodeDetailDialogCloseButton close={close} />
+        <ThemedCloseButton onClick={close} />
       </div>
     )
   }

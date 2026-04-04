@@ -21,8 +21,8 @@ import { errorToast } from "../../../../utils/toasts"
 import { findUnwatchedEpisodesUpTo } from "../../../../utils/unwatchedEpisodes"
 import { ThemedAlert } from "../../../misc/ThemedAlert"
 import { ThemedButton } from "../../../misc/ThemedButton"
+import { ThemedCloseButton } from "../../../misc/ThemedCloseButton"
 import { EpisodeBox } from "../EpisodeBox"
-import { EpisodeDetailDialogCloseButton } from "./EpisodeDetailDialogCloseButton"
 
 const RELEASE_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   weekday: "long",
@@ -181,7 +181,7 @@ function Header({
           </div>
         </div>
       </div>
-      <EpisodeDetailDialogCloseButton close={close} />
+      <ThemedCloseButton variant="dark" onClick={close} />
     </div>
   )
 }

@@ -12,6 +12,7 @@ import { type ShowRecord, type ShowSearchResult } from "../../../types/schemas"
 import { errorToast } from "../../../utils/toasts"
 import { ImageWithPlaceholder } from "../../misc/ImageWithPlaceholder"
 import { ThemedButton } from "../../misc/ThemedButton"
+import { ThemedCloseButton } from "../../misc/ThemedCloseButton"
 import { ThemedDialog } from "../../misc/ThemedDialog"
 
 interface SearchModalContextType {
@@ -134,16 +135,13 @@ function TopBar() {
   const { fn_resetAndCloseModal } = use(SearchModalContext)
 
   return (
-    <div className="flex justify-between border-b mb-2">
-      <div className="text-lg font-bold">Add new show</div>
-      <button
-        type="button"
-        className="focus-visible:outline-none"
-        onClick={() => fn_resetAndCloseModal()}
-      >
-        Cancel
-      </button>
-    </div>
+    <>
+      <ThemedCloseButton
+        classNameOverride="float-right"
+        onClick={fn_resetAndCloseModal}
+      />
+      <div className="text-lg font-bold mr-20">Add new show</div>
+    </>
   )
 }
 
