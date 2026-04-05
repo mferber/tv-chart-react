@@ -1,7 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { useQueryClient } from "@tanstack/react-query"
 import { Info, Trash2 } from "lucide-react"
-import { type ReactNode, use } from "react"
+import React, { type ReactNode, use, useEffect, useRef, useState } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { useCommandExecutor } from "../../../providers/commands/CommandExecutorProvider"
@@ -168,38 +168,81 @@ function Season({
   selectedEpisode?: EpisodeSpecifier
 }) {
   const { setSelectedEpisode } = use(SelectedEpisodeContext)
+  const [renderRowFully, setRenderRowFully] = useState(false)
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  // Use IntersectionObserver to only render full EpisodeBoxes when this season's
+  // row is onscreen or nearly onscreen -- the rest of the time, render a simple
+  // placeholder. The placeholders are rarely visible except when scrolling very
+  // fast, and even then they're barely perceptible.
+  //
+  // This is necessary to reduce the number of inline SVGs that are in the DOM at
+  // the same time; otherwise horizontal scrolling of long seasons becomes
+  // unacceptably janky on iOS, which has limited rendering resources.
+  //
+  // This approach does make vertical scrolling very slightly janky due to
+  // interrupting the scroll to mount and unmount SVGs, but it's far less
+  // noticeable than the horizontal scrolling problems it solves.
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) =>
+        React.startTransition(() => setRenderRowFully(entry.isIntersecting)),
+      { rootMargin: "200px" }, // preload slightly before entering viewport
+    )
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+    return () => observer.disconnect()
+  }, [])
 
   return (
-    <div className="flex gap-8 items-center">
+    <div ref={ref} className="flex gap-8 items-center">
       <span className="w-2 shrink-0 text-2xl">{seasonNum}</span>
       <span className="flex gap-1 items-center overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
-        {season.map((ep, idx) => (
-          <EpisodeBox
-            episodeSpecifier={{
+        {season.map((ep, idx) => {
+          if (!renderRowFully) {
+            return (
+              // eslint-disable-next-line react-x/no-array-index-key
+              <div className="w-8 h-8 shrink-0 bg-stone-200" key={idx}>
+                {" "}
+              </div>
+            )
+          }
+
+          const episodeSpecifier = {
+            showId: showId,
+            seasonNum: seasonNum,
+            episodeIdx: idx,
+          }
+          const selected =
+            selectedEpisode !== undefined &&
+            selectedEpisode.showId === showId &&
+            selectedEpisode.seasonNum === seasonNum &&
+            selectedEpisode.episodeIdx === idx
+
+          const clickHandler: React.MouseEventHandler<HTMLButtonElement> = (
+            e,
+          ) => {
+            setSelectedEpisode({
               showId: showId,
               seasonNum: seasonNum,
               episodeIdx: idx,
-            }}
-            episodeDescriptor={ep}
-            selected={
-              selectedEpisode !== undefined &&
-              selectedEpisode.showId === showId &&
-              selectedEpisode.seasonNum === seasonNum &&
-              selectedEpisode.episodeIdx === idx
-            }
-            onClick={(e) => {
-              setSelectedEpisode({
-                showId: showId,
-                seasonNum: seasonNum,
-                episodeIdx: idx,
-              })
-              // prevent the event from propagating to the ShowList and closing the details dialog
-              e.stopPropagation()
-            }}
-            // eslint-disable-next-line react-x/no-array-index-key
-            key={idx}
-          />
-        ))}
+            })
+            // prevent the event from propagating to the ShowList and closing the details dialog
+            e.stopPropagation()
+          }
+
+          return (
+            <EpisodeBox
+              episodeSpecifier={episodeSpecifier}
+              episodeDescriptor={ep}
+              selected={selected}
+              onClick={clickHandler}
+              // eslint-disable-next-line react-x/no-array-index-key
+              key={idx}
+            />
+          )
+        })}
         {
           <span className="text-lg" title="end-of-season indicator">
             {"\u2666"}
