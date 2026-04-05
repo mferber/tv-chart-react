@@ -48,8 +48,10 @@ function MainUIBody() {
   const showsQuery = useShowsQuery()
 
   return (
-    // leave room at top for fixed toolbar (see AppHeader)
-    <main className="px-4 pb-4 pt-14 bg-stone-100">
+    // leave room at top for fixed toolbar (see AppHeader); don't pad the right
+    // edge so that long show seasons can visibly run off the end, requiring
+    // horizontal scrolling
+    <main className="pl-4 pb-4 pt-14 bg-stone-100">
       <AppHeader
         setSearchUIOpen={setSearchUIOpen}
         refetch={showsQuery.refetch}
