@@ -245,7 +245,8 @@ function Season({
         })}
         {
           <span className="text-lg" title="end-of-season indicator">
-            {"\u2666"}
+            {/* Filled diamond for completed seasons, unfilled otherwise */}
+            {season.every((ep) => ep.watched) ? "\u2666" : "\u2662"}
           </span>
         }
       </span>
