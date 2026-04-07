@@ -193,6 +193,8 @@ export async function uploadImportFile(file: File): Promise<void> {
     headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
   })
   if (fetchResponse.status === HTTP_BAD_REQUEST) {
+    // log the error details to help with troubleshooting
+    console.error(await fetchResponse.json())
     throw new HttpBadRequestError()
   }
   handleError(fetchResponse, "HTTP error attempting to restore from backup")
