@@ -49,9 +49,6 @@ export function Show({
 }
 
 function ShowHeader({ show }: { show: Show }) {
-  const { executor } = useCommandExecutor()
-  const queryClient = useQueryClient()
-
   return (
     <div className="flex gap-2 mb-4">
       <ImageWithPlaceholder
@@ -65,30 +62,39 @@ function ShowHeader({ show }: { show: Show }) {
         <div className="font-extralight">
           {show.source}, {show.duration} min.
         </div>
-        <div className="flex gap-3 items-center mt-2 sm:gap-1">
-          <ThemedAlert
-            trigger={
-              <span className="hover:cursor-pointer hover:text-red-800">
-                <Trash2 className="w-6 h-6" strokeWidth="1" />
-              </span>
-            }
-            body={<div>Are you sure you want to delete {show.title}?</div>}
-            actionButtonText="Delete"
-            onAction={async () => {
-              await executor.execute(new DeleteShowCommand(show.id))
-              queryClient.invalidateQueries({ queryKey: SHOWS_QUERY_KEY })
-            }}
-          />
-          <ShowInfoDropDownMenu
-            show={show}
-            trigger={
-              <span className="hover:cursor-pointer hover:text-red-800">
-                <Info className="w-6 h-6" strokeWidth="1" />
-              </span>
-            }
-          />
-        </div>
+        <ShowTools show={show} />
       </div>
+    </div>
+  )
+}
+
+function ShowTools({ show }: { show: Show }) {
+  const { executor } = useCommandExecutor()
+  const queryClient = useQueryClient()
+
+  return (
+    <div className="flex gap-3 items-center mt-2 sm:gap-1">
+      <ThemedAlert
+        trigger={
+          <span className="hover:cursor-pointer hover:text-red-800">
+            <Trash2 className="w-6 h-6" strokeWidth="1" />
+          </span>
+        }
+        body={<div>Are you sure you want to delete {show.title}?</div>}
+        actionButtonText="Delete"
+        onAction={async () => {
+          await executor.execute(new DeleteShowCommand(show.id))
+          queryClient.invalidateQueries({ queryKey: SHOWS_QUERY_KEY })
+        }}
+      />
+      <ShowInfoDropDownMenu
+        show={show}
+        trigger={
+          <span className="hover:cursor-pointer hover:text-red-800">
+            <Info className="w-6 h-6" strokeWidth="1" />
+          </span>
+        }
+      />
     </div>
   )
 }
