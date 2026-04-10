@@ -10,7 +10,6 @@ export class DeleteShowCommand extends Command {
   }
 
   async execute(): Promise<void> {
-    const deleted_show = await deleteShow(this.showId)
-    console.log(deleted_show)
+    await deleteShow(this.showId)
   }
 }
