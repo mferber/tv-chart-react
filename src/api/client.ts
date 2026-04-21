@@ -185,8 +185,7 @@ export async function deleteShow(showId: string): Promise<void> {
   await handleError(fetchResponse, "HTTP error attempting to delete show")
 }
 
-// FIXME show ID should go in body, not URL
-export async function toggleFavorite(showId: string): Promise<Show> {
+export async function toggleFavorite(showId: string): Promise<void> {
   const body = { show_id: showId }
   const fetchResponse = await apiFetch(`/toggle-favorite`, {
     method: "POST",
@@ -197,7 +196,6 @@ export async function toggleFavorite(showId: string): Promise<Show> {
     fetchResponse,
     "HTTP error attempting to toggle favorite status",
   )
-  return showSchema.parse(await fetchResponse.json())
 }
 
 // Clicking on a native download link is far simpler than using fetch
