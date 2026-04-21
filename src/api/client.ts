@@ -55,7 +55,10 @@ export class HttpError extends Error {
 
 // Fetch wrapper that (a) prepends the API base URL, and (b) permit credentials
 // (including CSRF cookie) on cross-origin requests
-export function apiFetch(relativeUrl: string, options = {}): Promise<Response> {
+export function apiFetch(
+  relativeUrl: string,
+  options: RequestInit = {},
+): Promise<Response> {
   if (API_BASE === undefined) {
     console.error(
       "Environment var VITE_API_BASE_URL is unset: it must contain the API base URL",
@@ -63,6 +66,10 @@ export function apiFetch(relativeUrl: string, options = {}): Promise<Response> {
     throw new UndefinedApiBaseUrlError()
   }
 
+  if (!options.headers) {
+    options.headers = {}
+    options.headers["Content-Type"] = "application/json"
+  }
   return fetch(`${API_BASE}${relativeUrl}`, {
     ...options,
     credentials: "include",
@@ -176,6 +183,21 @@ export async function deleteShow(showId: string): Promise<void> {
     headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
   })
   await handleError(fetchResponse, "HTTP error attempting to delete show")
+}
+
+// FIXME show ID should go in body, not URL
+export async function toggleFavorite(showId: string): Promise<Show> {
+  const body = { show_id: showId }
+  const fetchResponse = await apiFetch(`/toggle-favorite`, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
+  })
+  await handleError(
+    fetchResponse,
+    "HTTP error attempting to toggle favorite status",
+  )
+  return showSchema.parse(await fetchResponse.json())
 }
 
 // Clicking on a native download link is far simpler than using fetch

@@ -1,11 +1,12 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { useQueryClient } from "@tanstack/react-query"
-import { Info, Trash2 } from "lucide-react"
+import { Heart, Info, Trash2 } from "lucide-react"
 import React, { type ReactNode, use, useEffect, useRef, useState } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { useCommandExecutor } from "../../../providers/commands/CommandExecutorProvider"
 import { DeleteShowCommand } from "../../../providers/commands/DeleteShowCommand"
+import { ToggleShowFavoriteCommand } from "../../../providers/commands/ToggleFavoriteCommand"
 import { SHOWS_QUERY_KEY } from "../../../providers/ShowsQueryProvider"
 import { type EpisodeDescriptor, type Show } from "../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../types/types"
@@ -74,6 +75,7 @@ function ShowTools({ show }: { show: Show }) {
 
   return (
     <div className="flex gap-3 items-center mt-2 sm:gap-1">
+      <Favorite show={show} />
       <ThemedAlert
         trigger={
           <span className="hover:cursor-pointer hover:text-red-800">
@@ -99,6 +101,28 @@ function ShowTools({ show }: { show: Show }) {
   )
 }
 
+function Favorite({ show }: { show: Show }) {
+  const { executor } = useCommandExecutor()
+  const queryClient = useQueryClient()
+
+  return (
+    <div
+      title={`${show.title} is${show.favorite ? "" : " not"} a favorite`}
+      onClick={() => {
+        executor.execute(
+          new ToggleShowFavoriteCommand(show.id, show.title, queryClient),
+        )
+      }}
+    >
+      <Heart
+        className="w-6 h-6"
+        strokeWidth="1"
+        stroke={show.favorite ? "#9f0712" : "black"}
+        fill={show.favorite ? "#9f0712" : "transparent"}
+      />
+    </div>
+  )
+}
 function ShowInfoDropDownMenu({
   show,
   trigger,

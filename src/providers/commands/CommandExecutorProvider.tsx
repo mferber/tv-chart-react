@@ -61,21 +61,19 @@ export class CommandExecutor {
     this.updateCanUndoState = updateCanUndoState
   }
 
+  /**
+   * @throws if any error occurs in the command
+   */
   async execute(command: Command) {
-    try {
-      await command.execute()
+    await command.execute()
 
-      if (command instanceof UndoableCommand) {
-        this.undoStack.push(command)
-        this.updateCanUndoState(true)
-      } else {
-        // non-undoable command acts as a barrier
-        this.undoStack.length = 0
-        this.updateCanUndoState(false)
-      }
-    } catch (err) {
-      console.error(err)
-      throw err
+    if (command instanceof UndoableCommand) {
+      this.undoStack.push(command)
+      this.updateCanUndoState(true)
+    } else {
+      // non-undoable command acts as a barrier
+      this.undoStack.length = 0
+      this.updateCanUndoState(false)
     }
   }
 

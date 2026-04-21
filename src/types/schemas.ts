@@ -13,6 +13,7 @@ export const showSchema = z.object({
   id: z.uuid(),
   tvmaze_id: z.number(),
   title: z.string(),
+  favorite: z.boolean(),
   source: z.string(),
   duration: z.number(),
   image_sm_url: z.nullish(z.url()),
