@@ -30,10 +30,6 @@ export class ToggleWatchedCommand extends UndoableCommand {
     this.episodeSpecifiers = episodeSpecifiers
   }
 
-  isUndoable(): boolean {
-    return true
-  }
-
   /**
    * Sets the local state for the episode being updated
    * @param cachedData the query cache for all shows
@@ -89,7 +85,7 @@ export class ToggleWatchedCommand extends UndoableCommand {
       console.error(err)
 
       // revert optimistic local state update
-      await toggleEpisodes(this.showId, this.episodeSpecifiers)
+      this.queryClient.setQueryData(SHOWS_QUERY_KEY, cachedData)
 
       throw err
     }
