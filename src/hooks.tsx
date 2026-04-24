@@ -18,6 +18,7 @@ export function useFetchAppEnvironment(): string | null | Error {
       } catch (e) {
         console.error(e)
         if (e instanceof Error) {
+          // FIXME: why??
           setAppEnvironment(e)
         } else {
           console.error(

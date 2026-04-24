@@ -1,4 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+import { clsx } from "clsx"
 import { Plus, RefreshCcw, Undo2 } from "lucide-react"
 import {
   type Dispatch,
@@ -10,6 +11,7 @@ import { ThreeDots } from "react-loader-spinner"
 
 import { getExportUrl } from "../../api/client"
 import Couch from "../../assets/couch.svg?react"
+import { useAppEnvironment } from "../../providers/AppEnvironmentProvider"
 import {
   CommandExecutorProvider,
   useCommandExecutor,
@@ -99,11 +101,27 @@ function AppHeader({
 }) {
   // User can't be null or we wouldn't be here
   const currentUser = useCurrentUserStatus().user!
+  const appEnv = useAppEnvironment()
+  const appEnvLabel: string | null = (() => {
+    if (appEnv instanceof Error) {
+      return "error"
+    } else if (typeof appEnv === "string") {
+      return appEnv === "production" ? null : appEnv
+    } else {
+      return null
+    }
+  })()
 
   const { executor, canUndo } = useCommandExecutor()
 
   return (
-    <div className="fixed top-0 left-0 right-0 pt-2 px-4 bg-white z-1 flex justify-between border-b pb-2 mb-4 items-center">
+    // color the top bar if a nonprod environment is in use
+    <div
+      className={clsx(
+        "fixed top-0 left-0 right-0 pt-2 px-4 z-1 flex justify-between border-b pb-2 mb-4 items-center",
+        appEnvLabel ? "bg-red-500" : "bg-white",
+      )}
+    >
       <span className="flex gap-4 items-center" title="Main menu">
         <CouchMenu
           currentUser={currentUser}
@@ -142,10 +160,16 @@ function AppHeader({
           </a>
         </span>
       </span>
-      <span className="flex gap-2 items-baseline">
+      <span className="flex gap-2 items-center">
+        {/* show environment badge if not production */}
+        {appEnvLabel && (
+          <span className="bg-red-800 px-2 py-1 rounded-sm text-white text-xs">
+            {appEnvLabel}
+          </span>
+        )}
         <a
           href="#"
-          className={`${canUndo ? "text-black hover:text-red-800" : "text-gray-300 cursor-not-allowed"}`}
+          className={`${canUndo ? "text-black hover:text-red-800" : "text-gray-500 cursor-not-allowed"}`}
           onClick={(e) => {
             e.preventDefault()
             executor.undo()
