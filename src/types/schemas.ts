@@ -21,6 +21,8 @@ export const showSchema = z.object({
   imdb_id: z.nullish(z.string()),
   thetvdb_id: z.nullish(z.number()),
   seasons: z.array(z.array(episodeDescriptorSchema)),
+  user_channel: z.nullish(z.string()),
+  user_notes: z.nullish(z.string()),
 })
 export type Show = z.infer<typeof showSchema>
 

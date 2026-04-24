@@ -50,21 +50,31 @@ export function Show({
 }
 
 function ShowHeader({ show }: { show: Show }) {
+  const displaySource = show.user_channel ? show.user_channel : show.source
+
   return (
-    <div className="flex gap-2 mb-4">
-      <ImageWithPlaceholder
-        src={show.image_sm_url || null}
-        alt={show.title}
-        widthClassName="w-16"
-        placeholderHeightClassName="h-20"
-      />
-      <div className="flex flex-col items-start">
-        <header className="text-xl font-medium">{show.title}</header>
-        <div className="font-extralight">
-          {show.source}, {show.duration} min.
+    <div className="mb-4">
+      <div className="flex gap-2">
+        <ImageWithPlaceholder
+          src={show.image_sm_url || null}
+          alt={show.title}
+          widthClassName="w-16"
+          placeholderHeightClassName="h-20"
+        />
+        <div className="flex flex-col items-start">
+          <header className="text-xl font-medium">{show.title}</header>
+          <div className="font-extralight">
+            {displaySource}, {show.duration} min.
+          </div>
+          <ShowTools show={show} />
         </div>
-        <ShowTools show={show} />
       </div>
+      {show.user_notes && (
+        <div className="text-sm mt-2">
+          <span className="font-bold">My notes:</span>{" "}
+          <span className="italic">{show.user_notes}</span>
+        </div>
+      )}
     </div>
   )
 }
