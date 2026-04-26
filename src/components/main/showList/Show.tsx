@@ -3,6 +3,10 @@ import { useQueryClient } from "@tanstack/react-query"
 import { Heart, Info, SquarePen, Trash2 } from "lucide-react"
 import React, { type ReactNode, use, useEffect, useRef, useState } from "react"
 
+import imdbLogo from "../../../assets/externalSiteLogos/sitelogo-imdb.png"
+import thetvdbLogo from "../../../assets/externalSiteLogos/sitelogo-thetvdb.png"
+import tvmazeLogo from "../../../assets/externalSiteLogos/sitelogo-tvmaze.png"
+import wikipediaLogo from "../../../assets/externalSiteLogos/sitelogo-wikipedia.png"
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { useCommandExecutor } from "../../../providers/commands/CommandExecutorProvider"
 import { DeleteShowCommand } from "../../../providers/commands/DeleteShowCommand"
@@ -172,11 +176,14 @@ function ShowInfoDropDownMenu({
           </ThemedDropdownMenuItem>
           <ThemedDropdownMenuSeparator />
           <ThemedDropdownMenuItem nonselectable>
-            <div className="font-bold">View on:</div>
+            <div className="font-bold">Look up this show on:</div>
           </ThemedDropdownMenuItem>
           <ThemedDropdownMenuItem>
             <a target="_blank" href={`https://imdb.com/title/${show.imdb_id}`}>
-              → IMDB
+              <div className="flex items-center gap-2">
+                <img src={imdbLogo} className="w-4 h-4 inline" />
+                <span>IMDB</span>
+              </div>
             </a>
           </ThemedDropdownMenuItem>
           <ThemedDropdownMenuItem>
@@ -184,7 +191,10 @@ function ShowInfoDropDownMenu({
               target="_blank"
               href={`https://tvmaze.com/shows/${show.tvmaze_id}`}
             >
-              → TVmaze
+              <div className="flex items-center gap-2">
+                <img src={tvmazeLogo} className="w-4 h-4 inline" />
+                <span>TVmaze</span>
+              </div>
             </a>
           </ThemedDropdownMenuItem>
           {show.thetvdb_id && (
@@ -193,7 +203,10 @@ function ShowInfoDropDownMenu({
                 target="_blank"
                 href={`https://www.thetvdb.com/dereferrer/series/${show.thetvdb_id}`}
               >
-                → TheTVDB
+                <div className="flex items-center gap-2">
+                  <img src={thetvdbLogo} className="w-4 h-4 inline" />
+                  <span>TheTVDB</span>
+                </div>
               </a>
             </ThemedDropdownMenuItem>
           )}
@@ -202,7 +215,10 @@ function ShowInfoDropDownMenu({
               target="_blank"
               href={`https://en.wikipedia.org/wiki/${show.title}`}
             >
-              → Wikipedia
+              <div className="flex items-center gap-2">
+                <img src={wikipediaLogo} className="w-4 h-4 inline" />
+                <span>Wikipedia</span>
+              </div>
             </a>
           </ThemedDropdownMenuItem>
           {/* 
