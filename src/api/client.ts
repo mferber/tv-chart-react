@@ -1,4 +1,4 @@
-import type { EditUserFieldsValues } from "../components/main/showList/EditUserFieldsDialog"
+import { type UpdateUserFieldsValues } from "../providers/commands/UpdateUserFieldsCommand"
 import { type User } from "../providers/CurrentUserStatusProvider"
 import {
   type EpisodeDetails,
@@ -201,7 +201,7 @@ export async function toggleFavorite(showId: string): Promise<void> {
 
 export async function updateUserFields(
   showId: string,
-  values: EditUserFieldsValues,
+  values: UpdateUserFieldsValues,
 ): Promise<void> {
   const body = {
     show_id: showId,
