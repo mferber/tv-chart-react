@@ -1,6 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { useQueryClient } from "@tanstack/react-query"
-import { Heart, Info, Trash2 } from "lucide-react"
+import { Heart, Info, SquarePen, Trash2 } from "lucide-react"
 import React, { type ReactNode, use, useEffect, useRef, useState } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
@@ -17,6 +17,7 @@ import {
   ThemedDropdownMenuItem,
   ThemedDropdownMenuSeparator,
 } from "../../misc/ThemedDropdownMenu"
+import { EditUserFieldsDialog } from "./EditUserFieldsDialog"
 import { EpisodeBox } from "./EpisodeBox"
 
 /**
@@ -50,8 +51,6 @@ export function Show({
 }
 
 function ShowHeader({ show }: { show: Show }) {
-  const displaySource = show.user_channel ? show.user_channel : show.source
-
   return (
     <div className="mb-4">
       <div className="flex gap-2">
@@ -64,15 +63,18 @@ function ShowHeader({ show }: { show: Show }) {
         <div className="flex flex-col items-start">
           <header className="text-xl font-medium">{show.title}</header>
           <div className="font-extralight">
-            {displaySource}, {show.duration} min.
+            {show.user_channel && show.user_channel + ", "}
+            {show.duration} min.
           </div>
           <ShowTools show={show} />
         </div>
       </div>
       {show.user_notes && (
-        <div className="text-sm mt-2">
+        <div className="text-sm mt-2 pr-4">
           <span className="font-bold">My notes:</span>{" "}
-          <span className="italic">{show.user_notes}</span>
+          <span className="italic">
+            {show.user_notes.replaceAll(/\n+/g, " • ")}
+          </span>
         </div>
       )}
     </div>
@@ -86,6 +88,14 @@ function ShowTools({ show }: { show: Show }) {
   return (
     <div className="flex gap-3 items-center mt-2 sm:gap-1">
       <Favorite show={show} />
+      <ShowInfoDropDownMenu
+        show={show}
+        trigger={
+          <span className="hover:cursor-pointer hover:text-red-800">
+            <Info className="w-6 h-6" strokeWidth="1" />
+          </span>
+        }
+      />
       <ThemedAlert
         trigger={
           <span className="hover:cursor-pointer hover:text-red-800">
@@ -99,13 +109,20 @@ function ShowTools({ show }: { show: Show }) {
           queryClient.invalidateQueries({ queryKey: SHOWS_QUERY_KEY })
         }}
       />
-      <ShowInfoDropDownMenu
-        show={show}
+      <EditUserFieldsDialog
         trigger={
-          <span className="hover:cursor-pointer hover:text-red-800">
-            <Info className="w-6 h-6" strokeWidth="1" />
+          <span
+            className="hover:cursor-pointer hover:text-red-800"
+            title="Edit show details"
+          >
+            <SquarePen className="w-6 h-6" strokeWidth="1" />
           </span>
         }
+        show={show}
+        initialValues={{
+          channel: show.user_channel || null,
+          notes: show.user_notes || null,
+        }}
       />
     </div>
   )
@@ -149,6 +166,9 @@ function ShowInfoDropDownMenu({
         <ThemedDropdownMenuContent>
           <ThemedDropdownMenuItem nonselectable>
             <div className="font-bold">{show.title}</div>
+          </ThemedDropdownMenuItem>
+          <ThemedDropdownMenuItem nonselectable>
+            <div>Produced by {show.source}</div>
           </ThemedDropdownMenuItem>
           <ThemedDropdownMenuSeparator />
           <ThemedDropdownMenuItem nonselectable>

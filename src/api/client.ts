@@ -1,3 +1,4 @@
+import type { EditUserFieldsValues } from "../components/main/showList/EditUserFieldsDialog"
 import { type User } from "../providers/CurrentUserStatusProvider"
 import {
   type EpisodeDetails,
@@ -195,6 +196,26 @@ export async function toggleFavorite(showId: string): Promise<void> {
   await handleError(
     fetchResponse,
     "HTTP error attempting to toggle favorite status",
+  )
+}
+
+export async function updateUserFields(
+  showId: string,
+  values: EditUserFieldsValues,
+): Promise<void> {
+  const body = {
+    show_id: showId,
+    user_channel: values.channel,
+    user_notes: values.notes,
+  }
+  const fetchResponse = await apiFetch(`/update-user-fields`, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
+  })
+  await handleError(
+    fetchResponse,
+    "HTTP error attempting to update user fields",
   )
 }
 
