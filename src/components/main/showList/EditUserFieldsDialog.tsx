@@ -183,6 +183,7 @@ const channels = [
   "BBC America",
   "BET",
   "Bravo",
+  "BritBox",
   "Cartoon Network",
   "CBS",
   "Comedy Central",
