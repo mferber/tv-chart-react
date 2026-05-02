@@ -119,7 +119,7 @@ function AppHeader({
     <div
       className={clsx(
         "fixed top-0 left-0 right-0 pt-2 px-4 z-1 flex justify-between border-b pb-2 mb-4 items-center",
-        appEnvLabel ? "bg-red-500" : "bg-white",
+        appEnvLabel ? "bg-red-200" : "bg-white",
       )}
     >
       <span className="flex gap-4 items-center" title="Main menu">
