@@ -208,7 +208,7 @@ export async function updateUserFields(
     user_channel: values.channel,
     user_notes: values.notes,
   }
-  const fetchResponse = await apiFetch(`/update-user-fields`, {
+  const fetchResponse = await apiFetch("/update-user-fields", {
     method: "POST",
     body: JSON.stringify(body),
     headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
