@@ -277,6 +277,7 @@ function Season({
       <span className="flex gap-1 items-center overflow-x-auto whitespace-nowrap [scrollbar-width:none]">
         {season.map((ep, idx) => {
           if (!renderRowFully) {
+            // render cheap placeholders instead of actual SVGs, see comments on useEffect above
             return (
               // eslint-disable-next-line react-x/no-array-index-key
               <div className="w-8 h-8 shrink-0 bg-stone-200" key={idx}>
