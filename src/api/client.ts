@@ -61,6 +61,7 @@ export class HttpError extends Error {
 export function apiFetch(
   relativeUrl: string,
   options: RequestInit = {},
+  omitContentType: boolean = false,
 ): Promise<Response> {
   if (API_BASE === undefined) {
     console.error(
@@ -71,8 +72,10 @@ export function apiFetch(
 
   const headers = new Headers(options.headers)
 
-  // set content-type for all requests
-  headers.set("Content-Type", "application/json")
+  // set content-type for all requests that don't provide their own or ask to omit it
+  if (!headers.has("Content-Type") && !omitContentType) {
+    headers.set("Content-Type", "application/json")
+  }
 
   // set CSRF header for non-GET requests
   if (options.method && options.method !== "GET") {
@@ -252,10 +255,14 @@ export async function uploadImportFile(file: File): Promise<void> {
   const formData = new FormData()
   formData.append("file", file)
 
-  const fetchResponse = await apiFetch("/data/import", {
-    method: "POST",
-    body: formData,
-  })
+  const fetchResponse = await apiFetch(
+    "/data/import",
+    {
+      method: "POST",
+      body: formData,
+    },
+    true, // omit content-type header
+  )
   if (fetchResponse.status === HTTP_BAD_REQUEST) {
     // log the error details to help with troubleshooting
     console.error(await fetchResponse.json())
