@@ -69,11 +69,18 @@ export function apiFetch(
     throw new UndefinedApiBaseUrlError()
   }
 
-  // FIXME: always add content type header, even when CSRF header is already present
-  if (!options.headers) {
-    options.headers = {}
-    options.headers["Content-Type"] = "application/json"
+  const headers = new Headers(options.headers)
+
+  // set content-type for all requests
+  headers.set("Content-Type", "application/json")
+
+  // set CSRF header for non-GET requests
+  if (options.method && options.method !== "GET") {
+    headers.set(CSRF_TOKEN_HEADER_NAME, getCSRFCookie())
   }
+
+  options.headers = headers
+
   return fetch(`${API_BASE}${relativeUrl}`, {
     ...options,
     credentials: "include",
@@ -95,7 +102,6 @@ export async function fetchLogin(
   const fetchResponse = await apiFetch("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
-    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
   })
   await handleError(fetchResponse, "HTTP error attempting to log in user")
   return (await fetchResponse.json()) as User
@@ -108,7 +114,6 @@ export async function fetchRegisterUser(
   const fetchResponse = await apiFetch("/auth/register", {
     method: "POST",
     body: JSON.stringify({ email, password }),
-    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
   })
   await handleError(fetchResponse, "HTTP error attempting to register user")
   return (await fetchResponse.json()) as { id: string; email: string }
@@ -173,7 +178,6 @@ export async function toggleEpisodes(
   const fetchResponse = await apiFetch("/toggle-watched-status", {
     method: "POST",
     body: JSON.stringify(body),
-    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
   })
   await handleError(
     fetchResponse,
@@ -184,7 +188,6 @@ export async function toggleEpisodes(
 export async function deleteShow(showId: string): Promise<void> {
   const fetchResponse = await apiFetch(`/shows/${showId}`, {
     method: "DELETE",
-    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() }, // FIXME implement auto CSRF header for non-GET requests
   })
   await handleError(fetchResponse, "HTTP error attempting to delete show")
 }
@@ -194,7 +197,6 @@ export async function toggleFavorite(showId: string): Promise<void> {
   const fetchResponse = await apiFetch(`/toggle-favorite`, {
     method: "POST",
     body: JSON.stringify(body),
-    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
   })
   await handleError(
     fetchResponse,
@@ -214,7 +216,6 @@ export async function updateUserFields(
   const fetchResponse = await apiFetch("/update-user-fields", {
     method: "POST",
     body: JSON.stringify(body),
-    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
   })
   await handleError(
     fetchResponse,
@@ -235,7 +236,6 @@ export async function updateUserPrefs(newPrefs: UserPrefs): Promise<void> {
   const fetchResponse = await apiFetch("/user-prefs", {
     method: "PUT",
     body: JSON.stringify(newPrefs),
-    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
   })
   await handleError(
     fetchResponse,
@@ -255,7 +255,6 @@ export async function uploadImportFile(file: File): Promise<void> {
   const fetchResponse = await apiFetch("/data/import", {
     method: "POST",
     body: formData,
-    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
   })
   if (fetchResponse.status === HTTP_BAD_REQUEST) {
     // log the error details to help with troubleshooting
