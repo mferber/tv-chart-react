@@ -9,6 +9,8 @@ import {
   showSchema,
   type ShowSearchResults,
   showSearchResultsSchema,
+  type UserPrefs,
+  userPrefsSchema,
 } from "../types/schemas"
 import { type PartialEpisodeSpecifier } from "../types/types"
 import { getCSRFCookie } from "../utils/cookies"
@@ -67,6 +69,7 @@ export function apiFetch(
     throw new UndefinedApiBaseUrlError()
   }
 
+  // FIXME: always add content type header, even when CSRF header is already present
   if (!options.headers) {
     options.headers = {}
     options.headers["Content-Type"] = "application/json"
@@ -219,6 +222,27 @@ export async function updateUserFields(
   )
 }
 
+export async function fetchUserPrefs(): Promise<UserPrefs> {
+  const fetchResponse = await apiFetch("/user-prefs")
+  await handleError(
+    fetchResponse,
+    "HTTP error attempting to get user preferences",
+  )
+  return userPrefsSchema.parse(await fetchResponse.json())
+}
+
+export async function updateUserPrefs(newPrefs: UserPrefs): Promise<void> {
+  const fetchResponse = await apiFetch("/user-prefs", {
+    method: "PUT",
+    body: JSON.stringify(newPrefs),
+    headers: { [CSRF_TOKEN_HEADER_NAME]: getCSRFCookie() },
+  })
+  await handleError(
+    fetchResponse,
+    "HTTP error attempting to update user preferences",
+  )
+}
+
 // Clicking on a native download link is far simpler than using fetch
 export function getExportUrl() {
   return `${API_BASE}/data/export`
@@ -238,7 +262,10 @@ export async function uploadImportFile(file: File): Promise<void> {
     console.error(await fetchResponse.json())
     throw new HttpBadRequestError()
   }
-  handleError(fetchResponse, "HTTP error attempting to restore from backup")
+  await handleError(
+    fetchResponse,
+    "HTTP error attempting to restore from backup",
+  )
 }
 
 async function handleError(fetchResponse: Response, errorMsg: string) {
@@ -254,5 +281,6 @@ async function handleError(fetchResponse: Response, errorMsg: string) {
   console.error(
     `${errorMsg}: ${fetchResponse.status} ${fetchResponse.statusText}`,
   )
+  console.error("Throwing HTTPError")
   throw new HttpError()
 }
