@@ -199,13 +199,13 @@ function MarkWatchedControlBar({
   const queryClient = useQueryClient()
 
   return (
-    <div
-      className="flex px-2 my-2 bg-stone-300 rounded-lg items-center justify-between"
-      onClick={async () =>
-        toggleWatchedSingle(executor, episodeSpecifier, queryClient)
-      }
-    >
-      <span className="flex gap-1 items-center w-30 font-light cursor-pointer">
+    <div className="flex px-2 my-2 bg-stone-300 rounded-lg items-center justify-between">
+      <span
+        className="flex gap-1 items-center w-30 font-light cursor-pointer"
+        onClick={async () =>
+          toggleWatchedSingle(executor, episodeSpecifier, queryClient)
+        }
+      >
         {episodeDescriptor.watched ? (
           <>
             <SquareCheck className="inline w-8 h-8" />
