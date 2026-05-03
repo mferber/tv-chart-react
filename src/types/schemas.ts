@@ -63,3 +63,10 @@ export const showSearchResultsSchema = z.object({
   results: z.array(showSearchResultSchema),
 })
 export type ShowSearchResults = z.infer<typeof showSearchResultsSchema>
+
+// User preferences schema
+
+export const userPrefsSchema = z.object({
+  show_favorites_only: z.boolean(),
+})
+export type UserPrefs = z.infer<typeof userPrefsSchema>

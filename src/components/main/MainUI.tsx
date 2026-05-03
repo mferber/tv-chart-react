@@ -1,6 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { clsx } from "clsx"
-import { Plus, RefreshCcw, Undo2 } from "lucide-react"
+import { Heart, Plus, RefreshCcw, Undo2 } from "lucide-react"
 import {
   type Dispatch,
   type ReactNode,
@@ -24,6 +24,11 @@ import {
   ShowsQueryProvider,
   useShowsQuery,
 } from "../../providers/ShowsQueryProvider"
+import {
+  UserPrefsProvider,
+  useUserPrefs,
+} from "../../providers/UserPrefsProvider"
+import { type UserPrefs } from "../../types/schemas"
 import { infoToast } from "../../utils/toasts"
 import { LogOutLink } from "../authentication/LogOutLink"
 import {
@@ -37,16 +42,19 @@ import { ShowList } from "./showList/ShowList"
 
 export function MainUI() {
   return (
-    <ShowsQueryProvider>
-      <CommandExecutorProvider>
-        <MainUIBody />
-      </CommandExecutorProvider>
-    </ShowsQueryProvider>
+    <UserPrefsProvider>
+      <ShowsQueryProvider>
+        <CommandExecutorProvider>
+          <MainUIBody />
+        </CommandExecutorProvider>
+      </ShowsQueryProvider>
+    </UserPrefsProvider>
   )
 }
 
 function MainUIBody() {
   const [searchUIOpen, setSearchUIOpen] = useState(false)
+  const { userPrefs } = useUserPrefs()
   const showsQuery = useShowsQuery()
 
   return (
@@ -64,7 +72,7 @@ function MainUIBody() {
           Couldn't load shows — try reloading
         </div>
       )}
-      {showsQuery.isPending && (
+      {(showsQuery.isPending || !userPrefs) && (
         <div className="flex h-40 justify-center items-center">
           <ThreeDots width="50" height="15" color="black" />
         </div>
@@ -113,6 +121,7 @@ function AppHeader({
   })()
 
   const { executor, canUndo } = useCommandExecutor()
+  const { userPrefs, updateUserPrefs } = useUserPrefs()
 
   return (
     // color the top bar if a nonprod environment is in use
@@ -134,6 +143,35 @@ function AppHeader({
             </div>
           }
         />
+        <a
+          href="#"
+          className="hover:text-red-800"
+          onClick={() => {
+            if (!userPrefs) {
+              return
+            }
+
+            // optimistic local update
+            const newPrefs: UserPrefs = {
+              show_favorites_only: !userPrefs.show_favorites_only,
+            }
+            updateUserPrefs(newPrefs)
+          }}
+          title="Show favorites only"
+        >
+          <Heart
+            strokeWidth="1"
+            className={
+              !userPrefs
+                ? "text-stone-300"
+                : userPrefs.show_favorites_only
+                  ? "text-red-800"
+                  : "text-black"
+            }
+            fill="currentColor"
+            fillOpacity={!userPrefs || userPrefs.show_favorites_only ? 1 : 0}
+          />
+        </a>
         <a
           href="#"
           className="hover:text-red-800"

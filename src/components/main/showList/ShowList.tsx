@@ -1,11 +1,12 @@
 import { use, useState } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
-import { type ShowRecord } from "../../../types/schemas"
+import { useUserPrefs } from "../../../providers/UserPrefsProvider"
+import { type Show, type ShowRecord } from "../../../types/schemas"
 import { type EpisodeSpecifier } from "../../../types/types"
 import { titleSort } from "../../../utils/showSort"
 import { EpisodeDetailDialog } from "./episodeDetailDialog/EpisodeDetailDialog"
-import { Show } from "./Show"
+import { Show as ShowComponent } from "./Show"
 
 /**
  * Displays the main list of shows.
@@ -60,12 +61,29 @@ export function ShowListBody({
   selectedEpisode?: EpisodeSpecifier
 }) {
   const { setSelectedEpisode } = use(SelectedEpisodeContext)
+  const { userPrefs } = useUserPrefs()
+
+  const showFilter: (s: Show) => boolean = (show) => {
+    const favoritesFilterIsOn = userPrefs?.show_favorites_only || false
+    if (favoritesFilterIsOn) {
+      return show.favorite
+    } else {
+      return true
+    }
+  }
+
   const showList = Object.values(shows)
   return (
     <div onClick={() => setSelectedEpisode(undefined)}>
-      {titleSort(showList).map((show) => (
-        <Show show={show} selectedEpisode={selectedEpisode} key={show.id} />
-      ))}
+      {titleSort(showList)
+        .filter(showFilter)
+        .map((show) => (
+          <ShowComponent
+            show={show}
+            selectedEpisode={selectedEpisode}
+            key={show.id}
+          />
+        ))}
     </div>
   )
 }
