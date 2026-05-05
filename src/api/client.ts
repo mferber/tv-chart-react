@@ -15,7 +15,21 @@ import {
 import { type PartialEpisodeSpecifier } from "../types/types"
 import { getCSRFCookie } from "../utils/cookies"
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL
+// A hack to enable testing a dev server from another local device, such as a phone: we can't use
+// localhost as the host in that scenario. For example, the phone might be accessing the dev server
+// via http://mydevmachine.local:5173. So if the configured host is localhost, we swap that out and
+// instead use the current hostname, in this example mydevmachine.local.
+//
+// (Of course, the dev server must be set up correctly as well: it must to be bound to all network
+// interfaces, not just the localhost loopback; if CORS is in use, it must be configured to
+// accept the hostname being used; and secure cookies must be disabled to permit cross-site testing
+// over HTTP.)
+const configuredApiBase = import.meta.env.VITE_API_BASE_URL as string
+const API_BASE = configuredApiBase?.replace(
+  new RegExp("^http://localhost:"),
+  `http://${window.location.hostname}:`,
+)
+
 const CSRF_TOKEN_HEADER_NAME = "X-CSRFToken"
 const HTTP_BAD_REQUEST = 400
 const HTTP_STATUS_UNAUTHORIZED = 401
