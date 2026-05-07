@@ -108,6 +108,7 @@ export function ShowListBody({
   const showList = Object.values(shows)
   return (
     <div
+      className="transition-[padding-bottom] duration-200 ease-out"
       onClick={() => setSelectedEpisode(undefined)}
       style={{ paddingBottom: `${selectedEpisode ? bottomPaddingPx : 0}px` }}
     >
