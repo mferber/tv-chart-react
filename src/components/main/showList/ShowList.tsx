@@ -1,4 +1,4 @@
-import { use, useState } from "react"
+import { use, useEffect, useState } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { useUserPrefs } from "../../../providers/UserPrefsProvider"
@@ -62,6 +62,39 @@ export function ShowListBody({
 }) {
   const { setSelectedEpisode } = use(SelectedEpisodeContext)
   const { userPrefs } = useUserPrefs()
+  const [bottomPaddingPx, setBottomPaddingPx] = useState(0)
+
+  // Reserve scroll space equal to the fixed bottom episode dialog's occupied
+  // height so the final rows of the show list remain reachable while it is open.
+  useEffect(() => {
+    if (!selectedEpisode) {
+      return
+    }
+
+    const dialogElement = document.getElementById(
+      "episode-detail-dialog-content",
+    )
+    if (!dialogElement) {
+      return
+    }
+
+    const updateOccupiedHeight = () => {
+      const rect = dialogElement.getBoundingClientRect()
+      const bottomGap = Math.max(0, window.innerHeight - rect.bottom)
+      setBottomPaddingPx(Math.ceil(rect.height + bottomGap))
+    }
+
+    updateOccupiedHeight()
+
+    const observer = new ResizeObserver(() => updateOccupiedHeight())
+    observer.observe(dialogElement)
+    window.addEventListener("resize", updateOccupiedHeight)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener("resize", updateOccupiedHeight)
+    }
+  }, [selectedEpisode])
 
   const showFilter: (s: Show) => boolean = (show) => {
     const favoritesFilterIsOn = userPrefs?.show_favorites_only || false
@@ -74,7 +107,10 @@ export function ShowListBody({
 
   const showList = Object.values(shows)
   return (
-    <div onClick={() => setSelectedEpisode(undefined)}>
+    <div
+      onClick={() => setSelectedEpisode(undefined)}
+      style={{ paddingBottom: `${selectedEpisode ? bottomPaddingPx : 0}px` }}
+    >
       {titleSort(showList)
         .filter(showFilter)
         .map((show) => (
