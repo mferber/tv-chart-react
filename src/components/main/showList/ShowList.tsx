@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react"
+import { use, useCallback, useEffect, useState } from "react"
 
 import { SelectedEpisodeContext } from "../../../contexts/SelectedEpisodeContext"
 import { useUserPrefs } from "../../../providers/UserPrefsProvider"
@@ -26,6 +26,11 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
   // obscured by the dialog
   const [episodeDetailsBounds, setEpisodeDetailsBounds] =
     useState<DOMRect | null>(null)
+
+  const handleBoundsFinalized = useCallback(
+    (rect: DOMRect) => setEpisodeDetailsBounds(rect),
+    [],
+  )
 
   const specifier = selectedEpisodeSpecifier
   const episodeDescriptor = specifier
@@ -62,7 +67,7 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
         episodeSpecifier={selectedEpisodeSpecifier}
         episodeDescriptor={episodeDescriptor}
         showTitle={specifier ? shows[specifier.showId].title : undefined}
-        onBoundsFinalized={(h) => setEpisodeDetailsBounds(h)}
+        onBoundsFinalized={handleBoundsFinalized}
         close={() => setSelectedEpisodeSpecifier(undefined)}
       />
     </>
