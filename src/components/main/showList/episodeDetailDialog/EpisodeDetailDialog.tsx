@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { ThreeDots } from "react-loader-spinner"
 
 import { type EpisodeDescriptor } from "../../../../types/schemas"
@@ -16,11 +16,17 @@ export function EpisodeDetailDialog({
   episodeSpecifier,
   episodeDescriptor,
   showTitle,
+
+  // function to call when the episode details box has been populated and its bounds
+  // have settled down; allows us to notify the parent components so we can add
+  // padding to account for the dialog's presence
+  onBoundsFinalized,
   close,
 }: {
   episodeSpecifier?: EpisodeSpecifier
   episodeDescriptor?: EpisodeDescriptor
   showTitle?: string
+  onBoundsFinalized?: (bounds: DOMRect) => void
   close: () => void
 }) {
   const isOpen = episodeSpecifier !== undefined
@@ -28,16 +34,14 @@ export function EpisodeDetailDialog({
   return (
     <Dialog.Root modal={false} open={isOpen}>
       {episodeSpecifier && episodeDescriptor && showTitle && (
-        <Dialog.Content
-          id="episode-detail-dialog-content"
-          className="fixed max-h-2/5 right-2 md:right-8 bottom-2 md:bottom-8 left-2 md:left-8 p-4 bg-stone-200 shadow-gray-500 shadow-lg border rounded-xl outline-0 overflow-auto"
-        >
+        <Dialog.Content className="fixed max-h-2/5 right-2 md:right-8 bottom-2 md:bottom-8 left-2 md:left-8 p-4 bg-stone-200 shadow-gray-500 shadow-lg border rounded-xl outline-0 overflow-auto">
           <Dialog.Title className="sr-only" />
           <Dialog.Description className="sr-only" />
           <ModalBody
             episodeSpecifier={episodeSpecifier}
             episodeDescriptor={episodeDescriptor}
             showTitle={showTitle}
+            onBoundsFinalized={onBoundsFinalized}
             close={close}
           />
         </Dialog.Content>
@@ -50,19 +54,29 @@ function ModalBody({
   episodeSpecifier,
   episodeDescriptor,
   showTitle,
+  onBoundsFinalized,
   close,
 }: {
   episodeSpecifier: EpisodeSpecifier
   episodeDescriptor: EpisodeDescriptor
   showTitle: string
+  onBoundsFinalized?: (bounds: DOMRect) => void
   close: () => void
 }) {
   const [episodeDetails, setEpisodeDetails] = useState<EpisodeDetails | null>(
-    episodeDetailsCache.getEpisodeDetails(episodeSpecifier),
+    null,
   )
   const [isLoading, setIsLoading] = useState(false)
   const [isEpisodeMissing, setIsEpisodeMissing] = useState(false)
   const [isError, setIsError] = useState(false)
+
+  const updateModalRefBounds = useCallback(
+    (el: HTMLDivElement) => {
+      if (!el || !onBoundsFinalized) return
+      onBoundsFinalized(el.getBoundingClientRect())
+    },
+    [onBoundsFinalized],
+  )
 
   useEffect(() => {
     if (isError) {
@@ -124,13 +138,15 @@ function ModalBody({
 
   return (
     episodeDetails && (
-      <EpisodeDetailDialogContent
-        episodeSpecifier={episodeSpecifier}
-        episodeDescriptor={episodeDescriptor}
-        episodeDetails={episodeDetails}
-        showTitle={showTitle}
-        close={close}
-      />
+      <div ref={updateModalRefBounds}>
+        <EpisodeDetailDialogContent
+          episodeSpecifier={episodeSpecifier}
+          episodeDescriptor={episodeDescriptor}
+          episodeDetails={episodeDetails}
+          showTitle={showTitle}
+          close={close}
+        />
+      </div>
     )
   )
 }

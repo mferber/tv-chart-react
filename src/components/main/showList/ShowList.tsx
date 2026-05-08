@@ -8,6 +8,8 @@ import { titleSort } from "../../../utils/showSort"
 import { EpisodeDetailDialog } from "./episodeDetailDialog/EpisodeDetailDialog"
 import { Show as ShowComponent } from "./Show"
 
+const LAYOUT_CATCHUP_DELAY = 300
+
 /**
  * Displays the main list of shows.
  * @param shows map (by id) of all the shows to display
@@ -19,12 +21,24 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
     EpisodeSpecifier | undefined
   >(undefined)
 
+  // bottom padding allows the window to scroll further than normal when the episode
+  // details dialog is showing, so that content at the bottom of the page won't be
+  // obscured by the dialog
+  const [episodeDetailsBounds, setEpisodeDetailsBounds] =
+    useState<DOMRect | null>(null)
+
   const specifier = selectedEpisodeSpecifier
   const episodeDescriptor = specifier
     ? shows[specifier.showId].seasons[specifier.seasonNum - 1][
         specifier?.episodeIdx
       ]
     : undefined
+
+  // pad enough to account for the episode details dialog and its bottom margin
+  const bottomPaddingPx = episodeDetailsBounds
+    ? episodeDetailsBounds.height +
+      (window.innerHeight - episodeDetailsBounds.bottom)
+    : 0
 
   return (
     <>
@@ -40,6 +54,7 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
         <ShowListBody
           shows={shows}
           selectedEpisode={selectedEpisodeSpecifier}
+          bottomPaddingPx={bottomPaddingPx}
         />
       </SelectedEpisodeContext>
 
@@ -47,6 +62,7 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
         episodeSpecifier={selectedEpisodeSpecifier}
         episodeDescriptor={episodeDescriptor}
         showTitle={specifier ? shows[specifier.showId].title : undefined}
+        onBoundsFinalized={(h) => setEpisodeDetailsBounds(h)}
         close={() => setSelectedEpisodeSpecifier(undefined)}
       />
     </>
@@ -56,45 +72,47 @@ export function ShowList({ shows }: { shows: ShowRecord }) {
 export function ShowListBody({
   shows,
   selectedEpisode,
+  bottomPaddingPx,
 }: {
   shows: ShowRecord
   selectedEpisode?: EpisodeSpecifier
+  bottomPaddingPx: number
 }) {
   const { setSelectedEpisode } = use(SelectedEpisodeContext)
   const { userPrefs } = useUserPrefs()
-  const [bottomPaddingPx, setBottomPaddingPx] = useState(0)
 
-  // Reserve scroll space equal to the fixed bottom episode dialog's occupied
-  // height so the final rows of the show list remain reachable while it is open.
+  // If the selected episode box is hidden behind the episode details, scroll it
+  // into view
   useEffect(() => {
-    if (!selectedEpisode) {
-      return
+    const maybeScrollSelectedEpisodeIntoView = () => {
+      const selectedEpisodeBox = document.getElementById("selected-episode-box")
+      if (!selectedEpisodeBox || bottomPaddingPx === 0) {
+        return
+      }
+
+      const selectedRect = selectedEpisodeBox.getBoundingClientRect()
+      const visibleBottom = window.innerHeight - bottomPaddingPx
+
+      const hiddenByPixels = selectedRect.bottom - visibleBottom
+      if (hiddenByPixels > 0) {
+        window.scrollTo({
+          top: window.scrollY + hiddenByPixels + selectedRect.height,
+          behavior: "smooth",
+        })
+      }
     }
 
-    const dialogElement = document.getElementById(
-      "episode-detail-dialog-content",
-    )
-    if (!dialogElement) {
-      return
+    let scrollAfterLayoutTimeout: number | null = null
+    if (scrollAfterLayoutTimeout !== null) {
+      window.clearTimeout(scrollAfterLayoutTimeout)
     }
 
-    const updateOccupiedHeight = () => {
-      const rect = dialogElement.getBoundingClientRect()
-      const bottomGap = Math.max(0, window.innerHeight - rect.bottom)
-      setBottomPaddingPx(Math.ceil(rect.height + bottomGap))
-    }
-
-    updateOccupiedHeight()
-
-    const observer = new ResizeObserver(() => updateOccupiedHeight())
-    observer.observe(dialogElement)
-    window.addEventListener("resize", updateOccupiedHeight)
-
-    return () => {
-      observer.disconnect()
-      window.removeEventListener("resize", updateOccupiedHeight)
-    }
-  }, [selectedEpisode])
+    // Leave a little time for layout to catch up before doing the actual scroll,
+    // otherwise sometimes it doesn't scroll the right amount
+    scrollAfterLayoutTimeout = window.setTimeout(() => {
+      maybeScrollSelectedEpisodeIntoView()
+    }, LAYOUT_CATCHUP_DELAY)
+  }, [selectedEpisode, bottomPaddingPx])
 
   const showFilter: (s: Show) => boolean = (show) => {
     const favoritesFilterIsOn = userPrefs?.show_favorites_only || false

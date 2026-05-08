@@ -310,14 +310,18 @@ function Season({
           }
 
           return (
-            <EpisodeBox
-              episodeSpecifier={episodeSpecifier}
-              episodeDescriptor={ep}
-              selected={selected}
-              onClick={clickHandler}
+            <span
+              id={selected ? "selected-episode-box" : undefined}
               // eslint-disable-next-line react-x/no-array-index-key
               key={idx}
-            />
+            >
+              <EpisodeBox
+                episodeSpecifier={episodeSpecifier}
+                episodeDescriptor={ep}
+                selected={selected}
+                onClick={clickHandler}
+              />
+            </span>
           )
         })}
         {
